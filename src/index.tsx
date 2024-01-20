@@ -1,15 +1,39 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import WrongPage from "./Component/WrongPage";
+import AboutUsPage from "./Component/AboutUsPage";
+import ExplorePage from "./Component/ExplorePage";
+import HomePage from "./Component/HomePage";
+import OrderListPage from "./Component/OrderListPage";
+import OrderPage from "./Component/OrderPage";
+import PolicyPage from "./Component/PolicyPage";
+import ProductPage from "./Component/ProductPage";
+import UserPage from "./Component/UserPage";
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<App />}>
+          <Route path="*" element={<WrongPage />} />
+          <Route path="" element={<HomePage />} />
+          <Route path="aboutus" element={<AboutUsPage />} />
+          <Route path="explore" element={<ExplorePage />} />
+          <Route path="orderlist" element={<OrderListPage />} />
+          <Route path="order/:orderId" element={<OrderPage />} />
+          <Route path="policy" element={<PolicyPage />} />
+          <Route path="ProductPage/:productId" element={<ProductPage />} />
+          <Route path="user" element={<UserPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );
 
