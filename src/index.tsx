@@ -13,6 +13,7 @@ import OrderPage from "./Component/OrderPage";
 import PolicyPage from "./Component/PolicyPage";
 import ProductPage from "./Component/ProductPage";
 import UserPage from "./Component/UserPage";
+import "tailwindcss/tailwind.css";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
