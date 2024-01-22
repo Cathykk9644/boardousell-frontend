@@ -1,10 +1,10 @@
-import "./App.css";
 import Navibar from "./Component/Shared-component/Navibar";
 import { Outlet } from "react-router-dom";
+import "./App.css";
 
 export default function App() {
   return (
-    <div className="App" data-theme="nord">
+    <div data-theme="nord">
       <Navibar />
       <Outlet />
     </div>
