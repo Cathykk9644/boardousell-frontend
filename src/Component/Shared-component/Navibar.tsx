@@ -10,7 +10,7 @@ import { useState } from "react";
 export default function Navibar() {
   const [openDrawer, setDrawer] = useState<boolean>(false);
   return (
-    <div className="navbar shadow">
+    <div className="navbar">
       <div className="flex-1">
         <Link to="/" className="btn btn-ghost max-h-full h-20">
           <img className="max-h-full" src={logo} alt="logo" />

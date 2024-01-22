@@ -1,0 +1,11 @@
+.notice-background {
+  background-size: cover;
+  background-position: center;
+  height: 30vh;
+  background-image: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.5),
+      oklch(var(--b3))
+    ),
+    url("./Component//img/homepage-background.png");
+}
