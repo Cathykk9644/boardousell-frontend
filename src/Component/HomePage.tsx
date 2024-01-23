@@ -99,10 +99,10 @@ export default function HomePage() {
             onAnimationEnd={() => setStartAnimation(null)}
           >
             <div
-              className="h-full w-full bg-cover"
+              className="h-full w-full bg-cover bg-center"
               style={{ backgroundImage: `url(${background})` }}
             >
-              <h1 className="text-base-100 bg-gradient-to-tl from-transparent via-transparent to-base-300 w-max">
+              <h1 className="pl-2 pt-1 text-base-content bg-gradient-to-tl from-base-300 to-transparent w-max">
                 {notice.title}
               </h1>
             </div>
@@ -116,8 +116,8 @@ export default function HomePage() {
       <style>
         {animationNext} {animationPrev} {animationReset}
       </style>
-      <div className="notice-background flex flex-col justify-center items-center">
-        <div className="overflow-x-hidden flex flex-col justify-end flex-wrap w-5/6 h-4/6 relative">
+      <div className="notice-background h-48 sm:h-80 justify-center items-center sm:items-start">
+        <div className="overflow-x-hidden flex flex-col justify-end flex-wrap w-72 h-5/6 sm:w-96 sm:m-10 relative">
           {noticesDisplay}
           <MobileStepper
             className="flex justify-center"
