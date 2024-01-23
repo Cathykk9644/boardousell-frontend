@@ -42,5 +42,5 @@ export default function ProductList() {
     };
     fetchData();
   }, []);
-  return <ProductCard />;
+  return <ProductCard product={!!newProducts ? newProducts[0] : null} />;
 }
