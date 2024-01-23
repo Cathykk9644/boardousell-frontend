@@ -16,10 +16,11 @@ interface noticeDetail {
 }
 
 type notice = noticeDetail[];
-
+type animation = "next" | "prev" | "reset" | null;
 export default function HomePage() {
   const [notices, setNotices] = useState<notice>([]);
   const [noticeID, setNoticeID] = useState<number>(0);
+  const [startAnimation, setStartAnimation] = useState<animation>(null);
 
   useEffect(() => {
     const fetchNotice = async () => {
@@ -33,14 +34,69 @@ export default function HomePage() {
     fetchNotice();
   }, []);
 
+  useEffect(() => {
+    const autoSwipe = () => {
+      if (noticeID === notices.length - 1) {
+        setStartAnimation("reset");
+        setNoticeID(0);
+      } else {
+        setStartAnimation("next");
+        setNoticeID((prev) => prev + 1);
+      }
+    };
+    const timer = setInterval(() => {
+      autoSwipe();
+    }, 5000);
+    return () => {
+      clearInterval(timer);
+    };
+  }, [noticeID, notices.length]);
+
+  const animationReset = `@keyframes reset-notice{
+    0%{transform:translate(-${(notices.length - 1) * 100}%);}
+    100%{transform:translate(0);}
+  }`;
+
+  const animationNext = `@keyframes next-notice{
+    0%{transform:translate(-${(noticeID - 1) * 100}%);}
+    100%{transform:translate(-${noticeID * 100}%);}
+  }`;
+
+  const animationPrev = `@keyframes prev-notice{
+    0%{transform:translate(-${(noticeID + 1) * 100}%);}
+    100%{transform:translate(-${noticeID * 100}%);}
+  }`;
+
+  const handleNext = () => {
+    setStartAnimation("next");
+    setNoticeID((prev) => prev + 1);
+  };
+  const handlePrev = () => {
+    setStartAnimation("prev");
+    setNoticeID((prev) => prev - 1);
+  };
+
   const noticesDisplay: React.ReactNode | null = !!notices.length
     ? notices.map((notice, i) => {
         const background = notice.url === null ? noticeBackground : notice.url;
         return (
           <div
-            className="absolute h-full w-full"
+            className="absolute h-full w-full "
             key={notice.id}
-            style={{ left: `${(i - noticeID) * 100}%` }}
+            style={{
+              left: `${i * 100}%`,
+              transform: `translate(-${noticeID * 100}%)`,
+              animationName:
+                startAnimation === "next"
+                  ? "next-notice"
+                  : startAnimation === "prev"
+                  ? "prev-notice"
+                  : startAnimation === "reset"
+                  ? "reset-notice"
+                  : "none",
+              animationDuration: "0.5s",
+            }}
+            onAnimationEnd={() => setStartAnimation(null)}
           >
             <div
               className="h-full w-full bg-cover"
@@ -57,29 +113,36 @@ export default function HomePage() {
 
   return (
     <div>
+      <style>
+        {animationNext} {animationPrev} {animationReset}
+      </style>
       <div className="notice-background flex flex-col justify-center items-center">
         <div className="overflow-x-hidden flex flex-col justify-end flex-wrap w-5/6 h-4/6 relative">
           {noticesDisplay}
           <MobileStepper
-            sx={{ bgcolor: "transparent", color: "#e5e7eb", zIndex: 1 }}
+            className="flex justify-center"
+            sx={{
+              bgcolor: "transparent",
+              zIndex: 1,
+            }}
             variant="dots"
             steps={notices.length}
             position="static"
             activeStep={noticeID}
             backButton={
               <button
-                disabled={noticeID === 0}
-                onClick={() => setNoticeID((prev) => prev - 1)}
+                onClick={handlePrev}
+                className={noticeID === 0 ? "invisible" : ""}
               >
-                <KeyboardArrowLeft />
+                <KeyboardArrowLeft className="text-base-300" />
               </button>
             }
             nextButton={
               <button
-                disabled={noticeID === notices.length - 1}
-                onClick={() => setNoticeID((prev) => prev + 1)}
+                className={noticeID === notices.length - 1 ? "invisible" : ""}
+                onClick={handleNext}
               >
-                <KeyboardArrowRight />
+                <KeyboardArrowRight className="text-base-300" />
               </button>
             }
           />
