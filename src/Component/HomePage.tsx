@@ -4,6 +4,7 @@ import noticeBackground from "./img/notice-default.png";
 import { MobileStepper } from "@mui/material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import ProductList from "./Sub-Component/ProductList";
 
 const BACKENDURL = process.env.REACT_APP_BACKEND;
 interface noticeDetail {
@@ -148,6 +149,7 @@ export default function HomePage() {
           />
         </div>
       </div>
+      <ProductList />
     </div>
   );
 }

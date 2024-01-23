@@ -2,10 +2,11 @@
 module.exports = {
   content: [
     "./src/App.tsx",
-    "./src/Component/Shared-component/Navibar.tsx",
-    "./src/Component/Shared-component/ProductList.tsx",
-    "./src/Component/Shared-component/ShoppingCart.tsx",
-    "./src/Component/Shared-component/Wishlist.tsx",
+    "./src/Component/Sub-Component/Navibar.tsx",
+    "./src/Component/Sub-Component/ProductCard.tsx",
+    "./src/Component/Sub-Component/ProductList.tsx",
+    "./src/Component/Sub-Component/ShoppingCart.tsx",
+    "./src/Component/Sub-Component/Wishlist.tsx",
     "./src/Component/AboutUsPage.tsx",
     "./src/Component/ExplorePage.tsx",
     "./src/Component/HomePage.tsx",

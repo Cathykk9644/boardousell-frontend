@@ -1,4 +1,4 @@
-import Navibar from "./Component/Shared-component/Navibar";
+import Navibar from "./Component/Sub-Component/Navibar";
 import { Outlet } from "react-router-dom";
 import "./App.css";
 
