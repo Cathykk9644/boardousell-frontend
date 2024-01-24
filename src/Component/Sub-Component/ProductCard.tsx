@@ -30,9 +30,9 @@ type props = {
 export default function ProductCard(props: props) {
   const productDetail = props.product;
   return !productDetail ? null : (
-    <div className="card w-44 h-64 mt-3 bg-secondary shadow-xl">
+    <div className="card w-44 mt-3 bg-secondary shadow-xl">
       <img
-        className="m-1 max-h-32 object-contain"
+        className="m-1 h-32 object-contain"
         src={productDetail.productPhotos[0].url}
       />
       <div className="card-body p-1">

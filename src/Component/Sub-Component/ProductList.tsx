@@ -56,7 +56,7 @@ export default function ProductList({ products }: props) {
           return <ProductCard product={product} />;
         });
         while (productGroupList && productGroupList.length < 4) {
-          productGroupList.push(<div className="card w-44 h-64 mt-3"></div>);
+          productGroupList.push(<div className="card w-44 h-72 mt-3"></div>);
         }
 
         return (
@@ -68,8 +68,8 @@ export default function ProductList({ products }: props) {
     : null;
   return (
     products && (
-      <div className="flex flex-col items-center">
-        <div className="overflow-x-scroll min-w-full flex flex-row">
+      <div className="flex flex-col items-center ">
+        <div className="overflow-x-scroll min-w-full flex flex-row ">
           {productAllList}
         </div>
         <Pagination count={dividedList.length} />
