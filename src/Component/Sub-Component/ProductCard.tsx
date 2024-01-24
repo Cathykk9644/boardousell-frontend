@@ -34,6 +34,7 @@ export default function ProductCard(props: props) {
       <img
         className="m-1 h-32 object-contain"
         src={productDetail.productPhotos[0].url}
+        alt={productDetail.name}
       />
       <div className="card-body p-1">
         <h2 className="card-title ">{productDetail.name}</h2>
