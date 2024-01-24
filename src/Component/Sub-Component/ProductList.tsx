@@ -3,7 +3,7 @@ import ProductCard from "./ProductCard";
 import axios from "axios";
 const BACKENDURL = process.env.REACT_APP_BACKEND;
 
-interface product {
+type product = {
   id: number;
   price: number;
   name: string;
@@ -11,31 +11,35 @@ interface product {
   stocks: number;
   createdAt: Date;
   updatedAt: Date;
-}
-interface rawProductData {
-  id: number;
-  productId: number;
-  createdAt: Date;
-  updatedAt: Date;
-  product: product;
-}
+  newproduct: {
+    id: number;
+    productId: number;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+  productPhotos: [
+    {
+      id: number;
+      productId: number;
+      url: string;
+      createdAt: Date;
+      updatedAt: Date;
+    }
+  ];
+} | null;
 
 type products = product[] | null;
 
 export default function ProductList() {
   const [newProducts, setNewProduct] = useState<products>(null);
-  console.log(newProducts);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const rawProductDataRes = await axios.get(
+        const productDataRes = await axios.get(
           BACKENDURL + `/product/newProduct`
         );
-        const productData = rawProductDataRes.data.map(
-          (rawProductData: rawProductData) => rawProductData.product
-        );
-        setNewProduct(productData);
+        setNewProduct(productDataRes.data);
       } catch (error) {
         console.log(error);
       }
