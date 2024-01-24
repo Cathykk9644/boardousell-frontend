@@ -49,9 +49,9 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div>
+    <div className="flex flex-col">
       <NoticeSlide />
-      <h1>New arrived:</h1>
+      <h1 className="ml-2">New arrived:</h1>
       <ProductList products={newProducts} />
     </div>
   );

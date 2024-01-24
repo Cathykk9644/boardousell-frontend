@@ -30,23 +30,23 @@ type props = {
 export default function ProductCard(props: props) {
   const productDetail = props.product;
   return !productDetail ? null : (
-    <div className="card w-40 bg-secondary shadow-xl">
+    <div className="card w-44 h-64 mt-3 bg-secondary shadow-xl">
       <img
         className="m-1 max-h-32 object-contain"
         src={productDetail.productPhotos[0].url}
       />
       <div className="card-body p-1">
-        <h2 className="card-title">{productDetail.name}</h2>
-        <div className="flex justi">
+        <h2 className="card-title ">{productDetail.name}</h2>
+        <div className="flex">
           <p>HKD${productDetail.price}</p>
           <p>Stocks: {productDetail.stocks}</p>
         </div>
       </div>
-      <div className="card-actions flex justify-evenly m-1">
-        <button className="btn">
+      <div className="card-actions flex justify-end mb-1 mr-1">
+        <button className="btn w-11 h-11">
           <StarsIcon />
         </button>
-        <button className="btn" disabled={!productDetail.stocks}>
+        <button className="btn w-11 h-11" disabled={!productDetail.stocks}>
           <ShoppingCartIcon />
         </button>
       </div>
