@@ -1,5 +1,6 @@
 import StarsIcon from "@mui/icons-material/Stars";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import noImage from "../img/no-image.jpg";
 type props = {
   product: {
     id: number;
@@ -19,7 +20,7 @@ type props = {
       {
         id: number;
         productId: number;
-        url: string;
+        url?: string;
         createdAt: Date;
         updatedAt: Date;
       }
@@ -33,7 +34,11 @@ export default function ProductCard(props: props) {
     <div className="card w-44 mt-3 bg-secondary shadow-xl">
       <img
         className="m-1 h-32 object-contain"
-        src={productDetail.productPhotos[0].url}
+        src={
+          productDetail.productPhotos[0].url
+            ? productDetail.productPhotos[0].url
+            : noImage
+        }
         alt={productDetail.name}
       />
       <div className="card-body p-1">

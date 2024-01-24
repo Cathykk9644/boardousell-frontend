@@ -22,7 +22,7 @@ type product = {
     {
       id: number;
       productId: number;
-      url: string;
+      url?: string;
       createdAt: Date;
       updatedAt: Date;
     }
