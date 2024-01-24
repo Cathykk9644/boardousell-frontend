@@ -107,7 +107,6 @@ export default function ProductList({ products }: props) {
       })
     : null;
 
-  console.log(animationArr);
   return (
     products && (
       <div className="flex flex-col items-center ">

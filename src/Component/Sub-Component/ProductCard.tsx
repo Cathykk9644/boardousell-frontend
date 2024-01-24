@@ -35,7 +35,7 @@ export default function ProductCard(props: props) {
       <img
         className="m-1 h-32 object-contain"
         src={
-          productDetail.productPhotos[0].url
+          productDetail.productPhotos.length
             ? productDetail.productPhotos[0].url
             : noImage
         }
