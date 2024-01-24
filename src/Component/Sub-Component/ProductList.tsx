@@ -1,8 +1,3 @@
-import { useEffect, useState } from "react";
-import ProductCard from "./ProductCard";
-import axios from "axios";
-const BACKENDURL = process.env.REACT_APP_BACKEND;
-
 type product = {
   id: number;
   price: number;
@@ -30,21 +25,28 @@ type product = {
 
 type products = product[] | null;
 
-export default function ProductList() {
-  const [newProducts, setNewProduct] = useState<products>(null);
+type props = {
+  products: products;
+};
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const productDataRes = await axios.get(
-          BACKENDURL + `/product/newProduct`
-        );
-        setNewProduct(productDataRes.data);
-      } catch (error) {
-        console.log(error);
+export default function ProductList({ products }: props) {
+  const dividedList: products[] = [];
+  if (products) {
+    let count: number = 1;
+    const currentList: product[] = [];
+    for (const product of products) {
+      currentList.push(product);
+      count++;
+      if (count === 4) {
+        dividedList.push(currentList);
+        count = 0;
+        currentList.splice(0, 4);
       }
-    };
-    fetchData();
-  }, []);
-  return <ProductCard product={!!newProducts ? newProducts[0] : null} />;
+    }
+    if (currentList.length) {
+      dividedList.push(currentList);
+    }
+  }
+  console.log(dividedList);
+  return <div></div>;
 }
