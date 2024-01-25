@@ -2,6 +2,8 @@ import ProductList from "./Sub-Component/ProductList";
 import NoticeSlide from "./Sub-Component/NoticeSlide";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import ShoppingCart from "./Sub-Component/ShoppingCart";
+import Wishlist from "./Sub-Component/Wishlist";
 const BACKENDURL = process.env.REACT_APP_BACKEND;
 
 type product = {
@@ -53,6 +55,8 @@ export default function HomePage() {
       <NoticeSlide />
       <h1 className="ml-2">New arrived:</h1>
       <ProductList products={newProducts} />
+      <Wishlist />
+      <ShoppingCart />
     </div>
   );
 }
