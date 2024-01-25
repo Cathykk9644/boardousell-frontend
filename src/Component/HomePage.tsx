@@ -8,26 +8,12 @@ import { useOutletContext } from "react-router-dom";
 const BACKENDURL = process.env.REACT_APP_BACKEND;
 
 type product = {
-  id: number;
   price: number;
   name: string;
-  description: string;
   stocks: number;
-  createdAt: Date;
-  updatedAt: Date;
-  newproduct: {
-    id: number;
-    productId: number;
-    createdAt: Date;
-    updatedAt: Date;
-  };
   productPhotos: [
     {
-      id: number;
-      productId: number;
       url?: string;
-      createdAt: Date;
-      updatedAt: Date;
     }
   ];
 } | null;

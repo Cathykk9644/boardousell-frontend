@@ -3,26 +3,12 @@ import ProductCard from "./ProductCard";
 import React, { useState } from "react";
 
 type product = {
-  id: number;
   price: number;
   name: string;
-  description: string;
   stocks: number;
-  createdAt: Date;
-  updatedAt: Date;
-  newproduct: {
-    id: number;
-    productId: number;
-    createdAt: Date;
-    updatedAt: Date;
-  };
   productPhotos: [
     {
-      id: number;
-      productId: number;
       url?: string;
-      createdAt: Date;
-      updatedAt: Date;
     }
   ];
 } | null;

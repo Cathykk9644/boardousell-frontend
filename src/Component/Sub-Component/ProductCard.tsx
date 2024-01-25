@@ -3,26 +3,12 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import noImage from "../img/no-image.jpg";
 type props = {
   product: {
-    id: number;
     price: number;
     name: string;
-    description: string;
     stocks: number;
-    createdAt: Date;
-    updatedAt: Date;
-    newproduct: {
-      id: number;
-      productId: number;
-      createdAt: Date;
-      updatedAt: Date;
-    };
     productPhotos: [
       {
-        id: number;
-        productId: number;
         url?: string;
-        createdAt: Date;
-        updatedAt: Date;
       }
     ];
   } | null;

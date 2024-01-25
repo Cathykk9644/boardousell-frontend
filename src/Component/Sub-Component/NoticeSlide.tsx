@@ -6,12 +6,8 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { MobileStepper } from "@mui/material";
 const BACKENDURL = process.env.REACT_APP_BACKEND;
 interface noticeDetail {
-  id: number;
   title: string;
   url: string | null;
-  detail: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 type notice = noticeDetail[];
@@ -82,7 +78,7 @@ export default function NoticeSlide() {
         return (
           <div
             className="absolute h-full w-full "
-            key={notice.id}
+            key={i}
             style={{
               left: `${i * 100}%`,
               transform: `translate(-${noticeID * 100}%)`,
