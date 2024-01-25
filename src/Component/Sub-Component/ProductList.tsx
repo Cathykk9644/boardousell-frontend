@@ -109,9 +109,9 @@ export default function ProductList({ products }: props) {
 
   return (
     products && (
-      <div className="flex flex-col items-center ">
-        {animationArr.map((animation) => (
-          <style>{animation}</style>
+      <div className="flex flex-col items-center mb-5">
+        {animationArr.map((animation, i) => (
+          <style key={`animation${i}`}>{animation}</style>
         ))}
         <div className="overflow-x-hidden w-96 md:w-full flex flex-row ">
           {productAllList}

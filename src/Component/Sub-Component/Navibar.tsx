@@ -10,7 +10,7 @@ import { useState } from "react";
 export default function Navibar() {
   const [openDrawer, setDrawer] = useState<boolean>(false);
   return (
-    <div className="navbar">
+    <div className="navbar shadow">
       <div className="flex-1">
         <Link to="/" className="btn btn-ghost max-h-full h-20">
           <img className="max-h-full" src={logo} alt="logo" />
@@ -39,24 +39,6 @@ export default function Navibar() {
                 onClick={() => setDrawer(false)}
               >
                 Explore
-              </Link>
-            </li>
-            <li>
-              <Link
-                className=" place-content-center btn btn-ghost"
-                to="/aboutus"
-                onClick={() => setDrawer(false)}
-              >
-                About us
-              </Link>
-            </li>
-            <li>
-              <Link
-                className="place-content-center btn btn-ghost"
-                to="/policy"
-                onClick={() => setDrawer(false)}
-              >
-                Policy
               </Link>
             </li>
           </ul>
