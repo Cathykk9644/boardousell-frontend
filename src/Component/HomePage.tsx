@@ -5,7 +5,7 @@ import axios from "axios";
 import ShoppingCart from "./Sub-Component/ShoppingCart";
 import Wishlist from "./Sub-Component/Wishlist";
 import { useOutletContext } from "react-router-dom";
-const BACKENDURL = process.env.REACT_APP_BACKEND;
+const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
 type product = {
   price: number;
