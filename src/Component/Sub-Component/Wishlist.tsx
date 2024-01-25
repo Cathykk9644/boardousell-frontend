@@ -39,14 +39,18 @@ export default function Wishlist(props: props) {
   return (
     <div>
       <Drawer anchor="right" open={open} onClose={handleClose}>
-        Hello
+        <div className="bg-neutral-content min-h-screen w-52 flex flex-col items-center">
+          <h1>Wishlist</h1>
+        </div>
       </Drawer>
-      <button
-        className="btn btn-accent border-neutral ring-1 rounded-3xl fixed bottom-20 right-5"
-        onClick={() => setOpen(true)}
-      >
-        <StarsIcon />
-      </button>
+      <div className="tooltip fixed bottom-32 right-12" data-tip="Wishlist">
+        <button
+          className="btn btn-accent border-neutral ring-1 rounded-3xl fixed bottom-20 right-5"
+          onClick={() => setOpen(true)}
+        >
+          <StarsIcon />
+        </button>
+      </div>
     </div>
   );
 }
