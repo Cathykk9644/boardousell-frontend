@@ -43,13 +43,20 @@ export default function Wishlist(props: props) {
           <h1>Wishlist</h1>
         </div>
       </Drawer>
-      <div className="tooltip fixed bottom-32 right-12" data-tip="Wishlist">
-        <button
-          className="btn btn-accent border-neutral ring-1 rounded-3xl fixed bottom-20 right-5"
-          onClick={() => setOpen(true)}
-        >
-          <StarsIcon />
-        </button>
+      <div className="fixed bottom-20 right-5">
+        <div className="indicator">
+          <div className="tooltip " data-tip="Wishlist">
+            <span className="indicator-item badge badge-primary">
+              {wishlist.length}
+            </span>
+            <button
+              className="btn btn-accent border-neutral ring-1 rounded-3xl"
+              onClick={() => setOpen(true)}
+            >
+              <StarsIcon />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

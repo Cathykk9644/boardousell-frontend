@@ -6,13 +6,12 @@ type props = {
 export default function ShoppingCart(props: props) {
   return (
     <div>
-      <div
-        className="tooltip fixed bottom-16 right-12"
-        data-tip="Shopping Cart"
-      >
-        <button className="btn btn-accent border-neutral ring-1 rounded-3xl fixed bottom-5 right-5">
-          <ShoppingCartIcon />
-        </button>
+      <div className="fixed bottom-5 right-5">
+        <div className="tooltip" data-tip="Shopping Cart">
+          <button className="btn btn-accent border-neutral ring-1 rounded-3xl">
+            <ShoppingCartIcon />
+          </button>
+        </div>
       </div>
     </div>
   );
