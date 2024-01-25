@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import ShoppingCart from "./Sub-Component/ShoppingCart";
 import Wishlist from "./Sub-Component/Wishlist";
+import { useOutletContext } from "react-router-dom";
 const BACKENDURL = process.env.REACT_APP_BACKEND;
 
 type product = {
@@ -35,6 +36,7 @@ type products = product[] | null;
 
 export default function HomePage() {
   const [newProducts, setNewProduct] = useState<products>(null);
+  const userEmail: string = useOutletContext();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,8 +57,8 @@ export default function HomePage() {
       <NoticeSlide />
       <h1 className="ml-2">New arrived:</h1>
       <ProductList products={newProducts} />
-      <Wishlist />
-      <ShoppingCart />
+      <Wishlist userEmail={userEmail} />
+      <ShoppingCart userEmail={userEmail} />
     </div>
   );
 }
