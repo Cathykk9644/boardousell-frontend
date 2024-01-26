@@ -1,9 +1,6 @@
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-type props = {
-  userId: number;
-};
 
-export default function ShoppingCart(props: props) {
+export default function ShoppingCart() {
   return (
     <div>
       <div className="fixed bottom-5 right-5">

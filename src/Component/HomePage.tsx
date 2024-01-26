@@ -2,8 +2,6 @@ import ProductList from "./Sub-Component/ProductList";
 import NoticeSlide from "./Homepage-Sub/NoticeSlide";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import ShoppingCart from "./Sub-Component/ShoppingCart";
-import Wishlist from "./Sub-Component/Wishlist";
 import { useOutletContext } from "react-router-dom";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
@@ -43,8 +41,6 @@ export default function HomePage() {
       <NoticeSlide />
       <h1 className="ml-2">New arrived:</h1>
       <ProductList products={newProducts} />
-      <Wishlist userId={userId} />
-      <ShoppingCart userId={userId} />
     </div>
   );
 }

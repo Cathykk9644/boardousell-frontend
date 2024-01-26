@@ -2,12 +2,10 @@ import StarsIcon from "@mui/icons-material/Stars";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Divider, Drawer } from "@mui/material";
+import { useState } from "react";
 import axios from "axios";
-import { useEffect, useState } from "react";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
-type props = {
-  userId: number;
-};
+
 type wishItem = {
   id: number;
   product: {
@@ -16,38 +14,27 @@ type wishItem = {
   };
 };
 type wishlist = wishItem[];
+type props = {
+  wishlist: wishlist;
+  setWishlist: Function;
+};
 
 //Need to add add shopping cart
-//Need to develop handle close to update database
 export default function Wishlist(props: props) {
-  const [wishlist, setWishlist] = useState<wishlist>([]);
   const [open, setOpen] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const wishlistRes = await axios.get(
-          `${BACKENDURL}/wishlist/${props.userId}`
-        );
-        setWishlist(wishlistRes.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, [props.userId]);
-
-  const handleClose = () => {
-    setOpen(false);
+  const handleDelete = async (wishlistId: number) => {
+    try {
+      await axios.delete(`${BACKENDURL}/wishlist/${wishlistId}`);
+      props.setWishlist((prev: wishlist) =>
+        prev.filter((item: wishItem) => item.id !== wishlistId)
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleDelete = (index: number) => {
-    const newWishList = [...wishlist];
-    newWishList.splice(index, 1);
-    setWishlist(newWishList);
-  };
-
-  const wishlistDisplay = wishlist.map((item, i) => {
+  const wishlistDisplay = props.wishlist.map((item, i) => {
     return (
       <li
         className={`flex items-center ${
@@ -60,7 +47,7 @@ export default function Wishlist(props: props) {
         </button>
         <button
           className="m-1 btn btn-sm btn-square"
-          onClick={() => handleDelete(i)}
+          onClick={() => handleDelete(item.id)}
         >
           <DeleteIcon />
         </button>
@@ -75,7 +62,7 @@ export default function Wishlist(props: props) {
         <div className="indicator">
           <div className="tooltip" data-tip="Wishlist">
             <span className="indicator-item badge badge-primary">
-              {wishlist.length}
+              {props.wishlist.length}
             </span>
             <button
               className="btn btn-accent border-neutral ring-1 rounded-3xl"
@@ -86,7 +73,7 @@ export default function Wishlist(props: props) {
           </div>
         </div>
       </div>
-      <Drawer anchor="right" open={open} onClose={handleClose}>
+      <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
         <div className="flex flex-col bg-neutral-content min-h-screen w-72">
           <div className="h-20 flex justify-evenly items-center">
             <h1 className="text-3xl">Wishlist</h1>
