@@ -7,6 +7,9 @@ import Wishlist from "./Component/Sub-Component/Wishlist";
 import ShoppingCart from "./Component/Sub-Component/ShoppingCart";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
+type outletProps = {
+  handleAddWishItem: Function;
+};
 type wishItem = {
   id: number;
   product: {
@@ -20,6 +23,7 @@ export default function App() {
   const [userId, setUserId] = useState<number>(1);
   const [wishlist, setWishlist] = useState<wishlist>([]);
 
+  console.log(wishlist);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -32,10 +36,25 @@ export default function App() {
     fetchData();
   }, [userId]);
 
+  const handleAddWishItem = async (productId: number) => {
+    try {
+      const { data } = await axios.post(`${BACKENDURL}/wishlist`, {
+        userId: userId,
+        productId: productId,
+      });
+      setWishlist((prev) => [...prev, data]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const outletProps: outletProps = {
+    handleAddWishItem: handleAddWishItem,
+  };
   return (
     <div data-theme="nord">
       <Navibar />
-      <Outlet context={userId} />
+      <Outlet context={outletProps} />
       <footer className="footer p-10 bg-neutral text-neutral-content">
         <nav>
           <Link className="link link-hover" to="/aboutus">

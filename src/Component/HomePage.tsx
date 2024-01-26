@@ -5,7 +5,11 @@ import axios from "axios";
 import { useOutletContext } from "react-router-dom";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
+type outletProps = {
+  handleAddWishItem: Function;
+};
 type product = {
+  id: number;
   price: number;
   name: string;
   stocks: number;
@@ -15,12 +19,11 @@ type product = {
     }
   ];
 } | null;
-
 type products = product[] | null;
 
 export default function HomePage() {
   const [newProducts, setNewProduct] = useState<products>(null);
-  const userId: number = useOutletContext();
+  const { handleAddWishItem }: outletProps = useOutletContext();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,7 +43,10 @@ export default function HomePage() {
     <div className="flex flex-col">
       <NoticeSlide />
       <h1 className="ml-2">New arrived:</h1>
-      <ProductList products={newProducts} />
+      <ProductList
+        products={newProducts}
+        handleAddWishItem={handleAddWishItem}
+      />
     </div>
   );
 }

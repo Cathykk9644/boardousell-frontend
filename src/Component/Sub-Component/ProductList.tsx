@@ -3,6 +3,7 @@ import ProductCard from "./ProductCard";
 import React, { useState } from "react";
 
 type product = {
+  id: number;
   price: number;
   name: string;
   stocks: number;
@@ -17,9 +18,10 @@ type products = product[] | null;
 
 type props = {
   products: products;
+  handleAddWishItem: Function;
 };
 
-export default function ProductList({ products }: props) {
+export default function ProductList({ products, handleAddWishItem }: props) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [startAnimation, setStartAnimation] = useState<string>();
   const dividedList: products[] = [];
@@ -64,6 +66,7 @@ export default function ProductList({ products }: props) {
           return (
             <ProductCard
               product={product}
+              handleAddWishItem={handleAddWishItem}
               key={`page${i + 1}product${j + 1}`}
             />
           );
