@@ -30,7 +30,7 @@ export default function Navibar() {
             <Inventory2RoundedIcon />
             <AccountCircleRoundedIcon />
           </div>
-          <Divider className="bg-accent" />
+          <Divider className="bg-primary" />
           <ul className="menu flex flex-col items-center ">
             <li>
               <Link
