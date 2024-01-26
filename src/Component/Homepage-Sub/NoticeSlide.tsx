@@ -13,6 +13,7 @@ interface noticeDetail {
 type notice = noticeDetail[];
 type animation = "next" | "prev" | "reset" | null;
 
+//Need to add Notice Detail Page.
 export default function NoticeSlide() {
   const [notices, setNotices] = useState<notice>([]);
   const [noticeID, setNoticeID] = useState<number>(0);

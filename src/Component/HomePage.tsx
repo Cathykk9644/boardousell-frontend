@@ -1,5 +1,5 @@
 import ProductList from "./Sub-Component/ProductList";
-import NoticeSlide from "./Sub-Component/NoticeSlide";
+import NoticeSlide from "./Homepage-Sub/NoticeSlide";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ShoppingCart from "./Sub-Component/ShoppingCart";
@@ -22,7 +22,7 @@ type products = product[] | null;
 
 export default function HomePage() {
   const [newProducts, setNewProduct] = useState<products>(null);
-  const userEmail: string = useOutletContext();
+  const userId: number = useOutletContext();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,8 +43,8 @@ export default function HomePage() {
       <NoticeSlide />
       <h1 className="ml-2">New arrived:</h1>
       <ProductList products={newProducts} />
-      <Wishlist userEmail={userEmail} />
-      <ShoppingCart userEmail={userEmail} />
+      <Wishlist userId={userId} />
+      <ShoppingCart userId={userId} />
     </div>
   );
 }

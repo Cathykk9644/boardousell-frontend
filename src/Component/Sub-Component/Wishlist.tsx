@@ -6,7 +6,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 type props = {
-  userEmail: string;
+  userId: number;
 };
 type wishItem = {
   id: number;
@@ -17,6 +17,8 @@ type wishItem = {
 };
 type wishlist = wishItem[];
 
+//Need to add add shopping cart
+//Need to develop handle close to update database
 export default function Wishlist(props: props) {
   const [wishlist, setWishlist] = useState<wishlist>([]);
   const [open, setOpen] = useState<boolean>(false);
@@ -25,7 +27,7 @@ export default function Wishlist(props: props) {
     const fetchData = async () => {
       try {
         const wishlistRes = await axios.get(
-          `${BACKENDURL}/wishlist/${props.userEmail}`
+          `${BACKENDURL}/wishlist/${props.userId}`
         );
         setWishlist(wishlistRes.data);
       } catch (error) {
@@ -33,7 +35,7 @@ export default function Wishlist(props: props) {
       }
     };
     fetchData();
-  }, [props.userEmail]);
+  }, [props.userId]);
 
   const handleClose = () => {
     setOpen(false);

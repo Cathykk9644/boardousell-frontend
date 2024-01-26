@@ -14,6 +14,8 @@ type props = {
   } | null;
 };
 
+//Need to add wishlist function
+//Need to add shopping Cart function
 export default function ProductCard(props: props) {
   const productDetail = props.product;
   return !productDetail ? null : (

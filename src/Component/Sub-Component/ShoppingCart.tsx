@@ -1,6 +1,6 @@
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 type props = {
-  userEmail: string;
+  userId: number;
 };
 
 export default function ShoppingCart(props: props) {

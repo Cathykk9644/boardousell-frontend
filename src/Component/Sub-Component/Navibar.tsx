@@ -27,8 +27,12 @@ export default function Navibar() {
       <Drawer open={openDrawer} anchor="right" onClose={() => setDrawer(false)}>
         <div className="bg-neutral-content min-h-screen w-52">
           <div className="h-20 flex justify-evenly items-center">
-            <Inventory2RoundedIcon />
-            <AccountCircleRoundedIcon />
+            <Link to="/orderlist" onClick={() => setDrawer(false)}>
+              <Inventory2RoundedIcon />
+            </Link>
+            <Link to="/user" onClick={() => setDrawer(false)}>
+              <AccountCircleRoundedIcon />
+            </Link>
           </div>
           <Divider className="bg-primary" />
           <ul className="menu flex flex-col items-center ">
