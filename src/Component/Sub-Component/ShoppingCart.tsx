@@ -1,6 +1,11 @@
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
-export default function ShoppingCart() {
+type props = {
+  open: boolean;
+  setDrawer: Function;
+};
+
+export default function ShoppingCart({ open, setDrawer }: props) {
   return (
     <div>
       <div className="fixed bottom-5 right-5">

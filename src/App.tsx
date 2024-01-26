@@ -18,12 +18,13 @@ type wishItem = {
   };
 };
 type wishlist = wishItem[];
+type drawer = "nav" | "wish" | "cart" | null;
 
 export default function App() {
   const [userId, setUserId] = useState<number>(1);
   const [wishlist, setWishlist] = useState<wishlist>([]);
+  const [drawer, setDrawer] = useState<drawer>(null);
 
-  console.log(wishlist);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -43,6 +44,7 @@ export default function App() {
         productId: productId,
       });
       setWishlist((prev) => [...prev, data]);
+      setDrawer("wish");
     } catch (error) {
       console.log(error);
     }
@@ -53,7 +55,7 @@ export default function App() {
   };
   return (
     <div data-theme="nord">
-      <Navibar />
+      <Navibar open={drawer === "nav"} setDrawer={setDrawer} />
       <Outlet context={outletProps} />
       <footer className="footer p-10 bg-neutral text-neutral-content">
         <nav>
@@ -65,8 +67,13 @@ export default function App() {
             Policy
           </Link>
         </nav>
-        <Wishlist wishlist={wishlist} setWishlist={setWishlist} />
-        <ShoppingCart />
+        <Wishlist
+          open={drawer === "wish"}
+          setDrawer={setDrawer}
+          wishlist={wishlist}
+          setWishlist={setWishlist}
+        />
+        <ShoppingCart open={drawer === "cart"} setDrawer={setDrawer} />
       </footer>
     </div>
   );

@@ -2,7 +2,6 @@ import StarsIcon from "@mui/icons-material/Stars";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Divider, Drawer } from "@mui/material";
-import { useState } from "react";
 import axios from "axios";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
@@ -15,18 +14,23 @@ type wishItem = {
 };
 type wishlist = wishItem[];
 type props = {
+  open: boolean;
+  setDrawer: Function;
   wishlist: wishlist;
   setWishlist: Function;
 };
 
 //Need to add add shopping cart
-export default function Wishlist(props: props) {
-  const [open, setOpen] = useState<boolean>(false);
-
+export default function Wishlist({
+  open,
+  setDrawer,
+  wishlist,
+  setWishlist,
+}: props) {
   const handleDelete = async (wishlistId: number) => {
     try {
       await axios.delete(`${BACKENDURL}/wishlist/${wishlistId}`);
-      props.setWishlist((prev: wishlist) =>
+      setWishlist((prev: wishlist) =>
         prev.filter((item: wishItem) => item.id !== wishlistId)
       );
     } catch (error) {
@@ -34,7 +38,7 @@ export default function Wishlist(props: props) {
     }
   };
 
-  const wishlistDisplay = props.wishlist.map((item, i) => {
+  const wishlistDisplay = wishlist.map((item, i) => {
     return (
       <li
         className={`flex items-center ${
@@ -62,24 +66,24 @@ export default function Wishlist(props: props) {
         <div className="indicator">
           <div className="tooltip" data-tip="Wishlist">
             <span className="indicator-item badge badge-primary">
-              {props.wishlist.length}
+              {wishlist.length}
             </span>
             <button
               className="btn btn-accent border-neutral ring-1 rounded-3xl"
-              onClick={() => setOpen(true)}
+              onClick={() => setDrawer("wish")}
             >
               <StarsIcon />
             </button>
           </div>
         </div>
       </div>
-      <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
+      <Drawer anchor="right" open={open} onClose={() => setDrawer(null)}>
         <div className="flex flex-col bg-neutral-content min-h-screen w-72">
           <div className="h-20 flex justify-evenly items-center">
             <h1 className="text-3xl">Wishlist</h1>
           </div>
           <Divider className="bg-primary" />
-          <div className="bg-base-100 w-4/5 h-5/6 self-center my-auto overflow-x-scroll">
+          <div className="bg-base-100 w-4/5 h-5/6 self-center my-auto ">
             <ul>{wishlistDisplay}</ul>
           </div>
         </div>
