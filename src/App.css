@@ -10,3 +10,7 @@
     ),
     url("./Component//img/homepage-background.png");
 }
+
+.max-w-full-screen {
+  max-width: 100vw;
+}

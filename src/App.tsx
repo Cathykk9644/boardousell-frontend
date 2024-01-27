@@ -10,19 +10,21 @@ const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 type outletProps = {
   handleAddWishItem: Function;
 };
-type wishItem = {
+
+type item = {
   id: number;
   product: {
+    price: number;
     name: string;
     stocks: number;
   };
 };
-type wishlist = wishItem[];
 type drawer = "nav" | "wish" | "cart" | null;
 
 export default function App() {
   const [userId, setUserId] = useState<number>(2);
-  const [wishlist, setWishlist] = useState<wishlist>([]);
+  const [wishlist, setWishlist] = useState<item[]>([]);
+  const [cart, setCart] = useState<item[]>([]);
   const [drawer, setDrawer] = useState<drawer>(null);
 
   useEffect(() => {
@@ -30,6 +32,8 @@ export default function App() {
       try {
         const wishlistRes = await axios.get(`${BACKENDURL}/wishlist/${userId}`);
         setWishlist(wishlistRes.data);
+        const cartRes = await axios.get(`${BACKENDURL}/cart/${userId}`);
+        setCart(cartRes.data);
       } catch (error) {
         console.log(error);
       }
@@ -63,7 +67,11 @@ export default function App() {
         wishlist={wishlist}
         setWishlist={setWishlist}
       />
-      <ShoppingCart open={drawer === "cart"} setDrawer={setDrawer} />
+      <ShoppingCart
+        open={drawer === "cart"}
+        setDrawer={setDrawer}
+        cart={cart}
+      />
       <footer className="footer p-5 pl-10 bg-neutral text-neutral-content h-min">
         <nav>
           <Link className="link link-hover" to="/aboutus">
