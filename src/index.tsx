@@ -33,6 +33,7 @@ root.render(
           <Route path="policy" element={<PolicyPage />} />
           <Route path="ProductPage/:productId" element={<ProductPage />} />
           <Route path="user" element={<UserPage />} />
+          <Route path="notice" element={<NoticePage />} />
           <Route path="notice/:noticeId" element={<NoticePage />} />
         </Route>
       </Routes>
