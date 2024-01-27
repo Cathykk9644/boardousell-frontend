@@ -54,10 +54,17 @@ export default function App() {
     handleAddWishItem: handleAddWishItem,
   };
   return (
-    <div data-theme="nord">
+    <div data-theme="nord" className="min-h-screen">
       <Navibar open={drawer === "nav"} setDrawer={setDrawer} />
       <Outlet context={outletProps} />
-      <footer className="footer p-10 bg-neutral text-neutral-content">
+      <Wishlist
+        open={drawer === "wish"}
+        setDrawer={setDrawer}
+        wishlist={wishlist}
+        setWishlist={setWishlist}
+      />
+      <ShoppingCart open={drawer === "cart"} setDrawer={setDrawer} />
+      <footer className="footer p-5 pl-10 bg-neutral text-neutral-content h-min">
         <nav>
           <Link className="link link-hover" to="/aboutus">
             About us
@@ -67,13 +74,6 @@ export default function App() {
             Policy
           </Link>
         </nav>
-        <Wishlist
-          open={drawer === "wish"}
-          setDrawer={setDrawer}
-          wishlist={wishlist}
-          setWishlist={setWishlist}
-        />
-        <ShoppingCart open={drawer === "cart"} setDrawer={setDrawer} />
       </footer>
     </div>
   );

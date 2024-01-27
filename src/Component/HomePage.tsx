@@ -1,9 +1,9 @@
 import ProductList from "./Sub-Component/ProductList";
-import NoticeSlide from "./Homepage-Sub/NoticeSlide";
+import NoticeSlide from "./Notice-Sub/NoticeSlide";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useOutletContext } from "react-router-dom";
-const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
+import { BACKENDURL } from "../constant";
 
 type outletProps = {
   handleAddWishItem: Function;
@@ -42,7 +42,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       <NoticeSlide />
-      <h1 className="ml-2">New arrived:</h1>
+      <h1 className="m-2">New arrived:</h1>
       <ProductList
         products={newProducts}
         handleAddWishItem={handleAddWishItem}

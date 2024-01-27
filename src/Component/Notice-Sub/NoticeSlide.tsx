@@ -5,7 +5,8 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { MobileStepper } from "@mui/material";
 import { Link } from "react-router-dom";
-const BACKENDURL = process.env.REACT_APP_BACKEND;
+import { BACKENDURL } from "../../constant";
+
 interface noticeDetail {
   id: number;
   title: string;
@@ -97,7 +98,7 @@ export default function NoticeSlide() {
             }}
             onAnimationEnd={() => setStartAnimation(null)}
           >
-            <Link to={`notice/${notice.id}`}>
+            <Link to={`/notice/${notice.id}`}>
               <div
                 className="h-full w-full bg-cover bg-center"
                 style={{ backgroundImage: `url(${background})` }}

@@ -14,7 +14,7 @@ import PolicyPage from "./Component/PolicyPage";
 import ProductPage from "./Component/ProductPage";
 import UserPage from "./Component/UserPage";
 import "tailwindcss/tailwind.css";
-import NoticePage from "./Component/NoticePage";
+import NoticePage from "./Component/Notice-Sub/NoticePage";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -33,7 +33,6 @@ root.render(
           <Route path="policy" element={<PolicyPage />} />
           <Route path="ProductPage/:productId" element={<ProductPage />} />
           <Route path="user" element={<UserPage />} />
-          <Route path="notice" element={<NoticePage />} />
           <Route path="notice/:noticeId" element={<NoticePage />} />
         </Route>
       </Routes>

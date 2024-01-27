@@ -3,7 +3,7 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Divider, Drawer } from "@mui/material";
 import axios from "axios";
-const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
+import { BACKENDURL } from "../../constant";
 
 type wishItem = {
   id: number;
