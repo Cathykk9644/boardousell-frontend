@@ -26,7 +26,6 @@ type params = {
 export default function NoticePage() {
   const [noticeList, setNoticeList] = useState<noticeList>([]);
   const { noticeId } = useParams<params>();
-  const [page, setPage] = useState<number>(1);
   const [currentNoticeId, setCurrentNoticeId] = useState<number | undefined>(
     Number(noticeId)
   );
@@ -42,6 +41,10 @@ export default function NoticePage() {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    setCurrentNoticeId(Number(noticeId));
+  }, [noticeId]);
 
   const handleExpand = async (noticeId: number | undefined) => {
     setCurrentNoticeId((prev) => (prev === noticeId ? undefined : noticeId));
