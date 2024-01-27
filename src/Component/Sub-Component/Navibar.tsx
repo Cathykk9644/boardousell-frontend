@@ -41,6 +41,15 @@ export default function Navibar({ open, setDrawer }: props) {
             <li>
               <Link
                 className="place-content-center btn btn-ghost "
+                to="/notice"
+                onClick={() => setDrawer(null)}
+              >
+                All Notices
+              </Link>
+            </li>
+            <li>
+              <Link
+                className="place-content-center btn btn-ghost "
                 to="/explore"
                 onClick={() => setDrawer(null)}
               >

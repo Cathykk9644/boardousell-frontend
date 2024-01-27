@@ -21,7 +21,7 @@ type wishlist = wishItem[];
 type drawer = "nav" | "wish" | "cart" | null;
 
 export default function App() {
-  const [userId, setUserId] = useState<number>(1);
+  const [userId, setUserId] = useState<number>(2);
   const [wishlist, setWishlist] = useState<wishlist>([]);
   const [drawer, setDrawer] = useState<drawer>(null);
 

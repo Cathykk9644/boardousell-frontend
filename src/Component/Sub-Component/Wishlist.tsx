@@ -83,7 +83,7 @@ export default function Wishlist({
             <h1 className="text-3xl">Wishlist</h1>
           </div>
           <Divider className="bg-primary" />
-          <div className="bg-base-100 w-4/5 h-5/6 self-center my-auto ">
+          <div className="bg-base-100 w-4/5 h-5/6 self-center my-auto">
             <ul>{wishlistDisplay}</ul>
           </div>
         </div>

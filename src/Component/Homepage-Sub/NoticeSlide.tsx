@@ -4,8 +4,10 @@ import noticeBackground from "../img/notice-default.png";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { MobileStepper } from "@mui/material";
+import { Link } from "react-router-dom";
 const BACKENDURL = process.env.REACT_APP_BACKEND;
 interface noticeDetail {
+  id: number;
   title: string;
   url: string | null;
 }
@@ -16,7 +18,7 @@ type animation = "next" | "prev" | "reset" | null;
 //Need to add Notice Detail Page.
 export default function NoticeSlide() {
   const [notices, setNotices] = useState<notice>([]);
-  const [noticeID, setNoticeID] = useState<number>(0);
+  const [currentNotice, setCurrentNotice] = useState<number>(0);
   const [startAnimation, setStartAnimation] = useState<animation>(null);
 
   useEffect(() => {
@@ -33,12 +35,12 @@ export default function NoticeSlide() {
 
   useEffect(() => {
     const autoSwipe = () => {
-      if (noticeID === notices.length - 1) {
+      if (currentNotice === notices.length - 1) {
         setStartAnimation("reset");
-        setNoticeID(0);
+        setCurrentNotice(0);
       } else {
         setStartAnimation("next");
-        setNoticeID((prev) => prev + 1);
+        setCurrentNotice((prev) => prev + 1);
       }
     };
     const timer = setInterval(() => {
@@ -47,7 +49,7 @@ export default function NoticeSlide() {
     return () => {
       clearInterval(timer);
     };
-  }, [noticeID, notices.length]);
+  }, [currentNotice, notices.length]);
 
   const animationReset = `@keyframes reset-notice{
     0%{transform:translate(-${(notices.length - 1) * 100}%);}
@@ -55,22 +57,22 @@ export default function NoticeSlide() {
   }`;
 
   const animationNext = `@keyframes next-notice{
-    0%{transform:translate(-${(noticeID - 1) * 100}%);}
-    100%{transform:translate(-${noticeID * 100}%);}
+    0%{transform:translate(-${(currentNotice - 1) * 100}%);}
+    100%{transform:translate(-${currentNotice * 100}%);}
   }`;
 
   const animationPrev = `@keyframes prev-notice{
-    0%{transform:translate(-${(noticeID + 1) * 100}%);}
-    100%{transform:translate(-${noticeID * 100}%);}
+    0%{transform:translate(-${(currentNotice + 1) * 100}%);}
+    100%{transform:translate(-${currentNotice * 100}%);}
   }`;
 
   const handleNext = () => {
     setStartAnimation("next");
-    setNoticeID((prev) => prev + 1);
+    setCurrentNotice((prev) => prev + 1);
   };
   const handlePrev = () => {
     setStartAnimation("prev");
-    setNoticeID((prev) => prev - 1);
+    setCurrentNotice((prev) => prev - 1);
   };
 
   const noticesDisplay: React.ReactNode | null = !!notices.length
@@ -82,7 +84,7 @@ export default function NoticeSlide() {
             key={i}
             style={{
               left: `${i * 100}%`,
-              transform: `translate(-${noticeID * 100}%)`,
+              transform: `translate(-${currentNotice * 100}%)`,
               animationName:
                 startAnimation === "next"
                   ? "next-notice"
@@ -95,14 +97,16 @@ export default function NoticeSlide() {
             }}
             onAnimationEnd={() => setStartAnimation(null)}
           >
-            <div
-              className="h-full w-full bg-cover bg-center"
-              style={{ backgroundImage: `url(${background})` }}
-            >
-              <h1 className="pl-2 pt-1 text-base-content bg-gradient-to-tl from-base-300 to-transparent w-max">
-                {notice.title}
-              </h1>
-            </div>
+            <Link to={`notice/${notice.id}`}>
+              <div
+                className="h-full w-full bg-cover bg-center"
+                style={{ backgroundImage: `url(${background})` }}
+              >
+                <h1 className="pl-2 pt-1 text-base-content bg-gradient-to-tl from-base-300 to-transparent w-max">
+                  {notice.title}
+                </h1>
+              </div>
+            </Link>
           </div>
         );
       })
@@ -125,18 +129,20 @@ export default function NoticeSlide() {
             variant="dots"
             steps={notices.length}
             position="static"
-            activeStep={noticeID}
+            activeStep={currentNotice}
             backButton={
               <button
                 onClick={handlePrev}
-                className={noticeID === 0 ? "invisible" : ""}
+                className={currentNotice === 0 ? "invisible" : ""}
               >
                 <KeyboardArrowLeft className="text-base-300" />
               </button>
             }
             nextButton={
               <button
-                className={noticeID === notices.length - 1 ? "invisible" : ""}
+                className={
+                  currentNotice === notices.length - 1 ? "invisible" : ""
+                }
                 onClick={handleNext}
               >
                 <KeyboardArrowRight className="text-base-300" />
