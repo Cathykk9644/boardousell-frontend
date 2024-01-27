@@ -5,10 +5,12 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Divider, Drawer } from "@mui/material";
 import axios from "axios";
 import { BACKENDURL } from "../../constant";
+import { useNavigate } from "react-router-dom";
 
 type item = {
   id: number;
   product: {
+    id: number;
     price: number;
     name: string;
     stocks: number;
@@ -22,13 +24,13 @@ type props = {
 };
 
 //Need to add add shopping cart
-//Need to add redirect to productDetail page
 export default function Wishlist({
   open,
   setDrawer,
   wishlist,
   setWishlist,
 }: props) {
+  const navi = useNavigate();
   const handleDelete = async (wishlistId: number) => {
     try {
       await axios.delete(`${BACKENDURL}/wishlist/${wishlistId}`);
@@ -38,6 +40,11 @@ export default function Wishlist({
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleGoProduct = async (productId: number) => {
+    setDrawer(null);
+    navi(`product/${productId}`);
   };
 
   const wishlistDisplay = wishlist.map((item: item, i: number) => {
@@ -55,7 +62,12 @@ export default function Wishlist({
         >
           <DeleteIcon />
         </button>
-        <button className="btn btn-ghost max-w-32">{item.product.name}</button>
+        <button
+          className="btn btn-ghost max-w-32"
+          onClick={() => handleGoProduct(item.product.id)}
+        >
+          {item.product.name}
+        </button>
         <div className="flex min-w-32 justify-between">
           <div>
             ${item.product.price}

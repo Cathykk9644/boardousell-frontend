@@ -14,6 +14,7 @@ type outletProps = {
 type item = {
   id: number;
   product: {
+    id: number;
     price: number;
     name: string;
     stocks: number;

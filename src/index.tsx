@@ -31,7 +31,7 @@ root.render(
           <Route path="orderlist" element={<OrderListPage />} />
           <Route path="order/:orderId" element={<OrderPage />} />
           <Route path="policy" element={<PolicyPage />} />
-          <Route path="ProductPage/:productId" element={<ProductPage />} />
+          <Route path="product/:productId" element={<ProductPage />} />
           <Route path="user" element={<UserPage />} />
           <Route path="notice" element={<NoticePage />} />
           <Route path="notice/:noticeId" element={<NoticePage />} />
