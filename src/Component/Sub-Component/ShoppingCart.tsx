@@ -2,6 +2,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Divider, Drawer } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 type item = {
   id: number;
@@ -30,25 +31,47 @@ export default function ShoppingCart({
   startAnime,
   setAnime,
 }: props) {
+  const navi = useNavigate();
+
+  const handleGoProduct = async (productId: number) => {
+    setDrawer(null);
+    navi(`product/${productId}`);
+  };
+  const handleCheckout = async () => {
+    setDrawer(null);
+    navi(`checkout`);
+  };
   const cartDisplay = cart.map((item: item, i: number) => {
     return (
       <li
-        className={`flex items-center ${
+        className={`flex justify-between items-center  ${
           i % 2 === 0 ? "bg-primary" : "bg-secondary"
         }`}
         key={item.id}
       >
+        {" "}
         <button
           className="m-1 btn btn-sm btn-square"
           onClick={() => handleDeleteCart(item.id)}
         >
           <DeleteIcon />
         </button>
-        <span>{item.product.name}</span>
+        <button
+          className="btn btn-ghost max-w-32"
+          onClick={() => handleGoProduct(item.product.id)}
+        >
+          {item.product.name}
+        </button>
+        <div className="flex flex-col flex-end min-w-24 justify-between">
+          ${item.product.price}
+          <p>Stocks: {item.product.stocks}</p>
+        </div>
       </li>
     );
   });
 
+  let totalAmount = 0;
+  cart.forEach((item) => (totalAmount += item.product.price));
   return (
     <div>
       <div
@@ -82,8 +105,14 @@ export default function ShoppingCart({
             </button>
           </div>
           <Divider className="bg-primary" />
-          <div className="bg-base-100 w-4/5 h-5/6 self-center my-auto">
+          <div className="bg-base-100 w-5/6 h-4/6 my-10 self-center overflow-y-scroll">
             <ul>{cartDisplay}</ul>
+          </div>
+          <div className="flex flex-col w-4/5 self-center mb-5">
+            <h2 className="self-end text-xl">Total Amount: ${totalAmount}</h2>
+            <button className="btn btn-accent mt-2" onClick={handleCheckout}>
+              <h2 className="text-xl">Checkout</h2>
+            </button>
           </div>
         </div>
       </Drawer>
