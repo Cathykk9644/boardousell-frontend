@@ -18,14 +18,17 @@ type props = {
   setDrawer: Function;
   cart: item[];
   handleDeleteCart: Function;
+  startAnime: boolean;
+  setAnime: Function;
 };
 
-//Need to develop order function
 export default function ShoppingCart({
   open,
   setDrawer,
   cart,
   handleDeleteCart,
+  startAnime,
+  setAnime,
 }: props) {
   const cartDisplay = cart.map((item: item, i: number) => {
     return (
@@ -48,7 +51,12 @@ export default function ShoppingCart({
 
   return (
     <div>
-      <div className="fixed bottom-5 right-5">
+      <div
+        className={`fixed bottom-5 right-5 ${
+          startAnime && "add-item-animation"
+        }`}
+        onAnimationEnd={() => setAnime(null)}
+      >
         <div className="indicator">
           <div className="tooltip" data-tip="Shopping Cart">
             {!!cart.length && (

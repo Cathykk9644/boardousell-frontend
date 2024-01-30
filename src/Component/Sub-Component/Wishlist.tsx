@@ -20,6 +20,8 @@ type props = {
   wishlist: item[];
   handleDeleteWish: Function;
   handleWishToCart: Function;
+  startAnime: boolean;
+  setAnime: Function;
 };
 
 export default function Wishlist({
@@ -28,6 +30,8 @@ export default function Wishlist({
   wishlist,
   handleDeleteWish,
   handleWishToCart,
+  startAnime,
+  setAnime,
 }: props) {
   const navi = useNavigate();
 
@@ -76,7 +80,12 @@ export default function Wishlist({
 
   return (
     <div>
-      <div className="fixed bottom-20 right-5">
+      <div
+        className={`fixed bottom-20 right-5 ${
+          startAnime && "add-item-animation"
+        }`}
+        onAnimationEnd={() => setAnime(null)}
+      >
         <div className="indicator">
           <div className="tooltip" data-tip="Wishlist">
             {!!wishlist.length && (

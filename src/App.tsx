@@ -21,13 +21,15 @@ type item = {
     stocks: number;
   };
 };
-type drawer = "nav" | "wish" | "cart" | null;
+type anime = "wish" | "cart" | null;
+type drawer = "nav" | anime;
 
 export default function App() {
   const [userId, setUserId] = useState<number>(2);
   const [wishlist, setWishlist] = useState<item[]>([]);
   const [cart, setCart] = useState<item[]>([]);
   const [drawer, setDrawer] = useState<drawer>(null);
+  const [anime, setAnime] = useState<anime>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,7 +52,7 @@ export default function App() {
         productId: productId,
       });
       setWishlist((prev) => [...prev, data]);
-      setDrawer("wish");
+      setAnime("wish");
     } catch (error) {
       console.log(error);
     }
@@ -74,7 +76,7 @@ export default function App() {
         productId: productId,
       });
       setCart((prev: item[]) => [...prev, data]);
-      setDrawer("cart");
+      setAnime("cart");
     } catch (error) {
       console.log(error);
     }
@@ -95,6 +97,7 @@ export default function App() {
     try {
       handleAddCart(productId);
       handleDeleteWish(wishlistId);
+      setDrawer("cart");
     } catch (error) {
       console.log(error);
     }
@@ -114,12 +117,16 @@ export default function App() {
         wishlist={wishlist}
         handleDeleteWish={handleDeleteWish}
         handleWishToCart={handleWishToCart}
+        startAnime={anime === "wish"}
+        setAnime={setAnime}
       />
       <ShoppingCart
         open={drawer === "cart"}
         setDrawer={setDrawer}
         cart={cart}
         handleDeleteCart={handleDeleteCart}
+        startAnime={anime === "cart"}
+        setAnime={setAnime}
       />
       <footer className="footer p-5 pl-10 bg-neutral text-neutral-content h-min">
         <nav>
