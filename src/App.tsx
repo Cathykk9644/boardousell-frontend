@@ -9,6 +9,7 @@ const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
 type outletProps = {
   handleAddWishItem: Function;
+  handleAddCart: Function;
 };
 
 type item = {
@@ -66,20 +67,42 @@ export default function App() {
     }
   };
 
-  const handleWishToCart = async (wishlistId: number, productId: number) => {
+  const handleAddCart = async (productId: number) => {
     try {
       const { data } = await axios.post(`${BACKENDURL}/cart`, {
         userId: userId,
         productId: productId,
       });
       setCart((prev: item[]) => [...prev, data]);
-      handleDeleteWish(wishlistId);
       setDrawer("cart");
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDeleteCart = async (cartId: number) => {
+    try {
+      await axios.delete(`${BACKENDURL}/cart/${cartId}`);
+      setCart((prev: item[]) =>
+        prev.filter((item: item) => item.id !== cartId)
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleWishToCart = async (wishlistId: number, productId: number) => {
+    try {
+      handleAddCart(productId);
+      handleDeleteWish(wishlistId);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const outletProps: outletProps = {
     handleAddWishItem: handleAddWishItem,
+    handleAddCart: handleAddCart,
   };
   return (
     <div data-theme="nord" className="min-h-screen">
@@ -96,6 +119,7 @@ export default function App() {
         open={drawer === "cart"}
         setDrawer={setDrawer}
         cart={cart}
+        handleDeleteCart={handleDeleteCart}
       />
       <footer className="footer p-5 pl-10 bg-neutral text-neutral-content h-min">
         <nav>

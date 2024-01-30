@@ -4,6 +4,7 @@ import noImage from "../img/no-image.jpg";
 import { useNavigate } from "react-router-dom";
 type props = {
   handleAddWishItem: Function;
+  handleAddCart: Function;
   product: {
     id: number;
     price: number;
@@ -18,7 +19,11 @@ type props = {
 };
 
 //Need to add shopping Cart function
-export default function ProductCard({ product, handleAddWishItem }: props) {
+export default function ProductCard({
+  product,
+  handleAddWishItem,
+  handleAddCart,
+}: props) {
   const navi = useNavigate();
 
   return !product ? null : (
@@ -50,7 +55,11 @@ export default function ProductCard({ product, handleAddWishItem }: props) {
         >
           <StarsIcon />
         </button>
-        <button className="btn w-11 h-11" disabled={!product.stocks}>
+        <button
+          className="btn w-11 h-11"
+          disabled={!product.stocks}
+          onClick={() => handleAddCart(product.id)}
+        >
           <ShoppingCartIcon />
         </button>
       </div>

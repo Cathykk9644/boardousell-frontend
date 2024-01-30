@@ -22,7 +22,6 @@ type props = {
   handleWishToCart: Function;
 };
 
-//Need to add add shopping cart
 export default function Wishlist({
   open,
   setDrawer,
@@ -103,7 +102,7 @@ export default function Wishlist({
             </button>
           </div>
           <Divider className="bg-primary" />
-          <div className="bg-base-100 w-4/5 h-5/6 self-center my-auto">
+          <div className="bg-base-100 w-5/6 h-5/6 self-center my-auto overflow-y-scroll">
             <ul className="w-full">{wishlistDisplay}</ul>
           </div>
         </div>

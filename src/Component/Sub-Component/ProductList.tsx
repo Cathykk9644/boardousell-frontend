@@ -19,9 +19,14 @@ type products = product[] | null;
 type props = {
   products: products;
   handleAddWishItem: Function;
+  handleAddCart: Function;
 };
 
-export default function ProductList({ products, handleAddWishItem }: props) {
+export default function ProductList({
+  products,
+  handleAddWishItem,
+  handleAddCart,
+}: props) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [startAnimation, setStartAnimation] = useState<string>();
   const dividedList: products[] = [];
@@ -67,6 +72,7 @@ export default function ProductList({ products, handleAddWishItem }: props) {
             <ProductCard
               product={product}
               handleAddWishItem={handleAddWishItem}
+              handleAddCart={handleAddCart}
               key={`page${i + 1}product${j + 1}`}
             />
           );

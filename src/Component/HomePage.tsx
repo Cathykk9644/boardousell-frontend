@@ -7,6 +7,7 @@ import { BACKENDURL } from "../constant";
 
 type outletProps = {
   handleAddWishItem: Function;
+  handleAddCart: Function;
 };
 type product = {
   id: number;
@@ -23,7 +24,7 @@ type products = product[] | null;
 
 export default function HomePage() {
   const [newProducts, setNewProduct] = useState<products>(null);
-  const { handleAddWishItem }: outletProps = useOutletContext();
+  const { handleAddWishItem, handleAddCart }: outletProps = useOutletContext();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,6 +47,7 @@ export default function HomePage() {
       <ProductList
         products={newProducts}
         handleAddWishItem={handleAddWishItem}
+        handleAddCart={handleAddCart}
       />
     </div>
   );

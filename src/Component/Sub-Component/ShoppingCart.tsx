@@ -17,11 +17,16 @@ type props = {
   open: boolean;
   setDrawer: Function;
   cart: item[];
+  handleDeleteCart: Function;
 };
 
 //Need to develop order function
-export default function ShoppingCart({ open, setDrawer, cart }: props) {
-  const handleDelete = (cartId: number) => {};
+export default function ShoppingCart({
+  open,
+  setDrawer,
+  cart,
+  handleDeleteCart,
+}: props) {
   const cartDisplay = cart.map((item: item, i: number) => {
     return (
       <li
@@ -32,7 +37,7 @@ export default function ShoppingCart({ open, setDrawer, cart }: props) {
       >
         <button
           className="m-1 btn btn-sm btn-square"
-          onClick={() => handleDelete(item.id)}
+          onClick={() => handleDeleteCart(item.id)}
         >
           <DeleteIcon />
         </button>
