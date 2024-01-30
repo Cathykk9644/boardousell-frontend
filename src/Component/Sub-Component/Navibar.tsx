@@ -56,6 +56,15 @@ export default function Navibar({ open, setDrawer }: props) {
                 Explore
               </Link>
             </li>
+            <li>
+              <Link
+                className="place-content-center btn btn-ghost "
+                to="/contactus"
+                onClick={() => setDrawer(null)}
+              >
+                Contact Us
+              </Link>
+            </li>
           </ul>
         </div>
       </Drawer>

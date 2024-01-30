@@ -29,7 +29,7 @@ export default function GoogleMap({ location }: { location: string }) {
   return (
     center && (
       <APIProvider apiKey={mapApiKey ? mapApiKey : ""}>
-        <Map center={center} zoom={17} className="google-map">
+        <Map center={center} zoom={16} className="google-map">
           <Marker position={center} />
         </Map>
       </APIProvider>

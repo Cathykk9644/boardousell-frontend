@@ -9,6 +9,7 @@ module.exports = {
     "./src/Component/Sub-Component/Wishlist.tsx",
     "./src/Component/Notice-Sub/NoticeSlide.tsx",
     "./src/Component/Notice-Sub/NoticePage.tsx",
+    "./src/Component/ContactUsPage.tsx",
     "./src/Component/AboutUsPage.tsx",
     "./src/Component/CheckoutPage.tsx",
     "./src/Component/ExplorePage.tsx",
