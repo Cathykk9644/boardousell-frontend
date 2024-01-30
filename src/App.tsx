@@ -55,6 +55,29 @@ export default function App() {
     }
   };
 
+  const handleDeleteWish = async (wishlistId: number) => {
+    try {
+      await axios.delete(`${BACKENDURL}/wishlist/${wishlistId}`);
+      setWishlist((prev: item[]) =>
+        prev.filter((item: item) => item.id !== wishlistId)
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleWishToCart = async (wishlistId: number, productId: number) => {
+    try {
+      const { data } = await axios.post(`${BACKENDURL}/cart`, {
+        userId: userId,
+        productId: productId,
+      });
+      setCart((prev: item[]) => [...prev, data]);
+      handleDeleteWish(wishlistId);
+      setDrawer("cart");
+    } catch (error) {}
+  };
+
   const outletProps: outletProps = {
     handleAddWishItem: handleAddWishItem,
   };
@@ -66,7 +89,8 @@ export default function App() {
         open={drawer === "wish"}
         setDrawer={setDrawer}
         wishlist={wishlist}
-        setWishlist={setWishlist}
+        handleDeleteWish={handleDeleteWish}
+        handleWishToCart={handleWishToCart}
       />
       <ShoppingCart
         open={drawer === "cart"}

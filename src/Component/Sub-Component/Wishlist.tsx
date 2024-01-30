@@ -3,8 +3,6 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Divider, Drawer } from "@mui/material";
-import axios from "axios";
-import { BACKENDURL } from "../../constant";
 import { useNavigate } from "react-router-dom";
 
 type item = {
@@ -20,7 +18,8 @@ type props = {
   open: boolean;
   setDrawer: Function;
   wishlist: item[];
-  setWishlist: Function;
+  handleDeleteWish: Function;
+  handleWishToCart: Function;
 };
 
 //Need to add add shopping cart
@@ -28,19 +27,10 @@ export default function Wishlist({
   open,
   setDrawer,
   wishlist,
-  setWishlist,
+  handleDeleteWish,
+  handleWishToCart,
 }: props) {
   const navi = useNavigate();
-  const handleDelete = async (wishlistId: number) => {
-    try {
-      await axios.delete(`${BACKENDURL}/wishlist/${wishlistId}`);
-      setWishlist((prev: item[]) =>
-        prev.filter((item: item) => item.id !== wishlistId)
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const handleGoProduct = async (productId: number) => {
     setDrawer(null);
@@ -58,7 +48,7 @@ export default function Wishlist({
         {" "}
         <button
           className="m-1 btn btn-sm btn-square"
-          onClick={() => handleDelete(item.id)}
+          onClick={() => handleDeleteWish(item.id)}
         >
           <DeleteIcon />
         </button>
@@ -76,6 +66,7 @@ export default function Wishlist({
           <button
             className="m-1 btn btn-sm btn-square self-center"
             disabled={!item.product.stocks}
+            onClick={() => handleWishToCart(item.id, item.product.id)}
           >
             <AddShoppingCartIcon />
           </button>
