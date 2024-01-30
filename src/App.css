@@ -31,3 +31,8 @@
   animation-name: add-item;
   animation-duration: 0.2s;
 }
+
+.google-map {
+  min-width: 300px;
+  min-height: 300px;
+}
