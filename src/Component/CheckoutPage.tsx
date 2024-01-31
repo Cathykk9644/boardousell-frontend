@@ -1,9 +1,8 @@
 import axios from "axios";
-import React, { MouseEventHandler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import RemoveIcon from "@mui/icons-material/Remove";
 import StarsIcon from "@mui/icons-material/Stars";
-import { isFunctionDeclaration } from "typescript";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
 type checkoutList = {
@@ -119,28 +118,33 @@ export default function CheckoutPage() {
     }
     return (
       <tr key={item.id}>
+        <th className="flex flex-row">
+          <div className="tooltip" data-tip="Add back to wishlist">
+            <button
+              className="mr-1 btn btn-sm btn-square btn-outline"
+              onClick={() => handleCartToWish(item.id)}
+            >
+              <StarsIcon />
+            </button>
+          </div>
+
+          <div className="tooltip" data-tip="Reduce one ">
+            <button
+              className="btn btn-sm btn-square btn-outline"
+              onClick={() => handleReduceAmount(item.id)}
+            >
+              <RemoveIcon />
+            </button>
+          </div>
+        </th>
+        <th>{item.stocks}</th>
         <th>
           <Link to={`/product/${item.id}`} className="max-w-min">
             {item.name}
           </Link>
         </th>
-        <th>${item.price}</th>
         <th>{item.amounts}</th>
-        <th>{item.stocks}</th>
-        <th className="space-x-1">
-          <button
-            className="btn btn-sm btn-square btn-outline"
-            onClick={() => handleCartToWish(item.id)}
-          >
-            <StarsIcon />
-          </button>
-          <button
-            className="btn btn-sm btn-square btn-outline"
-            onClick={() => handleReduceAmount(item.id)}
-          >
-            <RemoveIcon />
-          </button>
-        </th>
+        <th>${item.price}</th>
       </tr>
     );
   });
@@ -151,40 +155,49 @@ export default function CheckoutPage() {
   if (!cart.length) {
     isAblePurchase = false;
   }
-  console.log(userInfo);
 
   return (
     <div className="min-h-screen flex flex-col items-center">
       <h1 className="text-3xl my-5">Checkout</h1>
-      <table className="mx-auto w-5/6 table table-sm border border-accent ">
+      <table className="mx-auto w-5/6 table table-sm border-2 border-accent bg-base-300">
         <thead>
           <tr className="border border-accent">
-            <th>Product</th>
-            <th>Price</th>
-            <th>Nos</th>
-            <th>Stocks</th>
             <th>Action</th>
+            <th>Stocks</th>
+            <th>Product</th>
+
+            <th>Nos</th>
+            <th>Price</th>
           </tr>
         </thead>
-        <tbody>{productDisplay}</tbody>
-        <tfoot>
+        <tbody>
+          {productDisplay}
           <tr>
-            <th>Total:</th>
-            <th>${totalAmount}</th>
+            <th className="border-t-2 border-accent"></th>
+            <th className="border-t-2 border-accent"></th>
+            <th className="border-t-2 border-accent"></th>
+            <th className="border-t-2 border-accent">Total:</th>
+            <th className="border-t-2 border-accent">${totalAmount}</th>
           </tr>
           {userInfo && userInfo?.level.discount < 1 && (
             <tr>
+              <th></th>
+              <th></th>
+              <th></th>
               <th>Discount:</th>
               <th>{userInfo.level.discount * 100}%</th>
             </tr>
           )}
           {userInfo && userInfo?.level.discount < 1 && (
             <tr>
+              <th></th>
+              <th></th>
+              <th></th>
               <th>After Discount:</th>
               <th>${discountedAmount}</th>
             </tr>
           )}
-        </tfoot>
+        </tbody>
       </table>
       <div className="flex flex-col w-5/6 m-5 space-y-1">
         <label>Shipping Address:</label>
