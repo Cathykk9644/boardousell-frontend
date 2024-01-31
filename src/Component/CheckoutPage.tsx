@@ -124,7 +124,7 @@ export default function CheckoutPage() {
             {item.name}
           </Link>
         </th>
-        <th>{item.price}</th>
+        <th>${item.price}</th>
         <th>{item.amounts}</th>
         <th>{item.stocks}</th>
         <th className="space-x-1">
@@ -151,6 +151,8 @@ export default function CheckoutPage() {
   if (!cart.length) {
     isAblePurchase = false;
   }
+  console.log(userInfo);
+
   return (
     <div className="min-h-screen flex flex-col items-center">
       <h1 className="text-3xl my-5">Checkout</h1>
@@ -163,8 +165,26 @@ export default function CheckoutPage() {
             <th>Stocks</th>
             <th>Action</th>
           </tr>
-          {productDisplay}
         </thead>
+        <tbody>{productDisplay}</tbody>
+        <tfoot>
+          <tr>
+            <th>Total:</th>
+            <th>${totalAmount}</th>
+          </tr>
+          {userInfo && userInfo?.level.discount < 1 && (
+            <tr>
+              <th>Discount:</th>
+              <th>{userInfo.level.discount * 100}%</th>
+            </tr>
+          )}
+          {userInfo && userInfo?.level.discount < 1 && (
+            <tr>
+              <th>After Discount:</th>
+              <th>${discountedAmount}</th>
+            </tr>
+          )}
+        </tfoot>
       </table>
       <div className="flex flex-col w-5/6 m-5 space-y-1">
         <label>Shipping Address:</label>

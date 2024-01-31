@@ -26,7 +26,7 @@ type outletProps = {
   handleDeleteCart: Function;
 };
 export default function App() {
-  const [userId, setUserId] = useState<number>(2);
+  const [userId, setUserId] = useState<number>(3);
   const [wishlist, setWishlist] = useState<item[]>([]);
   const [cart, setCart] = useState<item[]>([]);
   const [drawer, setDrawer] = useState<drawer>(null);
