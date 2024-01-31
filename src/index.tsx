@@ -16,7 +16,7 @@ import UserPage from "./Component/UserPage";
 import "tailwindcss/tailwind.css";
 import NoticePage from "./Component/Notice-Sub/NoticePage";
 import CheckoutPage from "./Component/CheckoutPage";
-import ContactUsPage from "./Component/ContactUsPage";
+import ContactUsPage from "./Component/ContactUs-Sub/ContactUsPage";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import GoogleMap from "./ContactUs-Sub/GoogleMap";
+import GoogleMap from "./GoogleMap";
 import axios from "axios";
+import { DISCLAIMER } from "../../constant";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
 type infomation = {
@@ -82,11 +83,7 @@ export default function ContactUsPage() {
   });
   return (
     <div className="min-h-screen flex flex-col">
-      <h1 className="bg-base-300 m-5 text-lg">
-        Please note that this website is for display purposes only. The content
-        and information provided on this site are not intended to be accurate,
-        up-to-date, or applicable in real-world scenarios.
-      </h1>
+      {DISCLAIMER}
       <h1 className="text-3xl my-5 self-center">Contact Us</h1>
       <div className="mx-5">
         <div className="text-xl">Business Hours:</div>

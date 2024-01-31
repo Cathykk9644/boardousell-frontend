@@ -1,8 +1,9 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import RemoveIcon from "@mui/icons-material/Remove";
 import StarsIcon from "@mui/icons-material/Stars";
+import { isFunctionDeclaration } from "typescript";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
 type checkoutList = {
@@ -50,7 +51,6 @@ export default function CheckoutPage() {
   const [address, setAddress] = useState<string>("");
   const navi = useNavigate();
 
-  console.log(cart);
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -105,6 +105,13 @@ export default function CheckoutPage() {
     }
   }
 
+  const handleConfirm = async () => {
+    try {
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   let isAblePurchase = true;
   const productDisplay = Object.values(checkoutListObject).map((item) => {
     if (item.amounts > item.stocks) {
@@ -140,10 +147,13 @@ export default function CheckoutPage() {
 
   let totalAmount = 0;
   cart.forEach((item) => (totalAmount += item.product.price));
+  const discountedAmount = userInfo ? totalAmount * userInfo.level.discount : 0;
+  if (!cart.length) {
+    isAblePurchase = false;
+  }
   return (
     <div className="min-h-screen flex flex-col items-center">
-      <h1 className="text-3xl my-5">Check Out</h1>
-
+      <h1 className="text-3xl my-5">Checkout</h1>
       <table className="mx-auto w-5/6 table table-sm border border-accent ">
         <thead>
           <tr className="border border-accent">
@@ -156,19 +166,37 @@ export default function CheckoutPage() {
           {productDisplay}
         </thead>
       </table>
+      <div className="flex flex-col w-5/6 m-5 space-y-1">
+        <label>Shipping Address:</label>
+        <input
+          type="input"
+          placeholder="Left it blank if you pick up at store."
+          className="input input-bordered input-primary"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
+      </div>
       <div
         className="tooltip w-5/6"
-        data-tip="Sorry, we do not have enough stocks."
+        data-tip={
+          isAblePurchase ? null : "Sorry, we do not have enough stocks."
+        }
       >
         <button
           className={`btn ${
             isAblePurchase ? "btn-accent" : "btn-warning"
           } w-full`}
           disabled={!isAblePurchase}
+          onClick={handleConfirm}
         >
           Confirm
         </button>
       </div>
+      <p className="w-5/6">
+        Please note that you need to pay online/at store in order to confirm
+        your order. (This is only a website for display, please feel free to try
+        the feature.)
+      </p>
     </div>
   );
 }

@@ -111,7 +111,11 @@ export default function ProductList({
         <div className="overflow-x-hidden w-96 md:w-full flex flex-row ">
           {productAllList}
         </div>
-        <Pagination count={dividedList.length} onChange={handleChange} />
+        <Pagination
+          count={dividedList.length}
+          onChange={handleChange}
+          className="mt-5"
+        />
       </div>
     )
   );

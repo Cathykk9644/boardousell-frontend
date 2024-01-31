@@ -1,5 +1,5 @@
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Divider, Drawer } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -45,7 +45,9 @@ export default function ShoppingCart({
     return (
       <li
         className={`flex justify-between items-center  ${
-          i % 2 === 0 ? "bg-primary" : "bg-secondary"
+          i % 2 === 0
+            ? "bg-primary text-base-300"
+            : "bg-secondary text-secondary-content"
         }`}
         key={item.id}
       >
@@ -87,7 +89,7 @@ export default function ShoppingCart({
               </span>
             )}
             <button
-              className="btn btn-accent border-neutral ring-1 rounded-3xl"
+              className="btn btn-secondary border-neutral ring-1 rounded-3xl"
               onClick={() => setDrawer("cart")}
             >
               <ShoppingCartIcon />
@@ -100,7 +102,7 @@ export default function ShoppingCart({
           <div className="h-20 flex justify-evenly items-center">
             <h1 className="text-3xl">Shopping Cart</h1>
             <button className="absolute left-5" onClick={() => setDrawer(null)}>
-              <ArrowForwardIcon />
+              <ArrowBackIcon />
             </button>
           </div>
           <Divider className="bg-primary" />

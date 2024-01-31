@@ -103,7 +103,7 @@ export default function NoticeSlide() {
                 className="h-full w-full bg-cover bg-center"
                 style={{ backgroundImage: `url(${background})` }}
               >
-                <h1 className="pl-2 pt-1 text-base-content bg-gradient-to-tl from-base-300 to-transparent w-max">
+                <h1 className="text-base-300 pl-2 pt-1 text-base-content bg-gradient-to-tl from-base-300 to-transparent w-max">
                   {notice.title}
                 </h1>
               </div>

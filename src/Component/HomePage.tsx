@@ -43,7 +43,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       <NoticeSlide />
-      <h1 className="m-2">New arrived:</h1>
+      <h1 className="m-2 text-2xl">New arrived:</h1>
       <ProductList
         products={newProducts}
         handleAddWishItem={handleAddWishItem}

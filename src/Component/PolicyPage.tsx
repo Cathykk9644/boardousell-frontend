@@ -1,11 +1,9 @@
+import { DISCLAIMER } from "../constant";
+
 export default function PolicyPage() {
   return (
     <div className="flex flex-col items-center">
-      <h1 className="bg-base-300 m-5 text-lg">
-        Please note that this website is for display purposes only. The content
-        and information provided on this site are not intended to be accurate,
-        up-to-date, or applicable in real-world scenarios.
-      </h1>
+      {DISCLAIMER}
       <h1>
         <b>User Responsibilities:</b>
       </h1>

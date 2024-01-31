@@ -27,25 +27,25 @@ export default function ProductCard({
   const navi = useNavigate();
 
   return !product ? null : (
-    <div className="card w-44 mt-3 bg-secondary shadow-xl">
+    <div className="card w-44 m-2 md:w-52 bg-accent text-accent-content shadow-xl">
       <img
-        className="m-1 h-32 object-contain cursor-pointer"
+        className="my-5 h-32 object-contain cursor-pointer"
         onClick={() => navi(`product/${product.id}`)}
         src={
           product.productPhotos.length ? product.productPhotos[0].url : noImage
         }
         alt={product.name}
       />
-      <div className="card-body p-1">
+      <div className="card-body flex flex-col items-center p-1">
         <h2
           className="card-title cursor-pointer"
           onClick={() => navi(`product/${product.id}`)}
         >
           {product.name}
         </h2>
-        <div className="flex">
-          <p>HKD${product.price}</p>
-          <p>Stocks: {product.stocks}</p>
+        <div className="flex flex-row w-full justify-between">
+          <span>HKD${product.price}</span>
+          <span>Stocks: {product.stocks}</span>
         </div>
       </div>
       <div className="card-actions flex justify-end mb-1 mr-1">

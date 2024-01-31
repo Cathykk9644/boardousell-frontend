@@ -1,11 +1,9 @@
+import { DISCLAIMER } from "../constant";
+
 export default function AboutUsPage() {
   return (
     <div className="flex flex-col items-center min-h-screen">
-      <h1 className="bg-base-300 m-5 text-lg">
-        Please note that this website is for display purposes only. The content
-        and information provided on this site are not intended to be accurate,
-        up-to-date, or applicable in real-world scenarios.
-      </h1>
+      {DISCLAIMER}
       <h1 className="text-3xl my-5">About Us</h1>
       <p className="w-5/6 m-3">
         Boardousell is an online destination for board game enthusiasts. We

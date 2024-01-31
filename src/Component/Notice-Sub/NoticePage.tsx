@@ -2,12 +2,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { BACKENDURL } from "../../constant";
 import NoticeSlide from "./NoticeSlide";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Divider,
-} from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useParams } from "react-router-dom";
 
 type noticeDetail = {
@@ -59,12 +55,11 @@ export default function NoticePage() {
           handleExpand(notice?.id);
         }}
       >
-        <AccordionSummary>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <div className="flex flex-col">
             <div className="self-start">{notice?.createdAt.slice(0, 10)}</div>
             <span> {notice?.title}</span>
           </div>
-          <Divider />
         </AccordionSummary>
         <AccordionDetails>
           <div className="card">
