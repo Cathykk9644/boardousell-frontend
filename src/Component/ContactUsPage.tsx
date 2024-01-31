@@ -76,6 +76,8 @@ export default function ContactUsPage() {
             <b className="self-center">Address: {info.detail}</b>
           </div>
         );
+      default:
+        return null;
     }
   });
   return (

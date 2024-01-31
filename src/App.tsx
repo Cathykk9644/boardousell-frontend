@@ -7,11 +7,6 @@ import Wishlist from "./Component/Sub-Component/Wishlist";
 import ShoppingCart from "./Component/Sub-Component/ShoppingCart";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
-type outletProps = {
-  handleAddWishItem: Function;
-  handleAddCart: Function;
-};
-
 type item = {
   id: number;
   product: {
@@ -24,6 +19,12 @@ type item = {
 type anime = "wish" | "cart" | null;
 type drawer = "nav" | anime;
 
+type outletProps = {
+  userId: number;
+  handleAddWishItem: Function;
+  handleAddCart: Function;
+  handleDeleteCart: Function;
+};
 export default function App() {
   const [userId, setUserId] = useState<number>(2);
   const [wishlist, setWishlist] = useState<item[]>([]);
@@ -104,8 +105,10 @@ export default function App() {
   };
 
   const outletProps: outletProps = {
-    handleAddWishItem: handleAddWishItem,
-    handleAddCart: handleAddCart,
+    userId,
+    handleAddWishItem,
+    handleAddCart,
+    handleDeleteCart,
   };
   return (
     <div data-theme="nord" className="min-h-screen">

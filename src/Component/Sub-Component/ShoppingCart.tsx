@@ -49,7 +49,6 @@ export default function ShoppingCart({
         }`}
         key={item.id}
       >
-        {" "}
         <button
           className="m-1 btn btn-sm btn-square"
           onClick={() => handleDeleteCart(item.id)}
