@@ -81,7 +81,15 @@ export default function OrderPage() {
   }, [orderId]);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
+      <div className="w-5/6 h-5/6 bg-base-300 self-center">
+        <table>
+          <thead>
+            <tr>Product</tr>
+            <tr>Amount</tr>
+          </thead>
+        </table>
+      </div>
       {/* <div className="w-5/6 flex flex-col">
         You are in {userInfo?.level.title} membership now.
         <div className="flex flex-col w-full">
@@ -110,7 +118,6 @@ export default function OrderPage() {
           Upgrate after hitting {userInfo?.level.requirement} points.
         </div>
       </div> */}
-      {orderId}
     </div>
   );
 }

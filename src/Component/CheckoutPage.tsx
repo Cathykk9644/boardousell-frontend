@@ -110,33 +110,35 @@ export default function CheckoutPage() {
     }
     return (
       <tr key={item.id}>
-        <th className="flex flex-row">
-          <div className="tooltip" data-tip="Add back to wishlist">
-            <button
-              className="mr-1 btn btn-sm btn-square btn-outline"
-              onClick={() => handleCartToWish(item.id)}
-            >
-              <StarsIcon />
-            </button>
-          </div>
+        <td>
+          <div className="flex flex-row">
+            <div className="tooltip" data-tip="Add back to wishlist">
+              <button
+                className="mr-1 btn btn-sm btn-square btn-outline"
+                onClick={() => handleCartToWish(item.id)}
+              >
+                <StarsIcon />
+              </button>
+            </div>
 
-          <div className="tooltip" data-tip="Reduce one ">
-            <button
-              className="btn btn-sm btn-square btn-outline"
-              onClick={() => handleReduceAmount(item.id)}
-            >
-              <RemoveIcon />
-            </button>
+            <div className="tooltip" data-tip="Reduce one ">
+              <button
+                className="btn btn-sm btn-square btn-outline"
+                onClick={() => handleReduceAmount(item.id)}
+              >
+                <RemoveIcon />
+              </button>
+            </div>
           </div>
-        </th>
-        <th>{item.stocks}</th>
-        <th>
+        </td>
+        <td>{item.stocks}</td>
+        <td>
           <Link to={`/product/${item.id}`} className="max-w-min">
             {item.name}
           </Link>
-        </th>
-        <th>{item.amounts}</th>
-        <th>${item.price}</th>
+        </td>
+        <td>{item.amounts}</td>
+        <td>${item.price}</td>
       </tr>
     );
   });
@@ -183,28 +185,28 @@ export default function CheckoutPage() {
         <tbody>
           {productDisplay}
           <tr>
-            <th className="border-t-2 border-accent"></th>
-            <th className="border-t-2 border-accent"></th>
-            <th className="border-t-2 border-accent"></th>
-            <th className="border-t-2 border-accent">Total:</th>
-            <th className="border-t-2 border-accent">${totalAmount}</th>
+            <td className="border-t-2 border-accent"></td>
+            <td className="border-t-2 border-accent"></td>
+            <td className="border-t-2 border-accent"></td>
+            <td className="border-t-2 border-accent">Total:</td>
+            <td className="border-t-2 border-accent">${totalAmount}</td>
           </tr>
           {userInfo && userInfo?.level.discount < 1 && (
             <tr>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th>Discount:</th>
-              <th>{userInfo.level.discount * 100}%</th>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>Discount:</td>
+              <td>{userInfo.level.discount * 100}%</td>
             </tr>
           )}
           {userInfo && userInfo?.level.discount < 1 && (
             <tr>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th>After Discount:</th>
-              <th>${discountedAmount}</th>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>After Discount:</td>
+              <td>${discountedAmount}</td>
             </tr>
           )}
         </tbody>
