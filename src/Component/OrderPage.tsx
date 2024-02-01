@@ -34,6 +34,13 @@ type product = {
   };
 };
 
+type message = {
+  isUserReceive: boolean;
+  detail: string;
+  createAt: string;
+  updatedAt: string;
+};
+
 type outletProps = {
   userId: number;
   handleAddWishItem: Function;
@@ -46,11 +53,13 @@ export default function OrderPage() {
   const [orderInfo, setOrderInfo] = useState<order>();
   const [userInfo, setUserInfo] = useState<user>();
   const [productList, setProductList] = useState<product[]>([]);
+  const [messageList, setMessageList] = useState<message[]>([]);
   const navi = useNavigate();
   const { userId } = useOutletContext<outletProps>();
   console.log(orderInfo);
   console.log(userInfo);
   console.log(productList);
+  console.log(messageList);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,10 +68,11 @@ export default function OrderPage() {
         if (data.userId !== userId) {
           return navi(`/`);
         }
-        const { user, products, ...order } = data;
+        const { user, products, messages, ...order } = data;
         setOrderInfo(order);
         setUserInfo(user);
         setProductList(products);
+        setMessageList(messages);
       } catch (error) {
         console.log(error);
       }
