@@ -2,6 +2,7 @@
 module.exports = {
   content: [
     "./src/App.tsx",
+    "./src/Component/Payment-Sub/Payment.tsx",
     "./src/Component/Sub-Component/Navibar.tsx",
     "./src/Component/Sub-Component/ProductCard.tsx",
     "./src/Component/Sub-Component/ProductList.tsx",

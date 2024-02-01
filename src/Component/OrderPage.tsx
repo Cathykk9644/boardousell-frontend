@@ -9,6 +9,12 @@ import {
   useParams,
 } from "react-router-dom";
 import { BACKENDURL } from "../constant";
+import Payment from "./Payment-Sub/Payment";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+const stripePromise = loadStripe(
+  process.env.REACT_APP_STRIPE_KEY ? process.env.REACT_APP_STRIPE_KEY : ""
+);
 
 type order = {
   id: number;
@@ -58,9 +64,9 @@ export default function OrderPage() {
   const [productList, setProductList] = useState<product[]>([]);
   const [messageList, setMessageList] = useState<message[]>([]);
   const [input, setInput] = useState<string>("");
+  const [clientSecret, setClientSecret] = useState("");
   const navi = useNavigate();
   const { userId } = useOutletContext<outletProps>();
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -76,12 +82,16 @@ export default function OrderPage() {
           return Date.parse(a.createdAt) - Date.parse(b.createdAt);
         });
         setMessageList(messages);
+        const res = await axios.post(`${BACKENDURL}/payment`, {
+          amount: order.amount,
+        });
+        setClientSecret(res.data.clientSecret);
       } catch (error) {
         console.log(error);
       }
     };
     fetchData();
-  }, [orderId]);
+  }, [navi, orderId, userId]);
 
   const handleSendMessage = async () => {
     try {
@@ -176,8 +186,6 @@ export default function OrderPage() {
     );
   });
 
-  const paymentDisplay = <div>payment</div>;
-
   return (
     <div className="min-h-screen flex flex-col">
       <div className="m-5 border border-primary w-5/6 h-5/6 bg-base-300 self-center">
@@ -192,6 +200,11 @@ export default function OrderPage() {
         </table>
         {orderInfoDislay}
         {orderInfo?.status === "pending" && membershipDisplay}
+        {orderInfo?.status === "pending" && clientSecret && (
+          <Elements stripe={stripePromise} options={{ clientSecret }}>
+            <Payment />
+          </Elements>
+        )}
         {<div className="divider">Message:</div>}
         <div
           className={`m-3 bg-base-200 border-info ${
@@ -215,7 +228,6 @@ export default function OrderPage() {
             </button>
           </div>
         </div>
-        {orderInfo?.status === "pending" && paymentDisplay}
       </div>
     </div>
   );
