@@ -120,14 +120,20 @@ export default function OrderPage() {
     );
   });
 
-  const orderTimestamp = orderInfo ? Date.parse(orderInfo.createdAt) : 0;
-  const date = new Date(orderTimestamp);
+  const createdTimestamp = orderInfo ? Date.parse(orderInfo.createdAt) : 0;
+  const createdDate = new Date(createdTimestamp);
+  const updatedTimestamp = orderInfo ? Date.parse(orderInfo.updatedAt) : 0;
+  const updatedDate = new Date(updatedTimestamp);
   const orderInfoDislay = (
     <table className="table m-2">
       <tbody>
         <tr>
           <th>Ordering Date:</th>
-          <td>{date.toLocaleString()}</td>
+          <td>{createdDate.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <th>Last Update:</th>
+          <td>{updatedDate.toLocaleString()}</td>
         </tr>
         <tr>
           <th>Status:</th>
@@ -196,6 +202,9 @@ export default function OrderPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Link to="/orderList" className="mt-5 btn btn-outline w-5/6 self-center">
+        Back to order List
+      </Link>
       <div className="m-5 border border-primary w-5/6 h-5/6 bg-base-300 self-center">
         <table className="table border border-secondary">
           <thead>
