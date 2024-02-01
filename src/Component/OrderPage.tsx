@@ -1,9 +1,16 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Params, useParams } from "react-router-dom";
+import {
+  Params,
+  useNavigate,
+  useOutletContext,
+  useParams,
+} from "react-router-dom";
 import { BACKENDURL } from "../constant";
 
 type order = {
+  id: number;
+  userId: number;
   address: string;
   amount: number;
   status: string;
@@ -27,11 +34,20 @@ type product = {
   };
 };
 
+type outletProps = {
+  userId: number;
+  handleAddWishItem: Function;
+  handleAddCart: Function;
+  handleDeleteCart: Function;
+};
+
 export default function OrderPage() {
   const { orderId } = useParams<Params>();
   const [orderInfo, setOrderInfo] = useState<order>();
   const [userInfo, setUserInfo] = useState<user>();
   const [productList, setProductList] = useState<product[]>([]);
+  const navi = useNavigate();
+  const { userId } = useOutletContext<outletProps>();
   console.log(orderInfo);
   console.log(userInfo);
   console.log(productList);
@@ -40,6 +56,9 @@ export default function OrderPage() {
     const fetchData = async () => {
       try {
         const { data } = await axios.get(`${BACKENDURL}/order/${orderId}`);
+        if (data.userId !== userId) {
+          return navi(`/`);
+        }
         const { user, products, ...order } = data;
         setOrderInfo(order);
         setUserInfo(user);
