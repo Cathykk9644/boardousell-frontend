@@ -104,13 +104,6 @@ export default function CheckoutPage() {
     }
   }
 
-  const handleConfirm = async () => {
-    try {
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   let isAblePurchase = true;
   const productDisplay = Object.values(checkoutListObject).map((item) => {
     if (item.amounts > item.stocks) {
@@ -151,11 +144,31 @@ export default function CheckoutPage() {
 
   let totalAmount = 0;
   cart.forEach((item) => (totalAmount += item.product.price));
-  const discountedAmount = userInfo ? totalAmount * userInfo.level.discount : 0;
+  const discountedAmount = userInfo
+    ? Math.round(totalAmount * userInfo.level.discount)
+    : 0;
+
+  //Need to add clear up cart
+  //Need to add rerender cart after changing page
+  const handleConfirm = async () => {
+    try {
+      const productIdList = cart.map((item) => item.product.id);
+      const { data } = await axios.post(`${BACKENDURL}/order`, {
+        userId,
+        address,
+        productIdList,
+        amount: discountedAmount,
+      });
+      navi(`/order/${data}`);
+    } catch (error) {
+      console.log(error);
+      navi(`/`);
+    }
+  };
+
   if (!cart.length) {
     isAblePurchase = false;
   }
-
   return (
     <div className="min-h-screen flex flex-col items-center">
       <h1 className="text-3xl my-5">Checkout</h1>
@@ -165,7 +178,6 @@ export default function CheckoutPage() {
             <th>Action</th>
             <th>Stocks</th>
             <th>Product</th>
-
             <th>Nos</th>
             <th>Price</th>
           </tr>

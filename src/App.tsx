@@ -1,5 +1,5 @@
 import Navibar from "./Component/Sub-Component/Navibar";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import "./App.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -31,6 +31,7 @@ export default function App() {
   const [cart, setCart] = useState<item[]>([]);
   const [drawer, setDrawer] = useState<drawer>(null);
   const [anime, setAnime] = useState<anime>(null);
+  const location = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,7 +45,7 @@ export default function App() {
       }
     };
     fetchData();
-  }, [userId]);
+  }, [userId, location.pathname]);
 
   const handleAddWishItem = async (productId: number) => {
     try {
