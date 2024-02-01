@@ -68,7 +68,7 @@ export default function Payment() {
     }
     setIsLoading(false);
     try {
-      await axios.put(`${BACKENDURL}/paid`, { orderId });
+      await axios.put(`${BACKENDURL}/order/paid`, { orderId });
       window.location.reload();
     } catch (error) {
       console.log(error);

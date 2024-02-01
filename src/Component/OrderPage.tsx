@@ -140,12 +140,12 @@ export default function OrderPage() {
   );
 
   const membershipDisplay = (
-    <div className="m-5 w-5/6 flex flex-col">
+    <div className="m-5 flex flex-col">
       You are in {userInfo?.level.title} membership now.
       <div className="flex flex-col w-full">
         <div className="w-full flex items-center">
           <progress
-            className="progress progress-primary"
+            className="w-3/5 progress progress-primary"
             value={userInfo?.points}
             max={userInfo?.level.requirement}
           />
@@ -155,7 +155,7 @@ export default function OrderPage() {
         </div>
         <div className="w-full flex items-center">
           <progress
-            className="progress progress-secondary
+            className="w-3/5 progress progress-secondary
             "
             value={
               (orderInfo ? orderInfo.amount : 0) +
