@@ -181,7 +181,13 @@ export default function OrderPage() {
         className={`chat ${message.isUserReceive ? "chat-start" : "chat-end"}`}
         key={message.id}
       >
-        <div className="chat-bubble chat-bubble-accent">{message.detail}</div>
+        <div
+          className={`chat-bubble ${
+            message.isUserReceive ? "chat-bubble-success" : "chat-bubble-accent"
+          }`}
+        >
+          {message.detail}
+        </div>
       </div>
     );
   });
@@ -199,15 +205,22 @@ export default function OrderPage() {
           <tbody>{productDisplay}</tbody>
         </table>
         {orderInfoDislay}
-        {orderInfo?.status === "pending" && membershipDisplay}
-        {orderInfo?.status === "pending" && clientSecret && (
-          <Elements stripe={stripePromise} options={{ clientSecret }}>
-            <Payment />
-          </Elements>
+
+        {orderInfo?.status === "Pending" && clientSecret && (
+          <div className="m-3">
+            <span className="text-xl">Online Payment:</span>
+            <Elements
+              stripe={stripePromise}
+              options={{ clientSecret, appearance: { theme: "flat" } }}
+            >
+              <Payment />
+            </Elements>
+          </div>
         )}
+        {orderInfo?.status === "Pending" && membershipDisplay}
         {<div className="divider">Message:</div>}
         <div
-          className={`m-3 bg-base-200 border-info ${
+          className={`py-1 mx-3 my-2 bg-base-200 border-info ${
             !!messageList.length && "border"
           }`}
         >
