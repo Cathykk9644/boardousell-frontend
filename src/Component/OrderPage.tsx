@@ -120,12 +120,14 @@ export default function OrderPage() {
     );
   });
 
+  const orderTimestamp = orderInfo ? Date.parse(orderInfo.createdAt) : 0;
+  const date = new Date(orderTimestamp);
   const orderInfoDislay = (
     <table className="table m-2">
       <tbody>
         <tr>
           <th>Ordering Date:</th>
-          <td>{orderInfo?.createdAt.substring(0, 10)}</td>
+          <td>{date.toLocaleString()}</td>
         </tr>
         <tr>
           <th>Status:</th>
