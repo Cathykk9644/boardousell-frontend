@@ -39,6 +39,7 @@ type userInfo = {
   level: {
     title: string;
     discount: number;
+    requirement: number;
   };
 } | null;
 
@@ -148,8 +149,6 @@ export default function CheckoutPage() {
     ? Math.round(totalAmount * userInfo.level.discount)
     : 0;
 
-  //Need to add clear up cart
-  //Need to add rerender cart after changing page
   const handleConfirm = async () => {
     try {
       const productIdList = cart.map((item) => item.product.id);
@@ -169,6 +168,7 @@ export default function CheckoutPage() {
   if (!cart.length) {
     isAblePurchase = false;
   }
+  console.log(userInfo);
   return (
     <div className="min-h-screen flex flex-col items-center">
       <h1 className="text-3xl my-5">Checkout</h1>
@@ -211,6 +211,36 @@ export default function CheckoutPage() {
           )}
         </tbody>
       </table>
+      <div className="w-5/6 flex flex-col">
+        You are in {userInfo?.level.title} membership now.
+        <div className="flex flex-col w-full">
+          <div className="w-full flex items-center">
+            <progress
+              className="progress progress-primary"
+              value={userInfo?.points}
+              max={userInfo?.level.requirement}
+            />
+            <span className="pl-1">
+              {userInfo?.points}/{userInfo?.level.requirement}
+            </span>
+          </div>
+          <div className="w-full flex items-center">
+            <progress
+              className="progress progress-secondary
+            "
+              value={discountedAmount + (userInfo ? userInfo.points : 0)}
+              max={userInfo?.level.requirement}
+            />
+            <span className="pl-1">
+              {discountedAmount + (userInfo ? userInfo.points : 0)}/
+              {userInfo?.level.requirement}
+            </span>
+          </div>
+          Upgrate after hitting {userInfo?.level.requirement} points.
+        </div>
+        <span className="self-end"></span>
+      </div>
+
       <div className="flex flex-col w-5/6 m-5 space-y-1">
         <label>Shipping Address:</label>
         <input
