@@ -11,6 +11,9 @@ type checkoutList = {
   name: string;
   stocks: number;
   amounts: number;
+  onsale?: {
+    discount: number;
+  };
 };
 
 type checkoutListObject = {
@@ -24,6 +27,9 @@ type item = {
     price: number;
     name: string;
     stocks: number;
+    onsale?: {
+      discount: number;
+    };
   };
 };
 
@@ -138,13 +144,31 @@ export default function CheckoutPage() {
           </Link>
         </td>
         <td>{item.amounts}</td>
-        <td>${item.price}</td>
+        <td>
+          {item.onsale ? (
+            <div>
+              <div className="line-through">${item.price}</div>
+              <div>${Math.round(item.price * item.onsale.discount)}</div>
+            </div>
+          ) : (
+            <div>${item.price}</div>
+          )}
+        </td>
       </tr>
     );
   });
 
   let totalAmount = 0;
-  cart.forEach((item) => (totalAmount += item.product.price));
+  cart.forEach((item) => {
+    if (item.product.onsale) {
+      totalAmount += Math.round(
+        item.product.price * item.product.onsale.discount
+      );
+    } else {
+      totalAmount += item.product.price;
+    }
+  });
+
   const discountedAmount = userInfo
     ? Math.round(totalAmount * userInfo.level.discount)
     : 0;

@@ -7,6 +7,9 @@ type product = {
   price: number;
   name: string;
   stocks: number;
+  onsale?: {
+    discount: number;
+  };
   productPhotos: [
     {
       url?: string;

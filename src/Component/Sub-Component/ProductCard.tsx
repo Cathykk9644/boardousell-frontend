@@ -10,6 +10,9 @@ type props = {
     price: number;
     name: string;
     stocks: number;
+    onsale?: {
+      discount: number;
+    };
     productPhotos: [
       {
         url?: string;
@@ -43,8 +46,17 @@ export default function ProductCard({
         >
           {product.name}
         </h2>
-        <div className="flex flex-row w-full justify-between">
-          <span>HKD${product.price}</span>
+        <div className="flex flex-row w-full justify-between items-center">
+          {product.onsale ? (
+            <div className="flex flex-col">
+              <span className="line-through">HKD${product.price}</span>
+              <span>
+                HKD${Math.round(product.price * product.onsale.discount)}
+              </span>
+            </div>
+          ) : (
+            <span>HKD${product.price}</span>
+          )}
           <span>Stocks: {product.stocks}</span>
         </div>
       </div>
