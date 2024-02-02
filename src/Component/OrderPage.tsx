@@ -70,7 +70,7 @@ export default function OrderPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`${BACKENDURL}/order/${orderId}`);
+        const { data } = await axios.get(`${BACKENDURL}/order/info/${orderId}`);
         if (!data || data.userId !== userId) {
           return navi(`/`);
         }

@@ -36,9 +36,11 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const wishlistRes = await axios.get(`${BACKENDURL}/wishlist/${userId}`);
+        const wishlistRes = await axios.get(
+          `${BACKENDURL}/wishlist/info/${userId}`
+        );
         setWishlist(wishlistRes.data);
-        const cartRes = await axios.get(`${BACKENDURL}/cart/${userId}`);
+        const cartRes = await axios.get(`${BACKENDURL}/cart/info/${userId}`);
         setCart(cartRes.data);
       } catch (error) {
         console.log(error);

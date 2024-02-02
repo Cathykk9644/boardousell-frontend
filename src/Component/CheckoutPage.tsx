@@ -66,7 +66,7 @@ export default function CheckoutPage() {
     };
     const fetchCartData = async () => {
       try {
-        const { data } = await axios.get(`${BACKENDURL}/cart/${userId}`);
+        const { data } = await axios.get(`${BACKENDURL}/cart/info/${userId}`);
         setCart(data);
       } catch (error) {
         console.log(error);
