@@ -43,7 +43,7 @@ type outletProps = {
   handleAddCart: Function;
 };
 
-//Need to add redirect to categories
+//Need to add Link to categories
 export default function ProductPage() {
   const { productId } = useParams<params>();
   const [productInfo, setProductInfo] = useState<product>(null);
