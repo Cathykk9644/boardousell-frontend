@@ -1,5 +1,7 @@
 import ProductList from "./Sub-Component/ProductList";
 import NoticeSlide from "./Notice-Sub/NoticeSlide";
+import { CircularProgress } from "@mui/material";
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useOutletContext } from "react-router-dom";
@@ -27,17 +29,21 @@ type products = product[];
 
 export default function HomePage() {
   const [newProducts, setNewProduct] = useState<products>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { handleAddWishItem, handleAddCart }: outletProps = useOutletContext();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const productDataRes = await axios.get(
           BACKENDURL + `/product/newProduct`
         );
         setNewProduct(productDataRes.data);
+        setIsLoading(false);
       } catch (error) {
         console.log(error);
+        setIsLoading(false);
       }
     };
     fetchData();
@@ -47,11 +53,15 @@ export default function HomePage() {
     <div className="flex flex-col">
       <NoticeSlide />
       <h1 className="m-2 text-2xl">New arrived:</h1>
-      <ProductList
-        products={newProducts}
-        handleAddWishItem={handleAddWishItem}
-        handleAddCart={handleAddCart}
-      />
+      {isLoading ? (
+        <CircularProgress className="self-center" />
+      ) : (
+        <ProductList
+          products={newProducts}
+          handleAddWishItem={handleAddWishItem}
+          handleAddCart={handleAddCart}
+        />
+      )}
     </div>
   );
 }

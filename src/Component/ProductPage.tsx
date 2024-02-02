@@ -1,4 +1,5 @@
 import axios from "axios";
+import { CircularProgress } from "@mui/material";
 import { ReactElement, useEffect, useState } from "react";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 import { BACKENDURL } from "../constant";
@@ -50,24 +51,23 @@ export default function ProductPage() {
   const [categoryList, setCategoryList] = useState<string[]>([]);
   const [suggestCategory, setSuggestCategory] = useState<string>("");
   const [suggestProducts, setSuggestProducts] = useState<suggestProduct[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { handleAddWishItem, handleAddCart } = useOutletContext<outletProps>();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const { data } = await axios.get(
           `${BACKENDURL}/product/info/${productId}`
         );
         const { productPhotos, categories, ...product } = data;
-        setProductInfo(product);
         const flatPhotoList = productPhotos.map(
           (item: { url: string }) => item.url
         );
-        setPhotoList(flatPhotoList);
         const flatCategoryList = categories.map(
           (item: { name: string }) => item.name
         );
-        setCategoryList(flatCategoryList);
         const randomIndex = Math.floor(Math.random() * flatCategoryList.length);
         const randomCategory = flatCategoryList[randomIndex];
         const suggestProductRes: { data: suggestProduct[] } = await axios.get(
@@ -76,10 +76,15 @@ export default function ProductPage() {
         const filterSuggestProducts = suggestProductRes.data.filter(
           (item) => item.id !== Number(productId)
         );
+        setProductInfo(product);
+        setPhotoList(flatPhotoList);
+        setCategoryList(flatCategoryList);
         setSuggestCategory(randomCategory);
         setSuggestProducts(filterSuggestProducts);
+        setIsLoading(false);
       } catch (error) {
         console.log(error);
+        setIsLoading(false);
       }
     };
     fetchData();
@@ -120,7 +125,19 @@ export default function ProductPage() {
       <p>{productInfo?.description}</p>
       <span>Categories: </span>
       <div className="flex justify-between text-xl">
-        <span>Price: ${productInfo?.price}</span>
+        <span>
+          Price:{" "}
+          <span className={productInfo?.onsale && "line-through"}>
+            ${productInfo?.price}
+          </span>
+          {productInfo?.onsale && (
+            <span>
+              {` $${Math.round(
+                productInfo.price * productInfo.onsale.discount
+              )}`}
+            </span>
+          )}
+        </span>
         <span>Stocks: {productInfo?.stocks}</span>
       </div>
       <div className="flex justify-between space-x-3">
@@ -162,11 +179,15 @@ export default function ProductPage() {
         >
           {suggestCategory}:
         </Link>
-        <ProductList
-          products={suggestProducts}
-          handleAddCart={handleAddCart}
-          handleAddWishItem={handleAddWishItem}
-        />
+        {isLoading ? (
+          <CircularProgress className="self-center" />
+        ) : (
+          <ProductList
+            products={suggestProducts}
+            handleAddCart={handleAddCart}
+            handleAddWishItem={handleAddWishItem}
+          />
+        )}
       </div>
     </div>
   );

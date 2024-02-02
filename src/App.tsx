@@ -46,6 +46,7 @@ export default function App() {
         console.log(error);
       }
     };
+
     fetchData();
   }, [userId, location.pathname]);
 

@@ -53,27 +53,23 @@ export default function CheckoutPage() {
   const [cart, setCart] = useState<item[]>([]);
   const [userInfo, setUserInfo] = useState<userInfo>(null);
   const [address, setAddress] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const navi = useNavigate();
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       try {
-        const { data } = await axios.get(`${BACKENDURL}/user/${userId}`);
-        setUserInfo(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    const fetchCartData = async () => {
-      try {
+        setIsLoading(true);
         const { data } = await axios.get(`${BACKENDURL}/cart/info/${userId}`);
+        const userDataRes = await axios.get(`${BACKENDURL}/user/${userId}`);
+        setUserInfo(userDataRes.data);
         setCart(data);
+        setIsLoading(false);
       } catch (error) {
         console.log(error);
       }
     };
-    fetchUserData();
-    fetchCartData();
+    fetchData();
   }, [userId]);
 
   const findCartId = (productId: number): number => {
@@ -256,7 +252,7 @@ export default function CheckoutPage() {
           className={`btn ${
             isAblePurchase ? "btn-accent" : "btn-warning"
           } w-full`}
-          disabled={!isAblePurchase}
+          disabled={!isAblePurchase || isLoading}
           onClick={handleConfirm}
         >
           Confirm
