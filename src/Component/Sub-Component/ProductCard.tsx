@@ -33,7 +33,7 @@ export default function ProductCard({
     <div className="card w-44 m-2 md:w-52 bg-accent text-accent-content shadow-xl">
       <img
         className="my-5 h-32 object-contain cursor-pointer"
-        onClick={() => navi(`product/${product.id}`)}
+        onClick={() => navi(`../product/${product.id}`)}
         src={
           product.productPhotos.length ? product.productPhotos[0].url : noImage
         }
@@ -42,7 +42,7 @@ export default function ProductCard({
       <div className="card-body flex flex-col items-center p-1">
         <h2
           className="card-title cursor-pointer"
-          onClick={() => navi(`product/${product.id}`)}
+          onClick={() => navi(`../product/${product.id}`)}
         >
           {product.name}
         </h2>

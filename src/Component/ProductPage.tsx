@@ -154,13 +154,20 @@ export default function ProductPage() {
         </div>
         <div>{productDisplay}</div>
       </div>
-      <h1>You may also interested in: </h1>
-      <h1>{suggestCategory}</h1>
-      <ProductList
-        products={suggestProducts}
-        handleAddCart={handleAddCart}
-        handleAddWishItem={handleAddWishItem}
-      />
+      <div className="w-5/6 flex flex-col">
+        <span className="text-xl">You may also interested in: </span>
+        <Link
+          to={`/serach/${suggestCategory}`}
+          className="self-start ml-5 btn btn-link btn-lg btn"
+        >
+          {suggestCategory}:
+        </Link>
+        <ProductList
+          products={suggestProducts}
+          handleAddCart={handleAddCart}
+          handleAddWishItem={handleAddWishItem}
+        />
+      </div>
     </div>
   );
 }
