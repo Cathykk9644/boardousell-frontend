@@ -80,7 +80,7 @@ export default function ProductList({
             />
           );
         });
-        while (productGroupList && productGroupList.length < 4) {
+        while (productGroupList && productGroupList.length < 4 && i !== 0) {
           productGroupList.push(
             <div
               className="card w-44 h-72 mt-3"
