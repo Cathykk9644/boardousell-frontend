@@ -107,11 +107,11 @@ export default function ProductList({
 
   return (
     products && (
-      <div className="flex flex-col items-center mb-5">
+      <div className="flex flex-col items-center w-full mb-5">
         {animationArr.map((animation, i) => (
           <style key={`animation${i}`}>{animation}</style>
         ))}
-        <div className="overflow-x-hidden w-96 md:w-full flex flex-row ">
+        <div className="overflow-x-hidden w-96 md:w-5/6 flex flex-row ">
           {productAllList}
         </div>
         <Pagination

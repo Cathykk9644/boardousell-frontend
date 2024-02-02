@@ -85,7 +85,7 @@ export default function ExplorePage() {
 
   const suggestDisplay = suggestLists.map((item) => {
     return (
-      <div key={`suggest${item.category}`}>
+      <div className="w-full" key={`suggest${item.category}`}>
         <h1 className="w-5/6 text-xl">{item.category}:</h1>
         <ProductList
           products={item.products}
