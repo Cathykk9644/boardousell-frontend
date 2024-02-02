@@ -174,7 +174,7 @@ export default function ProductPage() {
         <span className="text-xl">You may also interested in: </span>
         <Link
           to={`/search?category=${suggestCategory}`}
-          className="self-start ml-5 btn btn-link btn-lg btn"
+          className="self-start btn btn-link btn-lg btn"
         >
           {suggestCategory}:
         </Link>
