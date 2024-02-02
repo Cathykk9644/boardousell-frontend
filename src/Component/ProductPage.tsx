@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ReactElement, useEffect, useState } from "react";
-import { useOutletContext, useParams } from "react-router-dom";
+import { Link, useOutletContext, useParams } from "react-router-dom";
 import { BACKENDURL } from "../constant";
 import StarsIcon from "@mui/icons-material/Stars";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -26,16 +26,14 @@ type outletProps = {
   handleAddCart: Function;
 };
 
+//Need to add redirect to categories
 export default function ProductPage() {
   const { productId } = useParams();
   const [productInfo, setProductInfo] = useState<product>(null);
   const [photoList, setPhotoList] = useState<string[]>([]);
   const [categoryList, setCategoryList] = useState<string[]>([]);
-  const { userId, handleAddWishItem, handleAddCart } =
-    useOutletContext<outletProps>();
-  console.log(productInfo);
-  console.log(photoList);
-  console.log(categoryList);
+  const { handleAddWishItem, handleAddCart } = useOutletContext<outletProps>();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -77,21 +75,36 @@ export default function ProductPage() {
     );
   });
 
+  const categoriesInProduct = categoryList.map((name) => (
+    <Link className="btn btn-link btn-xs px-2" to={`/serach/${name}`}>
+      {name}
+    </Link>
+  ));
+
   const productDisplay = (
     <div className="m-5 space-y-3">
       <h1 className="text-3xl font-bold">{productInfo?.name}</h1>
+
       <p>{productInfo?.description}</p>
+      <span>Categories: </span>
       <div className="flex justify-between text-xl">
         <span className="">Price: ${productInfo?.price}</span>
         <span>Stocks: {productInfo?.stocks}</span>
       </div>
       <div className="flex justify-between space-x-3">
-        <button className="btn w-1/2">
+        <button
+          className="btn w-1/2"
+          onClick={() => handleAddWishItem(productId)}
+        >
           <StarsIcon />
         </button>
-        <button className="btn w-1/2">
+        <button className="btn w-1/2" onClick={() => handleAddCart(productId)}>
           <ShoppingCartIcon />
         </button>
+      </div>
+      <div className="flex flex-wrap items-center">
+        <span>Categories:</span>
+        {categoriesInProduct}
       </div>
     </div>
   );
