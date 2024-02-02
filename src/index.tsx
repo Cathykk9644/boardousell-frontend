@@ -17,6 +17,7 @@ import "tailwindcss/tailwind.css";
 import NoticePage from "./Component/Notice-Sub/NoticePage";
 import CheckoutPage from "./Component/CheckoutPage";
 import ContactUsPage from "./Component/ContactUs-Sub/ContactUsPage";
+import SearchPage from "./Component/SearchPage";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -39,6 +40,7 @@ root.render(
           <Route path="notice" element={<NoticePage />} />
           <Route path="notice/:noticeId" element={<NoticePage />} />
           <Route path="checkout" element={<CheckoutPage />} />
+          <Route path="search" element={<SearchPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
