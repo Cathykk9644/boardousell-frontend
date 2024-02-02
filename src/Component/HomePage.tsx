@@ -22,11 +22,11 @@ type product = {
       url?: string;
     }
   ];
-} | null;
-type products = product[] | null;
+};
+type products = product[];
 
 export default function HomePage() {
-  const [newProducts, setNewProduct] = useState<products>(null);
+  const [newProducts, setNewProduct] = useState<products>([]);
   const { handleAddWishItem, handleAddCart }: outletProps = useOutletContext();
 
   useEffect(() => {

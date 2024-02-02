@@ -15,9 +15,9 @@ type product = {
       url?: string;
     }
   ];
-} | null;
+};
 
-type products = product[] | null;
+type products = product[];
 
 type props = {
   products: products;
