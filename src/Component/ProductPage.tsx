@@ -43,7 +43,6 @@ type outletProps = {
   handleAddCart: Function;
 };
 
-//Need to add Link to categories
 export default function ProductPage() {
   const { productId } = useParams<params>();
   const [productInfo, setProductInfo] = useState<product>(null);
@@ -112,7 +111,7 @@ export default function ProductPage() {
     <Link
       key={name}
       className="btn btn-link btn-xs px-2"
-      to={`/serach/${name}`}
+      to={`/search?category=${name}`}
     >
       {name}
     </Link>
@@ -174,7 +173,7 @@ export default function ProductPage() {
       <div className="w-5/6 flex flex-col">
         <span className="text-xl">You may also interested in: </span>
         <Link
-          to={`/serach/${suggestCategory}`}
+          to={`/search?category=${suggestCategory}`}
           className="self-start ml-5 btn btn-link btn-lg btn"
         >
           {suggestCategory}:
