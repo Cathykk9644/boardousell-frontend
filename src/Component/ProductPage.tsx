@@ -1,7 +1,9 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { ReactElement, useEffect, useState } from "react";
+import { useOutletContext, useParams } from "react-router-dom";
 import { BACKENDURL } from "../constant";
+import StarsIcon from "@mui/icons-material/Stars";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 type params = {
   productId: string;
@@ -17,11 +19,20 @@ type product = {
     discount: number;
   };
 } | null;
+
+type outletProps = {
+  userId: number;
+  handleAddWishItem: Function;
+  handleAddCart: Function;
+};
+
 export default function ProductPage() {
   const { productId } = useParams();
   const [productInfo, setProductInfo] = useState<product>(null);
   const [photoList, setPhotoList] = useState<string[]>([]);
   const [categoryList, setCategoryList] = useState<string[]>([]);
+  const { userId, handleAddWishItem, handleAddCart } =
+    useOutletContext<outletProps>();
   console.log(productInfo);
   console.log(photoList);
   console.log(categoryList);
@@ -48,9 +59,56 @@ export default function ProductPage() {
     fetchData();
   }, [productId]);
 
+  const photoButtonDisplay: ReactElement[] = [];
+  const photoDisplay = photoList.map((url: string, i: number) => {
+    photoButtonDisplay.push(
+      <a className="btn btn-xs" href={`#photo${i + 1}`}>
+        {i + 1}
+      </a>
+    );
+    return (
+      <div
+        id={`photo${i + 1}`}
+        className="carousel-item w-full"
+        key={`Photo${i + 1}`}
+      >
+        <img src={url} alt={`Photo${i}`} />
+      </div>
+    );
+  });
+
+  const productDisplay = (
+    <div className="m-5 space-y-3">
+      <h1 className="text-3xl font-bold">{productInfo?.name}</h1>
+      <p>{productInfo?.description}</p>
+      <div className="flex justify-between text-xl">
+        <span className="">Price: ${productInfo?.price}</span>
+        <span>Stocks: {productInfo?.stocks}</span>
+      </div>
+      <div className="flex justify-between space-x-3">
+        <button className="btn w-1/2">
+          <StarsIcon />
+        </button>
+        <button className="btn w-1/2">
+          <ShoppingCartIcon />
+        </button>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen">
-      <div></div>
+    <div className="min-h-screen flex flex-col items-center">
+      <div className="my-3 w-5/6 flex flex-col sm:flex-row items-center bg-base-300 rounded-box">
+        <div className="flex flex-col items-center">
+          <div className="my-2 carousel w-5/6 sm:w-2/5 rounded-box">
+            {photoDisplay}
+          </div>
+          <div className="flex justify-center w-full py-2 gap-2">
+            {photoButtonDisplay}
+          </div>
+        </div>
+        <div>{productDisplay}</div>
+      </div>
     </div>
   );
 }
