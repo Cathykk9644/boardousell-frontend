@@ -6,7 +6,6 @@ import { BACKENDURL } from "../constant";
 export default function SearchPage() {
   const [products, setProducts] = useState([]);
   const location = useLocation();
-  console.log(products);
   useEffect(() => {
     const fetchData = async () => {
       try {

@@ -3,7 +3,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import Inventory2RoundedIcon from "@mui/icons-material/Inventory2Rounded";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
-
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Link, useNavigate } from "react-router-dom";
 import { Divider, Drawer, Slide } from "@mui/material";
@@ -63,7 +63,7 @@ export default function Navibar({ open, setDrawer }: props) {
 
   const searchAndMenu =
     windowWidth > 640 ? (
-      <div className="space-x-1 pr-4 overflow-x-hidden">
+      <div className="space-x-1 pr-4 overflow-x-hidden flex-initial">
         <Slide direction="left" in={openSearch}>
           <div className="flex flex-row items-center space-x-1">
             <div className="flex flex-col space-y-1">
@@ -108,9 +108,13 @@ export default function Navibar({ open, setDrawer }: props) {
         </button>
       </div>
     ) : (
-      <div className="space-x-1 pr-4 overflow-x-hidden">
-        <Slide direction="left" in={openSearch}>
-          <div className="flex flex-row items-center space-x-4 -right-20 relative">
+      <div className="flex-initial">
+        <Slide
+          direction="down"
+          in={openSearch}
+          className="flex items-center space-x-3 mr-3"
+        >
+          <div>
             <div className="flex flex-col space-y-1">
               <select
                 value={selectedCategory}
@@ -137,12 +141,16 @@ export default function Navibar({ open, setDrawer }: props) {
               className="btn btn-ghost btn-square btn-sm"
               onClick={() => setOpenSearch(false)}
             >
-              <ChevronRightIcon />
+              <ExpandLessIcon />
             </button>
           </div>
         </Slide>
-        <Slide direction="left" in={!openSearch}>
-          <div className="flex items-center space-x-5">
+        <Slide
+          direction="down"
+          in={!openSearch}
+          className="absolute right-5 flex space-x-3"
+        >
+          <div>
             <button
               className="btn btn-ghost btn-square btn-sm"
               onClick={() => setOpenSearch(true)}
@@ -162,7 +170,7 @@ export default function Navibar({ open, setDrawer }: props) {
 
   return (
     <div className="navbar shadow">
-      <div className={`flex-1`}>
+      <div className="flex-1">
         <Link to="/" className="btn btn-ghost max-h-full h-20">
           <img className="max-h-full" src={logo} alt="logo" />
         </Link>
