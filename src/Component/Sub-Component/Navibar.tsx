@@ -110,7 +110,7 @@ export default function Navibar({ open, setDrawer }: props) {
     ) : (
       <div className="space-x-1 pr-4 overflow-x-hidden">
         <Slide direction="left" in={openSearch}>
-          <div className="flex flex-row items-center space-x-3 absolute right-0">
+          <div className="flex flex-row items-center space-x-4 -right-20 relative">
             <div className="flex flex-col space-y-1">
               <select
                 value={selectedCategory}
