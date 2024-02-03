@@ -3,6 +3,7 @@ import { CircularProgress } from "@mui/material";
 import { ReactElement, useEffect, useState } from "react";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 import { BACKENDURL } from "../constant";
+import noImage from "./img/no-image.jpg";
 import StarsIcon from "@mui/icons-material/Stars";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ProductList from "./Sub-Component/ProductList";
@@ -67,8 +68,8 @@ export default function ProductPage() {
         const flatCategoryList = categories.map(
           (item: { name: string }) => item.name
         );
-        const randomIndex = Math.floor(Math.random() * flatCategoryList.length);
-        const randomCategory = flatCategoryList[randomIndex];
+        let randomIndex = Math.floor(Math.random() * flatCategoryList.length);
+        let randomCategory = flatCategoryList[randomIndex];
         const suggestProductRes: { data: suggestProduct[] } = await axios.get(
           `${BACKENDURL}/category/suggest/${randomCategory}`
         );
@@ -88,7 +89,9 @@ export default function ProductPage() {
     };
     fetchData();
   }, [productId]);
-
+  if (!photoList.length) {
+    photoList.push(noImage);
+  }
   const photoButtonDisplay: ReactElement[] = [];
   const photoDisplay = photoList.map((url: string, i: number) => {
     photoButtonDisplay.push(
@@ -118,7 +121,7 @@ export default function ProductPage() {
   ));
 
   const productDisplay = (
-    <div className="mx-5 space-y-3">
+    <div className="mx-5 sm:w-1/2 space-y-3">
       <h1 className="text-3xl font-bold">{productInfo?.name}</h1>
 
       <p>{productInfo?.description}</p>
@@ -159,33 +162,37 @@ export default function ProductPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center">
-      <div className="my-3 w-5/6 flex flex-col sm:flex-row items-center bg-base-300 rounded-box">
-        <div className="my-2 flex flex-col items-center">
-          <div className="my-2 carousel w-5/6 sm:w-2/5 rounded-box">
-            {photoDisplay}
-          </div>
+      <div className="my-3 w-5/6 h flex flex-col sm:flex-row items-center bg-base-300 rounded-box">
+        <div className="my-2 flex flex-col w-5/6 sm:w-3/5 items-center">
+          <div className="my-2 carousel w-80 rounded-box">{photoDisplay}</div>
           <div className="flex justify-center w-full py-2 gap-2">
             {photoButtonDisplay}
           </div>
         </div>
-        <div>{productDisplay}</div>
+        {productDisplay}
       </div>
       <div className="w-5/6 flex flex-col">
-        <span className="text-xl">You may also interested in: </span>
-        <Link
-          to={`/search?category=${suggestCategory}`}
-          className="self-start btn btn-link btn-lg btn"
-        >
-          {suggestCategory}:
-        </Link>
+        {!!suggestProducts.length && (
+          <span className="text-xl">You may also interested in: </span>
+        )}
+        {!!suggestProducts.length && (
+          <Link
+            to={`/search?category=${suggestCategory}`}
+            className="self-start btn btn-link btn-lg btn"
+          >
+            {suggestCategory}:
+          </Link>
+        )}
         {isLoading ? (
           <CircularProgress className="self-center" />
         ) : (
-          <ProductList
-            products={suggestProducts}
-            handleAddCart={handleAddCart}
-            handleAddWishItem={handleAddWishItem}
-          />
+          !!suggestProducts.length && (
+            <ProductList
+              products={suggestProducts}
+              handleAddCart={handleAddCart}
+              handleAddWishItem={handleAddWishItem}
+            />
+          )
         )}
       </div>
     </div>
