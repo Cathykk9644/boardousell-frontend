@@ -44,7 +44,7 @@ type product = {
 
 type message = {
   id: number;
-  isUserReceive: boolean;
+  isUserReceived: boolean;
   detail: string;
   createdAt: string;
   updatedAt: string;
@@ -186,12 +186,14 @@ export default function OrderPage() {
   const messageDisplay = messageList.map((message) => {
     return (
       <div
-        className={`chat ${message.isUserReceive ? "chat-start" : "chat-end"}`}
+        className={`chat ${message.isUserReceived ? "chat-start" : "chat-end"}`}
         key={message.id}
       >
         <div
           className={`chat-bubble ${
-            message.isUserReceive ? "chat-bubble-success" : "chat-bubble-accent"
+            message.isUserReceived
+              ? "chat-bubble-success"
+              : "chat-bubble-accent"
           }`}
         >
           {message.detail}
