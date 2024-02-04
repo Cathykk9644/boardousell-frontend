@@ -8,6 +8,7 @@ type outletProps = {
   handleAddWishItem: Function;
   handleAddCart: Function;
   handleDeleteCart: Function;
+  setError: Function;
 };
 type order = {
   id: number;
@@ -18,7 +19,7 @@ type order = {
 };
 
 export default function OrderListPage() {
-  const { userId } = useOutletContext<outletProps>();
+  const { userId, setError } = useOutletContext<outletProps>();
   const [orderList, setOrderList] = useState<order[]>([]);
 
   useEffect(() => {
@@ -27,11 +28,14 @@ export default function OrderListPage() {
         const { data } = await axios.get(`${BACKENDURL}/order/all/${userId}`);
         setOrderList(data);
       } catch (error) {
-        console.log(error);
+        setError({
+          backHome: true,
+          message: "Oh. Sorry, cannot load your order list for now.",
+        });
       }
     };
     fetchData();
-  }, [userId]);
+  }, [userId, setError]);
 
   const orderListDisplay = orderList.map((order) => {
     const createdTimestamp = order ? Date.parse(order.createdAt) : 0;

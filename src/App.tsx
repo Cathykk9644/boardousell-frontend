@@ -1,10 +1,11 @@
 import Navibar from "./Component/Sub-Component/Navibar";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Wishlist from "./Component/Sub-Component/Wishlist";
 import ShoppingCart from "./Component/Sub-Component/ShoppingCart";
+import ErrorPage from "./Component/Sub-Component/ErrorPage";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
 type item = {
@@ -24,6 +25,7 @@ type outletProps = {
   handleAddWishItem: Function;
   handleAddCart: Function;
   handleDeleteCart: Function;
+  setError: Function;
 };
 export default function App() {
   const [userId, setUserId] = useState<number>(3);
@@ -32,6 +34,11 @@ export default function App() {
   const [drawer, setDrawer] = useState<drawer>(null);
   const [anime, setAnime] = useState<anime>(null);
   const location = useLocation();
+  const navi = useNavigate();
+  const [error, setError] = useState<{
+    backHome: boolean;
+    message: string;
+  } | null>({ backHome: true, message: "TEsting for some error" });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,8 +49,11 @@ export default function App() {
         setWishlist(wishlistRes.data);
         const cartRes = await axios.get(`${BACKENDURL}/cart/info/${userId}`);
         setCart(cartRes.data);
-      } catch (error) {
-        console.log(error);
+      } catch (err) {
+        setError({
+          backHome: false,
+          message: "Oh. Sorry, somethings went wrong for now.",
+        });
       }
     };
 
@@ -58,8 +68,11 @@ export default function App() {
       });
       setWishlist((prev) => [...prev, data]);
       setAnime("wish");
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      setError({
+        backHome: true,
+        message: "Oh. Sorry, cannot add wish item for now.",
+      });
     }
   };
 
@@ -69,8 +82,11 @@ export default function App() {
       setWishlist((prev: item[]) =>
         prev.filter((item: item) => item.id !== wishlistId)
       );
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      setError({
+        backHome: false,
+        message: "Oh. Sorry, cannot delete this wish item for now.",
+      });
     }
   };
 
@@ -82,8 +98,11 @@ export default function App() {
       });
       setCart((prev: item[]) => [...prev, data]);
       setAnime("cart");
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      setError({
+        backHome: true,
+        message: "Oh. Sorry, cannot add this into your cart for now.",
+      });
     }
   };
 
@@ -94,18 +113,24 @@ export default function App() {
         prev.filter((item: item) => item.id !== cartId)
       );
     } catch (error) {
-      console.log(error);
+      setError({
+        backHome: false,
+        message: "Oh. Sorry, cannot delete this from your cart for now.",
+      });
     }
   };
 
-  const handleWishToCart = async (wishlistId: number, productId: number) => {
-    try {
-      handleAddCart(productId);
-      handleDeleteWish(wishlistId);
-      setDrawer("cart");
-    } catch (error) {
-      console.log(error);
+  const handleWishToCart = (wishlistId: number, productId: number) => {
+    handleAddCart(productId);
+    handleDeleteWish(wishlistId);
+    setDrawer("cart");
+  };
+
+  const handleError = () => {
+    if (error?.backHome) {
+      navi("/");
     }
+    setError(null);
   };
 
   const outletProps: outletProps = {
@@ -113,10 +138,15 @@ export default function App() {
     handleAddWishItem,
     handleAddCart,
     handleDeleteCart,
+    setError,
   };
   return (
     <div data-theme="nord" className="min-h-screen">
-      <Navibar open={drawer === "nav"} setDrawer={setDrawer} />
+      <Navibar
+        open={drawer === "nav"}
+        setDrawer={setDrawer}
+        setError={setError}
+      />
       <Outlet context={outletProps} />
       <Wishlist
         open={drawer === "wish"}
@@ -146,6 +176,7 @@ export default function App() {
           </Link>
         </nav>
       </footer>
+      <ErrorPage error={error} handleError={handleError} />
     </div>
   );
 }

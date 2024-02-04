@@ -17,7 +17,7 @@ type notice = noticeDetail[];
 type animation = "next" | "prev" | "reset" | null;
 
 //Need to add Notice Detail Page.
-export default function NoticeSlide() {
+export default function NoticeSlide({ setError }: { setError: Function }) {
   const [notices, setNotices] = useState<notice>([]);
   const [currentNotice, setCurrentNotice] = useState<number>(0);
   const [startAnimation, setStartAnimation] = useState<animation>(null);
@@ -28,11 +28,14 @@ export default function NoticeSlide() {
         const noticesRes = await axios.get(BACKENDURL + `/notice/newest`);
         setNotices(noticesRes.data);
       } catch (error) {
-        console.log(error);
+        setError({
+          backHome: true,
+          message: "Oh. Sorry, cannot load notices for now.",
+        });
       }
     };
     fetchNotice();
-  }, []);
+  }, [setError]);
 
   useEffect(() => {
     const autoSwipe = () => {

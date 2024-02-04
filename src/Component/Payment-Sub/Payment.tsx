@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 import { BACKENDURL } from "../../constant";
 import { useParams } from "react-router-dom";
 
-export default function Payment() {
+export default function Payment({ setError }: { setError: Function }) {
   const stripe = useStripe();
   const elements = useElements();
   const [message, setMessage] = useState<string | null>(null);
@@ -44,10 +44,13 @@ export default function Payment() {
             break;
         }
       })
-      .catch((error) => {
-        console.error(error);
+      .catch((error: any) => {
+        setError({
+          backHome: false,
+          message: error.message,
+        });
       });
-  }, [stripe]);
+  }, [stripe, setError]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +74,10 @@ export default function Payment() {
       await axios.put(`${BACKENDURL}/order/paid`, { orderId });
       window.location.reload();
     } catch (error) {
-      console.log(error);
+      setError({
+        backHome: false,
+        message: "Oh. Somethings goes wrong",
+      });
     }
   };
 

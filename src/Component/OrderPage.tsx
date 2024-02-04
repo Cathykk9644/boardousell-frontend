@@ -55,6 +55,7 @@ type outletProps = {
   handleAddWishItem: Function;
   handleAddCart: Function;
   handleDeleteCart: Function;
+  setError: Function;
 };
 
 export default function OrderPage() {
@@ -66,7 +67,7 @@ export default function OrderPage() {
   const [input, setInput] = useState<string>("");
   const [clientSecret, setClientSecret] = useState("");
   const navi = useNavigate();
-  const { userId } = useOutletContext<outletProps>();
+  const { userId, setError } = useOutletContext<outletProps>();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -87,11 +88,14 @@ export default function OrderPage() {
         });
         setClientSecret(res.data.clientSecret);
       } catch (error) {
-        console.log(error);
+        setError({
+          backHome: true,
+          message: "Oh. Sorry, cannot load this order for now.",
+        });
       }
     };
     fetchData();
-  }, [navi, orderId, userId]);
+  }, [navi, orderId, userId, setError]);
 
   const handleSendMessage = async () => {
     try {
@@ -103,7 +107,10 @@ export default function OrderPage() {
       setMessageList((prev) => [...prev, data]);
       setInput("");
     } catch (error) {
-      console.log(error);
+      setError({
+        backHome: false,
+        message: "Oh. Sorry, cannot send message for now.",
+      });
     }
   };
 
@@ -226,7 +233,7 @@ export default function OrderPage() {
               stripe={stripePromise}
               options={{ clientSecret, appearance: { theme: "flat" } }}
             >
-              <Payment />
+              <Payment setError={setError} />
             </Elements>
           </div>
         )}

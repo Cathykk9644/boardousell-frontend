@@ -11,6 +11,7 @@ type outletProps = {
   handleAddWishItem: Function;
   handleAddCart: Function;
   handleDeleteCart: Function;
+  setError: Function;
 };
 
 type product = {
@@ -38,7 +39,8 @@ export default function ExplorePage() {
   const [onsaleList, setOnsaleList] = useState<product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [suggestLists, setSuggestLists] = useState<suggestCategory[]>([]);
-  const { handleAddWishItem, handleAddCart } = useOutletContext<outletProps>();
+  const { handleAddWishItem, handleAddCart, setError } =
+    useOutletContext<outletProps>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,12 +78,15 @@ export default function ExplorePage() {
         setOnsaleList(onsaleRes.data);
         setIsLoading(false);
       } catch (error) {
-        console.log(error);
+        setError({
+          backHome: true,
+          message: "Oh. Sorry, cannot load the product list for now.",
+        });
         setIsLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [setError]);
 
   const suggestDisplay = suggestLists.map((item) => {
     return (
@@ -111,7 +116,7 @@ export default function ExplorePage() {
 
   return (
     <div className="min-h-screen">
-      <NoticeSlide />
+      <NoticeSlide setError={setError} />
       {isLoading ? (
         <CircularProgress />
       ) : (

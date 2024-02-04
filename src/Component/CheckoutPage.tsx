@@ -38,6 +38,7 @@ type outletProps = {
   handleAddWishItem: Function;
   handleAddCart: Function;
   handleDeleteCart: Function;
+  setError: Function;
 };
 type userInfo = {
   email: string;
@@ -48,7 +49,7 @@ type userInfo = {
 } | null;
 
 export default function CheckoutPage() {
-  const { userId, handleAddWishItem, handleDeleteCart } =
+  const { userId, handleAddWishItem, handleDeleteCart, setError } =
     useOutletContext<outletProps>();
   const [cart, setCart] = useState<item[]>([]);
   const [userInfo, setUserInfo] = useState<userInfo>(null);
@@ -66,11 +67,14 @@ export default function CheckoutPage() {
         setCart(data);
         setIsLoading(false);
       } catch (error) {
-        console.log(error);
+        setError({
+          backHome: true,
+          message: "Oh. Sorry, cannot load your cart for now.",
+        });
       }
     };
     fetchData();
-  }, [userId]);
+  }, [userId, setError]);
 
   const findCartId = (productId: number): number => {
     const index = cart.findIndex((item) => item.product.id === productId);

@@ -10,6 +10,7 @@ import { BACKENDURL } from "../constant";
 type outletProps = {
   handleAddWishItem: Function;
   handleAddCart: Function;
+  setError: Function;
 };
 type product = {
   id: number;
@@ -30,7 +31,8 @@ type products = product[];
 export default function HomePage() {
   const [newProducts, setNewProduct] = useState<products>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { handleAddWishItem, handleAddCart }: outletProps = useOutletContext();
+  const { handleAddWishItem, handleAddCart, setError }: outletProps =
+    useOutletContext();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,16 +44,19 @@ export default function HomePage() {
         setNewProduct(productDataRes.data);
         setIsLoading(false);
       } catch (error) {
-        console.log(error);
+        setError({
+          backHome: false,
+          message: "Oh. Somethings went wrong for now.",
+        });
         setIsLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [setError]);
 
   return (
     <div className="flex flex-col">
-      <NoticeSlide />
+      <NoticeSlide setError={setError} />
       <h1 className="m-2 text-2xl">New arrived:</h1>
       {isLoading ? (
         <CircularProgress className="self-center" />

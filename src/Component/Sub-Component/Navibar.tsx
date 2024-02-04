@@ -13,9 +13,10 @@ import { BACKENDURL } from "../../constant";
 type props = {
   open: boolean;
   setDrawer: Function;
+  setError: Function;
 };
 
-export default function Navibar({ open, setDrawer }: props) {
+export default function Navibar({ open, setDrawer, setError }: props) {
   const [categories, setCategories] = useState<string[]>([]);
   const [openSearch, setOpenSearch] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -44,14 +45,17 @@ export default function Navibar({ open, setDrawer }: props) {
         const { data } = await axios.get(`${BACKENDURL}/category/all`);
         setCategories(data);
       } catch (error) {
-        console.log(error);
+        setError({
+          backHome: false,
+          message: "Oh. Sorry, cannot load categories for now.",
+        });
       }
     };
     fetchData();
     window.addEventListener("resize", () => {
       setWindowWidth(window.innerWidth);
     });
-  }, []);
+  }, [setError]);
 
   const option = categories.map((category) => {
     return (

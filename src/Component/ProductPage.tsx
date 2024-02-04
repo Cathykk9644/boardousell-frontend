@@ -42,6 +42,7 @@ type outletProps = {
   userId: number;
   handleAddWishItem: Function;
   handleAddCart: Function;
+  setError: Function;
 };
 
 export default function ProductPage() {
@@ -52,7 +53,8 @@ export default function ProductPage() {
   const [suggestCategory, setSuggestCategory] = useState<string>("");
   const [suggestProducts, setSuggestProducts] = useState<suggestProduct[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { handleAddWishItem, handleAddCart } = useOutletContext<outletProps>();
+  const { handleAddWishItem, handleAddCart, setError } =
+    useOutletContext<outletProps>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,12 +85,14 @@ export default function ProductPage() {
         setSuggestProducts(filterSuggestProducts);
         setIsLoading(false);
       } catch (error) {
-        console.log(error);
-        setIsLoading(false);
+        setError({
+          backHome: true,
+          message: "Oh. Sorry, cannot load this product for now.",
+        });
       }
     };
     fetchData();
-  }, [productId]);
+  }, [productId, setError]);
   if (!photoList.length) {
     photoList.push(noImage);
   }

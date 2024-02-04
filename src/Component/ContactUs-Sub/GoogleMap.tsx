@@ -7,7 +7,13 @@ type center = {
   lng: number;
 } | null;
 
-export default function GoogleMap({ location }: { location: string }) {
+export default function GoogleMap({
+  location,
+  setError,
+}: {
+  location: string;
+  setError: Function;
+}) {
   const [center, setCenter] = useState<center>(null);
 
   useEffect(() => {
@@ -21,7 +27,10 @@ export default function GoogleMap({ location }: { location: string }) {
           lng: data.results[0].geometry.location.lng,
         });
       } catch (error) {
-        console.log(error);
+        setError({
+          backHome: false,
+          message: "Oh. Sorry, cannot load google map for now.",
+        });
       }
     };
     getCenter();

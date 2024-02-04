@@ -30,13 +30,15 @@ type outletProps = {
   handleAddWishItem: Function;
   handleAddCart: Function;
   handleDeleteCart: Function;
+  setError: Function;
 };
 
 export default function SearchPage() {
   const [products, setProducts] = useState<product[]>([]);
   const [resultAmount, setResultAmount] = useState<number>(0);
   const [query] = useSearchParams();
-  const { handleAddCart, handleAddWishItem } = useOutletContext<outletProps>();
+  const { handleAddCart, handleAddWishItem, setError } =
+    useOutletContext<outletProps>();
   const navi = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
@@ -47,11 +49,14 @@ export default function SearchPage() {
         setProducts(data.result);
         setResultAmount(data.resultAmount);
       } catch (error) {
-        console.log(error);
+        setError({
+          backHome: true,
+          message: "Oh. Sorry, somethings went wrong with the search.",
+        });
       }
     };
     fetchData();
-  }, [query]);
+  }, [query, setError]);
   const handleChange = (e: React.ChangeEvent<unknown>, newPage: number) => {
     let queryString = "?";
     query.forEach((value, key) => {

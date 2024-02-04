@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import GoogleMap from "./GoogleMap";
 import axios from "axios";
 import { DISCLAIMER } from "../../constant";
+import { useOutletContext } from "react-router-dom";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
 type infomation = {
@@ -14,6 +15,7 @@ type hash = {
 
 export default function ContactUsPage() {
   const [infomations, setInfomations] = useState<infomation[] | null>(null);
+  const { setError }: { setError: Function } = useOutletContext();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -35,11 +37,14 @@ export default function ContactUsPage() {
           ...hashInfo["Map"],
         ]);
       } catch (error) {
-        console.log(error);
+        setError({
+          backHome: true,
+          message: "Oh. Sorry, cannot load infomation for now.",
+        });
       }
     };
     fetchData();
-  }, []);
+  }, [setError]);
 
   const infoDisplay = infomations?.map((info: infomation) => {
     switch (info.name) {
@@ -73,7 +78,7 @@ export default function ContactUsPage() {
       case "Map":
         return (
           <div key={info.detail} className=" flex flex-col m-5">
-            <GoogleMap location={info.detail} />
+            <GoogleMap location={info.detail} setError={setError} />
             <b className="self-center">Address: {info.detail}</b>
           </div>
         );

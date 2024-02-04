@@ -4,7 +4,7 @@ import { BACKENDURL } from "../../constant";
 import NoticeSlide from "./NoticeSlide";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 
 type noticeDetail = {
   id: number;
@@ -25,6 +25,7 @@ export default function NoticePage() {
   const [currentNoticeId, setCurrentNoticeId] = useState<number | undefined>(
     Number(noticeId)
   );
+  const { setError }: { setError: Function } = useOutletContext();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,11 +33,14 @@ export default function NoticePage() {
         const { data } = await axios.get(`${BACKENDURL}/notice`);
         setNoticeList(data);
       } catch (error) {
-        console.log(error);
+        setError({
+          backHome: true,
+          message: "Oh. Sorry, cannot load notices for now.",
+        });
       }
     };
     fetchData();
-  }, []);
+  }, [setError]);
 
   useEffect(() => {
     setCurrentNoticeId(Number(noticeId));
@@ -72,7 +76,7 @@ export default function NoticePage() {
   });
   return (
     <div className="min-h-screen flex flex-col">
-      <NoticeSlide />
+      <NoticeSlide setError={setError} />
       <h1 className="m-2">All Notices:</h1>
       <div className="sm:w-5/6 self-center">{listDisplay}</div>
     </div>
