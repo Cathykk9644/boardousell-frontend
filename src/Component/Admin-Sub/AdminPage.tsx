@@ -6,6 +6,7 @@ import AdminUserPage from "./AdminUserPage";
 import AdminInfoPage from "./AdminInfoPage";
 import AdminNoticePage from "./AdminNoticePage";
 import { useAuth0 } from "@auth0/auth0-react";
+import logo from "../img/boardousell-logo.png";
 
 export default function AdminPage() {
   const [currentTab, setCurrentTab] = useState<string>("user");
@@ -30,21 +31,30 @@ export default function AdminPage() {
       break;
   }
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex justify-evenly w-full m-5">
-        <h1 className="text-2xl self-start">Admin Page:</h1>
+    <div className="min-h-screen max-h-screen sm:flex sm:flex-col sm:items-center">
+      <div className="flex justify-between items-center">
+        <img className="h-20" src={logo} alt="logo" />
+        <h1 className="text-2xl">Admin Page</h1>
         <button className="btn btn-outline" onClick={() => logout()}>
           Log out
         </button>
       </div>
-      <Tabs value={currentTab} onChange={(e, val) => setCurrentTab(val)}>
-        <Tab label="Product" value="product" />
-        <Tab label="Order" value="order" />
-        <Tab label="Infomation" value="infomation" />
-        <Tab label="Notice" value="notice" />
-        <Tab label="User" value="user" />
-      </Tabs>
-      {currentTabDisplay}
+      <div className="border-b-2 border-accent p-1">
+        <Tabs
+          variant="scrollable"
+          allowScrollButtonsMobile
+          scrollButtons="auto"
+          value={currentTab}
+          onChange={(e, val) => setCurrentTab(val)}
+        >
+          <Tab label="Product" value="product" />
+          <Tab label="Order" value="order" />
+          <Tab label="Infomation" value="infomation" />
+          <Tab label="Notice" value="notice" />
+          <Tab label="User" value="user" />
+        </Tabs>
+      </div>
+      <div className="pt-3">{currentTabDisplay}</div>
     </div>
   );
 }
