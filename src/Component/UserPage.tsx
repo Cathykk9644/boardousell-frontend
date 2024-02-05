@@ -1,6 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 type outletProps = {
   userId: number;
   handleAddWishItem: Function;
@@ -10,7 +10,6 @@ type outletProps = {
 };
 export default function UserPage() {
   const { userId } = useOutletContext<outletProps>();
-  const navi = useNavigate();
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
   useEffect(() => {
     if (!isAuthenticated) {

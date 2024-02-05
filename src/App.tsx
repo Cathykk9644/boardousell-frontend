@@ -16,6 +16,9 @@ type item = {
     price: number;
     name: string;
     stocks: number;
+    onsale?: {
+      discount: number;
+    };
   };
 };
 type anime = "wish" | "cart" | null;
@@ -49,9 +52,7 @@ export default function App() {
         const { data } = await axios.get(
           `${BACKENDURL}/user/login/${user?.sub}`
         );
-        console.log(data);
         if (data[1]) {
-          console.log(user?.email, user?.nickname, user?.phone_number);
           await axios.put(`${BACKENDURL}/user/${data[0].id}`, {
             email: user?.email,
             name: user?.nickname,
@@ -77,8 +78,11 @@ export default function App() {
     };
     if (isAuthenticated) {
       fetchData();
+    } else {
+      setUserId(0);
+      setIsAdmin(false);
     }
-  }, [userId, location.pathname, isAuthenticated, loginWithRedirect]);
+  }, [userId, location.pathname, isAuthenticated, loginWithRedirect, user]);
 
   const handleAddWishItem = async (productId: number) => {
     if (!isAuthenticated) {

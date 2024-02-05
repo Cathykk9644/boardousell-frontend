@@ -12,6 +12,9 @@ type item = {
     price: number;
     name: string;
     stocks: number;
+    onsale?: {
+      discount: number;
+    };
   };
 };
 type props = {
@@ -65,7 +68,10 @@ export default function Wishlist({
         </button>
         <div className="flex min-w-32 justify-between">
           <div>
-            ${item.product.price}
+            $
+            {item.product.onsale
+              ? Math.round(item.product.price * item.product.onsale.discount)
+              : item.product.price}
             <p>Stocks: {item.product.stocks}</p>
           </div>
           <button

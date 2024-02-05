@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 import { BACKENDURL } from "../constant";
 import { Stack } from "@mui/material";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -23,7 +23,6 @@ export default function OrderListPage() {
   const { userId, setError } = useOutletContext<outletProps>();
   const [orderList, setOrderList] = useState<order[]>([]);
   const { isAuthenticated, loginWithRedirect } = useAuth0();
-  const navi = useNavigate();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -74,10 +73,20 @@ export default function OrderListPage() {
   });
 
   return (
-    <div className="flex flex-col items-center">
-      <Stack spacing={2} className="my-5">
-        {orderListDisplay}
-      </Stack>
+    <div className="flex flex-col items-center min-h-screen">
+      {orderList.length ? (
+        <Stack spacing={2} className="my-5">
+          {orderListDisplay}
+        </Stack>
+      ) : (
+        <div className="m-5 flex flex-col items-center space-y-5">
+          <span className="text-xl">You do not have any order yet.</span>
+          <span>Please explore out products.😊</span>
+          <Link to="../explore" className="btn btn-lg btn-accent">
+            Go explore!
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

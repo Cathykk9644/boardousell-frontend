@@ -3,6 +3,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import Inventory2RoundedIcon from "@mui/icons-material/Inventory2Rounded";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Link, useNavigate } from "react-router-dom";
@@ -10,6 +11,7 @@ import { Divider, Drawer, Slide } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { BACKENDURL } from "../../constant";
+import { useAuth0 } from "@auth0/auth0-react";
 type props = {
   open: boolean;
   setDrawer: Function;
@@ -21,6 +23,7 @@ export default function Navibar({ open, setDrawer, setError }: props) {
   const [openSearch, setOpenSearch] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const { isAuthenticated, logout, loginWithRedirect } = useAuth0();
   const [keyword, setKeyword] = useState<string>("");
   const navi = useNavigate();
 
@@ -182,14 +185,28 @@ export default function Navibar({ open, setDrawer, setError }: props) {
       {searchAndMenu}
       <Drawer open={open} anchor="right" onClose={() => setDrawer(null)}>
         <div className="bg-neutral-content min-h-screen w-52">
-          <div className="h-20 flex justify-evenly items-center">
-            <Link to="/orderlist" onClick={() => setDrawer(null)}>
-              <Inventory2RoundedIcon />
-            </Link>
-            <Link to="/user" onClick={() => setDrawer(null)}>
-              <AccountCircleRoundedIcon />
-            </Link>
-          </div>
+          {isAuthenticated ? (
+            <div className="h-20 flex justify-evenly items-center">
+              <Link to="/orderlist" onClick={() => setDrawer(null)}>
+                <Inventory2RoundedIcon />
+              </Link>
+              <Link to="/user" onClick={() => setDrawer(null)}>
+                <AccountCircleRoundedIcon />
+              </Link>
+              <button onClick={() => logout()}>
+                <LogoutRoundedIcon />
+              </button>
+            </div>
+          ) : (
+            <div className="h-20 flex items-center justify-center">
+              <button
+                className="btn btn-secondary"
+                onClick={() => loginWithRedirect()}
+              >
+                Login/Register
+              </button>
+            </div>
+          )}
           <Divider className="bg-primary" />
           <ul className="menu flex flex-col items-center ">
             <li>

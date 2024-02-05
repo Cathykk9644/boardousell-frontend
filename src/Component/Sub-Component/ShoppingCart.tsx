@@ -11,6 +11,9 @@ type item = {
     price: number;
     name: string;
     stocks: number;
+    onsale?: {
+      discount: number;
+    };
   };
 };
 
@@ -64,7 +67,10 @@ export default function ShoppingCart({
           {item.product.name}
         </button>
         <div className="flex flex-col flex-end min-w-24 justify-between">
-          ${item.product.price}
+          $
+          {item.product.onsale
+            ? Math.round(item.product.price * item.product.onsale.discount)
+            : item.product.price}
           <p>Stocks: {item.product.stocks}</p>
         </div>
       </li>
@@ -72,7 +78,12 @@ export default function ShoppingCart({
   });
 
   let totalAmount = 0;
-  cart.forEach((item) => (totalAmount += item.product.price));
+  cart.forEach(
+    (item) =>
+      (totalAmount += item.product.onsale
+        ? Math.round(item.product.price * item.product.onsale.discount)
+        : item.product.price)
+  );
   return (
     <div>
       <div
