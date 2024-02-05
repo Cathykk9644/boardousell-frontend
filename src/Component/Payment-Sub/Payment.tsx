@@ -8,8 +8,22 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { BACKENDURL } from "../../constant";
 import { useParams } from "react-router-dom";
-
-export default function Payment({ setError }: { setError: Function }) {
+type order = {
+  id: number;
+  userId: number;
+  address: string;
+  amount: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+};
+export default function Payment({
+  setError,
+  setOrderInfo,
+}: {
+  setError: Function;
+  setOrderInfo: Function;
+}) {
   const stripe = useStripe();
   const elements = useElements();
   const [message, setMessage] = useState<string | null>(null);
@@ -72,7 +86,9 @@ export default function Payment({ setError }: { setError: Function }) {
     setIsLoading(false);
     try {
       await axios.put(`${BACKENDURL}/order/paid`, { orderId });
-      window.location.reload();
+      setOrderInfo((prev: order) => {
+        return { ...prev, status: "paid" };
+      });
     } catch (error) {
       setError({
         backHome: false,

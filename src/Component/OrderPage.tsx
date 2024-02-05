@@ -68,9 +68,12 @@ export default function OrderPage() {
   const [input, setInput] = useState<string>("");
   const [clientSecret, setClientSecret] = useState("");
   const navi = useNavigate();
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
   const { userId, setError } = useOutletContext<outletProps>();
   useEffect(() => {
+    if (isLoading) {
+      return;
+    }
     if (!isAuthenticated) {
       loginWithRedirect();
     }
@@ -99,14 +102,24 @@ export default function OrderPage() {
         });
       }
     };
-    fetchData();
-  }, [navi, orderId, userId, setError, isAuthenticated, loginWithRedirect]);
+    if (userId) {
+      fetchData();
+    }
+  }, [
+    navi,
+    orderId,
+    userId,
+    setError,
+    isAuthenticated,
+    loginWithRedirect,
+    isLoading,
+  ]);
 
   const handleSendMessage = async () => {
     try {
       const { data } = await axios.post(`${BACKENDURL}/message`, {
-        orderId,
-        isUserReseived: false,
+        orderId: Number(orderId),
+        isUserReceived: false,
         detail: input,
       });
       setMessageList((prev) => [...prev, data]);
@@ -154,6 +167,10 @@ export default function OrderPage() {
         <tr>
           <th>Shipping Address: </th>
           <td>{orderInfo?.address}</td>
+        </tr>
+        <tr>
+          <th>Amount:</th>
+          <td>{orderInfo?.amount}</td>
         </tr>
       </tbody>
     </table>
@@ -238,7 +255,7 @@ export default function OrderPage() {
               stripe={stripePromise}
               options={{ clientSecret, appearance: { theme: "flat" } }}
             >
-              <Payment setError={setError} />
+              <Payment setError={setError} setOrderInfo={setOrderInfo} />
             </Elements>
           </div>
         )}

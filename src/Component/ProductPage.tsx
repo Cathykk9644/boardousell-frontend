@@ -52,14 +52,14 @@ export default function ProductPage() {
   const [categoryList, setCategoryList] = useState<string[]>([]);
   const [suggestCategory, setSuggestCategory] = useState<string>("");
   const [suggestProducts, setSuggestProducts] = useState<suggestProduct[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingProduct, setIsLoadingProduct] = useState<boolean>(false);
   const { handleAddWishItem, handleAddCart, setError } =
     useOutletContext<outletProps>();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
+        setIsLoadingProduct(true);
         const { data } = await axios.get(
           `${BACKENDURL}/product/info/${productId}`
         );
@@ -83,7 +83,7 @@ export default function ProductPage() {
         setCategoryList(flatCategoryList);
         setSuggestCategory(randomCategory);
         setSuggestProducts(filterSuggestProducts);
-        setIsLoading(false);
+        setIsLoadingProduct(false);
       } catch (error) {
         setError({
           backHome: true,
@@ -153,7 +153,11 @@ export default function ProductPage() {
         >
           <StarsIcon />
         </button>
-        <button className="btn w-1/2" onClick={() => handleAddCart(productId)}>
+        <button
+          className="btn w-1/2"
+          onClick={() => handleAddCart(productId)}
+          disabled={!productInfo?.stocks}
+        >
           <ShoppingCartIcon />
         </button>
       </div>
@@ -187,7 +191,7 @@ export default function ProductPage() {
             {suggestCategory}:
           </Link>
         )}
-        {isLoading ? (
+        {isLoadingProduct ? (
           <CircularProgress className="self-center" />
         ) : (
           !!suggestProducts.length && (

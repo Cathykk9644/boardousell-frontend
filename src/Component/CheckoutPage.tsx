@@ -55,22 +55,25 @@ export default function CheckoutPage() {
   const [cart, setCart] = useState<item[]>([]);
   const [userInfo, setUserInfo] = useState<userInfo>(null);
   const [address, setAddress] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const [isLoadingCart, setIsLoadingCart] = useState<boolean>(false);
+  const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
   const navi = useNavigate();
 
   useEffect(() => {
+    if (isLoading) {
+      return;
+    }
     if (!isAuthenticated) {
       loginWithRedirect();
     }
     const fetchData = async () => {
       try {
-        setIsLoading(true);
+        setIsLoadingCart(true);
         const { data } = await axios.get(`${BACKENDURL}/cart/info/${userId}`);
         const userDataRes = await axios.get(`${BACKENDURL}/user/${userId}`);
         setUserInfo(userDataRes.data);
         setCart(data);
-        setIsLoading(false);
+        setIsLoadingCart(false);
       } catch (error) {
         setError({
           backHome: true,
@@ -78,8 +81,10 @@ export default function CheckoutPage() {
         });
       }
     };
-    fetchData();
-  }, [userId, setError, isAuthenticated, loginWithRedirect]);
+    if (userId) {
+      fetchData();
+    }
+  }, [userId, setError, isAuthenticated, loginWithRedirect, isLoading]);
 
   const findCartId = (productId: number): number => {
     const index = cart.findIndex((item) => item.product.id === productId);
@@ -261,7 +266,7 @@ export default function CheckoutPage() {
           className={`btn ${
             isAblePurchase ? "btn-accent" : "btn-warning"
           } w-full`}
-          disabled={!isAblePurchase || isLoading}
+          disabled={!isAblePurchase || isLoadingCart}
           onClick={handleConfirm}
         >
           Confirm

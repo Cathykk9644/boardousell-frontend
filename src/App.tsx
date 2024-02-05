@@ -1,5 +1,5 @@
 import Navibar from "./Component/Sub-Component/Navibar";
-import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import "./App.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -33,13 +33,12 @@ type outletProps = {
 };
 export default function App() {
   const [userId, setUserId] = useState<number>(0);
-  const { isAuthenticated, loginWithRedirect, user } = useAuth0();
+  const { isAuthenticated, isLoading, loginWithRedirect, user } = useAuth0();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [wishlist, setWishlist] = useState<item[]>([]);
   const [cart, setCart] = useState<item[]>([]);
   const [drawer, setDrawer] = useState<drawer>(null);
   const [anime, setAnime] = useState<anime>(null);
-  const location = useLocation();
   const navi = useNavigate();
   const [error, setError] = useState<{
     backHome: boolean;
@@ -76,13 +75,21 @@ export default function App() {
         });
       }
     };
-    if (isAuthenticated) {
+    if (!isLoading && isAuthenticated) {
       fetchData();
-    } else {
-      setUserId(0);
-      setIsAdmin(false);
     }
-  }, [userId, location.pathname, isAuthenticated, loginWithRedirect, user]);
+    if (!isLoading && !isAuthenticated) {
+      setIsAdmin(false);
+      setUserId(0);
+    }
+  }, [
+    isAuthenticated,
+    isLoading,
+    user?.email,
+    user?.nickname,
+    user?.phone_number,
+    user?.sub,
+  ]);
 
   const handleAddWishItem = async (productId: number) => {
     if (!isAuthenticated) {

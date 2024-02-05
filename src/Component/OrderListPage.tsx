@@ -22,9 +22,12 @@ type order = {
 export default function OrderListPage() {
   const { userId, setError } = useOutletContext<outletProps>();
   const [orderList, setOrderList] = useState<order[]>([]);
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
 
   useEffect(() => {
+    if (isLoading) {
+      return;
+    }
     if (!isAuthenticated) {
       loginWithRedirect();
     }
@@ -39,8 +42,10 @@ export default function OrderListPage() {
         });
       }
     };
-    fetchData();
-  }, [userId, setError, isAuthenticated, loginWithRedirect]);
+    if (userId) {
+      fetchData();
+    }
+  }, [userId, setError, isAuthenticated, loginWithRedirect, isLoading]);
 
   const orderListDisplay = orderList.map((order) => {
     const createdTimestamp = order ? Date.parse(order.createdAt) : 0;
