@@ -87,7 +87,7 @@ export default function Payment({
     try {
       await axios.put(`${BACKENDURL}/order/paid`, { orderId });
       setOrderInfo((prev: order) => {
-        return { ...prev, status: "paid" };
+        return { ...prev, status: "Paid" };
       });
     } catch (error) {
       setError({

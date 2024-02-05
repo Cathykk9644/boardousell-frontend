@@ -12,6 +12,7 @@ module.exports = {
     "./src/Component/Notice-Sub/NoticeSlide.tsx",
     "./src/Component/Notice-Sub/NoticePage.tsx",
     "./src/Component/ContactUs-Sub/ContactUsPage.tsx",
+    "./src/Component/Admin-Sub/AdminPage.tsx",
     "./src/Component/SearchPage.tsx",
     "./src/Component/AboutUsPage.tsx",
     "./src/Component/CheckoutPage.tsx",

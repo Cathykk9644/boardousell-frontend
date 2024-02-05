@@ -7,6 +7,7 @@ import Wishlist from "./Component/Sub-Component/Wishlist";
 import ShoppingCart from "./Component/Sub-Component/ShoppingCart";
 import ErrorPage from "./Component/Sub-Component/ErrorPage";
 import { useAuth0 } from "@auth0/auth0-react";
+import AdminPage from "./Component/Admin-Sub/AdminPage";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
 type item = {
@@ -178,7 +179,9 @@ export default function App() {
     setError,
   };
 
-  return (
+  return isAdmin ? (
+    <AdminPage />
+  ) : (
     <div data-theme="nord" className="min-h-screen">
       <Navibar
         open={drawer === "nav"}
