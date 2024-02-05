@@ -6,6 +6,7 @@ import axios from "axios";
 import Wishlist from "./Component/Sub-Component/Wishlist";
 import ShoppingCart from "./Component/Sub-Component/ShoppingCart";
 import ErrorPage from "./Component/Sub-Component/ErrorPage";
+import { useAuth0 } from "@auth0/auth0-react";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
 type item = {
@@ -28,7 +29,9 @@ type outletProps = {
   setError: Function;
 };
 export default function App() {
-  const [userId, setUserId] = useState<number>(3);
+  const [userId, setUserId] = useState<number>(0);
+  const { isAuthenticated, loginWithRedirect, user } = useAuth0();
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [wishlist, setWishlist] = useState<item[]>([]);
   const [cart, setCart] = useState<item[]>([]);
   const [drawer, setDrawer] = useState<drawer>(null);
@@ -38,16 +41,32 @@ export default function App() {
   const [error, setError] = useState<{
     backHome: boolean;
     message: string;
-  } | null>({ backHome: true, message: "TEsting for some error" });
+  } | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const { data } = await axios.get(
+          `${BACKENDURL}/user/login/${user?.sub}`
+        );
+        console.log(data);
+        if (data[1]) {
+          console.log(user?.email, user?.nickname, user?.phone_number);
+          await axios.put(`${BACKENDURL}/user/${data[0].id}`, {
+            email: user?.email,
+            name: user?.nickname,
+            phone: user?.phone_number,
+          });
+        }
+        setUserId(data[0].id);
+        setIsAdmin(data[0].isAdmin);
         const wishlistRes = await axios.get(
-          `${BACKENDURL}/wishlist/info/${userId}`
+          `${BACKENDURL}/wishlist/info/${data[0].id}`
         );
         setWishlist(wishlistRes.data);
-        const cartRes = await axios.get(`${BACKENDURL}/cart/info/${userId}`);
+        const cartRes = await axios.get(
+          `${BACKENDURL}/cart/info/${data[0].id}`
+        );
         setCart(cartRes.data);
       } catch (err) {
         setError({
@@ -56,11 +75,15 @@ export default function App() {
         });
       }
     };
-
-    fetchData();
-  }, [userId, location.pathname]);
+    if (isAuthenticated) {
+      fetchData();
+    }
+  }, [userId, location.pathname, isAuthenticated, loginWithRedirect]);
 
   const handleAddWishItem = async (productId: number) => {
+    if (!isAuthenticated) {
+      return loginWithRedirect();
+    }
     try {
       const { data } = await axios.post(`${BACKENDURL}/wishlist`, {
         userId: userId,
@@ -91,6 +114,9 @@ export default function App() {
   };
 
   const handleAddCart = async (productId: number) => {
+    if (!isAuthenticated) {
+      return loginWithRedirect();
+    }
     try {
       const { data } = await axios.post(`${BACKENDURL}/cart`, {
         userId: userId,
@@ -140,6 +166,7 @@ export default function App() {
     handleDeleteCart,
     setError,
   };
+
   return (
     <div data-theme="nord" className="min-h-screen">
       <Navibar
@@ -148,23 +175,27 @@ export default function App() {
         setError={setError}
       />
       <Outlet context={outletProps} />
-      <Wishlist
-        open={drawer === "wish"}
-        setDrawer={setDrawer}
-        wishlist={wishlist}
-        handleDeleteWish={handleDeleteWish}
-        handleWishToCart={handleWishToCart}
-        startAnime={anime === "wish"}
-        setAnime={setAnime}
-      />
-      <ShoppingCart
-        open={drawer === "cart"}
-        setDrawer={setDrawer}
-        cart={cart}
-        handleDeleteCart={handleDeleteCart}
-        startAnime={anime === "cart"}
-        setAnime={setAnime}
-      />
+      {isAuthenticated && (
+        <Wishlist
+          open={drawer === "wish"}
+          setDrawer={setDrawer}
+          wishlist={wishlist}
+          handleDeleteWish={handleDeleteWish}
+          handleWishToCart={handleWishToCart}
+          startAnime={anime === "wish"}
+          setAnime={setAnime}
+        />
+      )}
+      {isAuthenticated && (
+        <ShoppingCart
+          open={drawer === "cart"}
+          setDrawer={setDrawer}
+          cart={cart}
+          handleDeleteCart={handleDeleteCart}
+          startAnime={anime === "cart"}
+          setAnime={setAnime}
+        />
+      )}
       <footer className="footer p-5 pl-10 bg-neutral text-neutral-content h-min">
         <nav>
           <Link className="link link-hover" to="/aboutus">

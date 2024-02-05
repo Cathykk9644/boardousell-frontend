@@ -18,32 +18,48 @@ import NoticePage from "./Component/Notice-Sub/NoticePage";
 import CheckoutPage from "./Component/CheckoutPage";
 import ContactUsPage from "./Component/ContactUs-Sub/ContactUsPage";
 import SearchPage from "./Component/SearchPage";
+import { Auth0Provider } from "@auth0/auth0-react";
+
+const DOMAIN = process.env.REACT_APP_AUTH_DOMAIN
+  ? process.env.REACT_APP_AUTH_DOMAIN
+  : "";
+const CLIENTID = process.env.REACT_APP_AUTH_CLIENT_ID
+  ? process.env.REACT_APP_AUTH_CLIENT_ID
+  : "";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />}>
-          <Route path="*" element={<WrongPage />} />
-          <Route path="" element={<HomePage />} />
-          <Route path="contactus" element={<ContactUsPage />} />
-          <Route path="aboutus" element={<AboutUsPage />} />
-          <Route path="explore" element={<ExplorePage />} />
-          <Route path="orderlist" element={<OrderListPage />} />
-          <Route path="order/:orderId" element={<OrderPage />} />
-          <Route path="policy" element={<PolicyPage />} />
-          <Route path="product/:productId" element={<ProductPage />} />
-          <Route path="user" element={<UserPage />} />
-          <Route path="notice" element={<NoticePage />} />
-          <Route path="notice/:noticeId" element={<NoticePage />} />
-          <Route path="checkout" element={<CheckoutPage />} />
-          <Route path="search" element={<SearchPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <Auth0Provider
+      domain={DOMAIN}
+      clientId={CLIENTID}
+      authorizationParams={{
+        redirect_uri: window.location.origin,
+      }}
+    >
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route path="*" element={<WrongPage />} />
+            <Route path="" element={<HomePage />} />
+            <Route path="contactus" element={<ContactUsPage />} />
+            <Route path="aboutus" element={<AboutUsPage />} />
+            <Route path="explore" element={<ExplorePage />} />
+            <Route path="orderlist" element={<OrderListPage />} />
+            <Route path="order/:orderId" element={<OrderPage />} />
+            <Route path="policy" element={<PolicyPage />} />
+            <Route path="product/:productId" element={<ProductPage />} />
+            <Route path="user" element={<UserPage />} />
+            <Route path="notice" element={<NoticePage />} />
+            <Route path="notice/:noticeId" element={<NoticePage />} />
+            <Route path="checkout" element={<CheckoutPage />} />
+            <Route path="search" element={<SearchPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </Auth0Provider>
   </React.StrictMode>
 );
 

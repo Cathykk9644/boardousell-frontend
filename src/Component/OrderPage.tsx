@@ -12,6 +12,7 @@ import { BACKENDURL } from "../constant";
 import Payment from "./Payment-Sub/Payment";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import { useAuth0 } from "@auth0/auth0-react";
 const stripePromise = loadStripe(
   process.env.REACT_APP_STRIPE_KEY ? process.env.REACT_APP_STRIPE_KEY : ""
 );
@@ -67,8 +68,12 @@ export default function OrderPage() {
   const [input, setInput] = useState<string>("");
   const [clientSecret, setClientSecret] = useState("");
   const navi = useNavigate();
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
   const { userId, setError } = useOutletContext<outletProps>();
   useEffect(() => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+    }
     const fetchData = async () => {
       try {
         const { data } = await axios.get(`${BACKENDURL}/order/info/${orderId}`);
@@ -95,7 +100,7 @@ export default function OrderPage() {
       }
     };
     fetchData();
-  }, [navi, orderId, userId, setError]);
+  }, [navi, orderId, userId, setError, isAuthenticated, loginWithRedirect]);
 
   const handleSendMessage = async () => {
     try {

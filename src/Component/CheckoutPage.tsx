@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import RemoveIcon from "@mui/icons-material/Remove";
 import StarsIcon from "@mui/icons-material/Stars";
+import { useAuth0 } from "@auth0/auth0-react";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
 type checkoutList = {
@@ -55,9 +56,13 @@ export default function CheckoutPage() {
   const [userInfo, setUserInfo] = useState<userInfo>(null);
   const [address, setAddress] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
   const navi = useNavigate();
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+    }
     const fetchData = async () => {
       try {
         setIsLoading(true);
@@ -74,7 +79,7 @@ export default function CheckoutPage() {
       }
     };
     fetchData();
-  }, [userId, setError]);
+  }, [userId, setError, isAuthenticated, loginWithRedirect]);
 
   const findCartId = (productId: number): number => {
     const index = cart.findIndex((item) => item.product.id === productId);

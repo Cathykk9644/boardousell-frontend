@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useOutletContext } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { BACKENDURL } from "../constant";
 import { Stack } from "@mui/material";
+import { useAuth0 } from "@auth0/auth0-react";
 type outletProps = {
   userId: number;
   handleAddWishItem: Function;
@@ -21,8 +22,13 @@ type order = {
 export default function OrderListPage() {
   const { userId, setError } = useOutletContext<outletProps>();
   const [orderList, setOrderList] = useState<order[]>([]);
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const navi = useNavigate();
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+    }
     const fetchData = async () => {
       try {
         const { data } = await axios.get(`${BACKENDURL}/order/all/${userId}`);
@@ -35,7 +41,7 @@ export default function OrderListPage() {
       }
     };
     fetchData();
-  }, [userId, setError]);
+  }, [userId, setError, isAuthenticated, loginWithRedirect]);
 
   const orderListDisplay = orderList.map((order) => {
     const createdTimestamp = order ? Date.parse(order.createdAt) : 0;
