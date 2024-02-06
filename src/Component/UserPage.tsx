@@ -143,10 +143,13 @@ export default function UserPage() {
               <td className="flex flex-row justify-between items-center">
                 {editing === "phone" ? (
                   <input
-                    type="number"
-                    className="input input-md input-bordered"
+                    type="input"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={(e) => {
+                      if (!isNaN(Number(e.target.value))) {
+                        setPhone(e.target.value);
+                      }
+                    }}
                   />
                 ) : (
                   <span>

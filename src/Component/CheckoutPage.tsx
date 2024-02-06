@@ -44,6 +44,7 @@ type outletProps = {
 type userInfo = {
   email: string;
   points: number;
+  phone: number;
   level: {
     discount: number;
   };
@@ -55,6 +56,7 @@ export default function CheckoutPage() {
   const [cart, setCart] = useState<item[]>([]);
   const [userInfo, setUserInfo] = useState<userInfo>(null);
   const [address, setAddress] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
   const [isLoadingCart, setIsLoadingCart] = useState<boolean>(false);
   const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
   const navi = useNavigate();
@@ -96,7 +98,10 @@ export default function CheckoutPage() {
       handleReduceAmount(productId);
       handleAddWishItem(productId);
     } catch (error) {
-      console.log(error);
+      setError({
+        backHome: true,
+        message: "Oh. Sorry, somethings went wrong.",
+      });
     }
   };
 
@@ -106,7 +111,10 @@ export default function CheckoutPage() {
       handleDeleteCart(cartId);
       setCart((prev) => prev.filter((item) => item.id !== cartId));
     } catch (error) {
-      console.log(error);
+      setError({
+        backHome: true,
+        message: "Oh. Sorry, somethings went wrong.",
+      });
     }
   };
 
@@ -120,9 +128,11 @@ export default function CheckoutPage() {
   }
 
   let isAblePurchase = true;
+  let tip: string | null = null;
   const productDisplay = Object.values(checkoutListObject).map((item) => {
     if (item.amounts > item.stocks) {
       isAblePurchase = false;
+      tip = "Sorry, we don't have enough stocks yet.";
     }
     return (
       <tr key={item.id}>
@@ -185,6 +195,9 @@ export default function CheckoutPage() {
 
   const handleConfirm = async () => {
     try {
+      if (userInfo && !userInfo.phone) {
+        await axios.put(`${BACKENDURL}/user/${userId}`, { phone: phone });
+      }
       const productIdList = cart.map((item) => item.product.id);
       const { data } = await axios.post(`${BACKENDURL}/order`, {
         userId,
@@ -194,13 +207,20 @@ export default function CheckoutPage() {
       });
       navi(`/order/${data}`);
     } catch (error) {
-      console.log(error);
-      navi(`/`);
+      setError({
+        backHome: true,
+        message: "Oh. Sorry, somethings went wrong.",
+      });
     }
   };
 
   if (!cart.length) {
     isAblePurchase = false;
+    tip = "You do not have anythings in the cart";
+  }
+  if (!phone.length && userInfo && !userInfo.phone) {
+    isAblePurchase = false;
+    tip = "Please Add Phone Number Before checkout";
   }
 
   return (
@@ -255,13 +275,25 @@ export default function CheckoutPage() {
           value={address}
           onChange={(e) => setAddress(e.target.value)}
         />
+
+        {userInfo && !userInfo.phone && (
+          <div className="flex justify-between items-center">
+            <label>Phone: </label>
+            <input
+              type="input"
+              placeholder="Please input your phone before checkout."
+              className="input input-bordered input-primary w-full ml-5"
+              value={phone}
+              onChange={(e) => {
+                if (!isNaN(Number(e.target.value))) {
+                  setPhone(e.target.value);
+                }
+              }}
+            />
+          </div>
+        )}
       </div>
-      <div
-        className="tooltip w-5/6"
-        data-tip={
-          isAblePurchase ? null : "Sorry, we do not have enough stocks."
-        }
-      >
+      <div className="tooltip w-5/6" data-tip={tip}>
         <button
           className={`btn ${
             isAblePurchase ? "btn-accent" : "btn-warning"
