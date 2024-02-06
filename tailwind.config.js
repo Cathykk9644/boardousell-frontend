@@ -18,6 +18,7 @@ module.exports = {
     "./src/Component/Admin-Sub/AdminNoticePage.tsx",
     "./src/Component/Admin-Sub/AdminProductPage.tsx",
     "./src/Component/Admin-Sub/AdminOrderPage.tsx",
+    "./src/Component/Admin-Sub/AdminMembershipPage.tsx",
     "./src/Component/SearchPage.tsx",
     "./src/Component/AboutUsPage.tsx",
     "./src/Component/CheckoutPage.tsx",
