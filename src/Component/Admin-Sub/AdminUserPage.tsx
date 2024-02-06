@@ -27,7 +27,7 @@ type user = {
 type key = "email" | "name" | "phone";
 
 export default function AdminUserPage() {
-  const [isLoading, setIsloading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<user[]>([]);
   const [keyword, setKeyword] = useState<string>("");
   const [type, setType] = useState<key>("email");
@@ -38,7 +38,7 @@ export default function AdminUserPage() {
 
   const handleSearch = async () => {
     try {
-      setIsloading(true);
+      setIsLoading(true);
       const { data } = await axios.get(
         `${BACKENDURL}/user/admin?${
           !!keyword.length ? type + "=" + keyword : ""
@@ -46,7 +46,7 @@ export default function AdminUserPage() {
       );
       setUsers(data);
       setErrMsg("");
-      setIsloading(false);
+      setIsLoading(false);
     } catch (error: any) {
       setErrMsg(error.message);
     }
@@ -64,7 +64,7 @@ export default function AdminUserPage() {
     userId: number
   ) => {
     try {
-      setIsloading(true);
+      setIsLoading(true);
       await axios.put(`${BACKENDURL}/user/${userId}`, {
         isAdmin: e.target.checked,
       });
@@ -81,7 +81,7 @@ export default function AdminUserPage() {
 
   const handleConfirmEdit = async () => {
     try {
-      setIsloading(true);
+      setIsLoading(true);
       await axios.put(`${BACKENDURL}/user/${editId}`, {
         points: editVal,
       });
