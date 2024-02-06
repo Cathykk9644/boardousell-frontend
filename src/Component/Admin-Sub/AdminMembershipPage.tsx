@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
-
+import DeleteIcon from "@mui/icons-material/Delete";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import { CircularProgress } from "@mui/material";
 import axios from "axios";
@@ -42,6 +42,16 @@ export default function AdminMembershipPage() {
     fetchData();
   }, []);
 
+  const handleDelete = async (id: number) => {
+    try {
+      const { data } = await axios.delete(`${BACKENDURL}/level/${id}`);
+      setLevels(data);
+      setErrMsg("");
+    } catch (error: any) {
+      setErrMsg(error.message);
+    }
+  };
+
   const handleConfirmAdd = async () => {
     try {
       const newData = {
@@ -77,6 +87,7 @@ export default function AdminMembershipPage() {
       setErrMsg(error.message);
     }
   };
+
   const handleEdit = (
     id: number | "new" | null,
     title: string,
@@ -143,7 +154,7 @@ export default function AdminMembershipPage() {
         ) : (
           <td>{level.discount}</td>
         )}
-        <td>
+        <td className="flex space-x-2">
           <button
             className="btn btn-square btn-sm"
             disabled={!!editId && !isEditing}
@@ -157,6 +168,13 @@ export default function AdminMembershipPage() {
             }
           >
             {isEditing ? <DoneRoundedIcon /> : <EditRoundedIcon />}
+          </button>
+          <button
+            className="btn btn-square btn-sm"
+            disabled={!!editId && !isEditing}
+            onClick={() => handleDelete(level.id)}
+          >
+            <DeleteIcon />
           </button>
         </td>
       </tr>
@@ -221,7 +239,7 @@ export default function AdminMembershipPage() {
               </th>
               <th>
                 <button
-                  className="btn btn-square"
+                  className="btn btn-sm btn-outline w-full"
                   disabled={!!editId && !isAdding}
                   onClick={() => handleEdit("new", "", "", "")}
                 >
