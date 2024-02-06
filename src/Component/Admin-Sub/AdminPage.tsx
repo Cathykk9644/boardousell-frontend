@@ -7,6 +7,7 @@ import AdminInfoPage from "./AdminInfoPage";
 import AdminNoticePage from "./AdminNoticePage";
 import { useAuth0 } from "@auth0/auth0-react";
 import logo from "../img/boardousell-logo.png";
+import AdminMembershipPage from "./AdminMembershipPage";
 
 export default function AdminPage() {
   const [currentTab, setCurrentTab] = useState<string>("user");
@@ -29,9 +30,12 @@ export default function AdminPage() {
     case "notice":
       currentTabDisplay = <AdminNoticePage />;
       break;
+    case "membership":
+      currentTabDisplay = <AdminMembershipPage />;
+      break;
   }
   return (
-    <div className="min-h-screen max-h-screen sm:flex sm:flex-col sm:items-center">
+    <div className="min-h-screen max-h-screen">
       <div className="flex justify-between items-center">
         <img className="h-20" src={logo} alt="logo" />
         <h1 className="text-2xl">Admin Page</h1>
@@ -52,9 +56,10 @@ export default function AdminPage() {
           <Tab label="Infomation" value="infomation" />
           <Tab label="Notice" value="notice" />
           <Tab label="User" value="user" />
+          <Tab label="Membership" value="membership" />
         </Tabs>
       </div>
-      <div className="pt-3">{currentTabDisplay}</div>
+      <div className="p-2">{currentTabDisplay}</div>
     </div>
   );
 }
