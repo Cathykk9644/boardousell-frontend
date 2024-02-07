@@ -57,16 +57,30 @@ export default function AdminProductPage() {
       setIsLoading(true);
       switch (type) {
         case "all":
-          const { data } = await axios.get(`${BACKENDURL}/product/admin/all/1`);
-          setTotalPage(Math.ceil(data.count / 5));
-          setProducts(data.data);
+          const allDataRes = await axios.get(
+            `${BACKENDURL}/product/admin/all/1`
+          );
+          setTotalPage(Math.ceil(allDataRes.data.count / 5));
+          setProducts(allDataRes.data.data);
+          break;
+        case "name":
+          if (!searchInput.length) {
+            throw new Error("Please Enter Keyword.");
+          }
+          const nameDataRes = await axios.get(
+            `${BACKENDURL}/product/admin/name/${searchInput}/1`
+          );
+          setTotalPage(Math.ceil(nameDataRes.data.count / 5));
+          setProducts(nameDataRes.data.data);
           break;
         default:
           throw new Error("No Search Found.");
       }
       setCurrentPage(1);
       setCurrentSearch({ type: type, input: searchInput });
+      setSearchInput("");
       setIsLoading(false);
+      setErrMsg("");
     } catch (error: any) {
       setErrMsg(error.message);
       setIsLoading(false);
@@ -81,16 +95,23 @@ export default function AdminProductPage() {
       setIsLoading(true);
       switch (currentSearch?.type) {
         case "all":
-          const { data } = await axios.get(
+          const allDataRes = await axios.get(
             `${BACKENDURL}/product/admin/all/${newPage}`
           );
-          setProducts(data.data);
+          setProducts(allDataRes.data.data);
+          break;
+        case "name":
+          const nameDataRes = await axios.get(
+            `${BACKENDURL}/product/admin/name/${currentSearch.input}/${newPage}`
+          );
+          setProducts(nameDataRes.data.data);
           break;
         default:
           throw new Error("Somethings wrong with the search page.");
       }
       setCurrentPage(newPage);
       setIsLoading(false);
+      setErrMsg("");
     } catch (error: any) {
       setErrMsg(error.message);
       setIsLoading(false);
