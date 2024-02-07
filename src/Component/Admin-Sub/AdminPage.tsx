@@ -11,7 +11,7 @@ import AdminMembershipPage from "./AdminMembershipPage";
 import AdminCategoryPage from "./AdminCategoryPage";
 
 export default function AdminPage() {
-  const [currentTab, setCurrentTab] = useState<string>("user");
+  const [currentTab, setCurrentTab] = useState<string>("product");
   const { logout } = useAuth0();
 
   let currentTabDisplay;

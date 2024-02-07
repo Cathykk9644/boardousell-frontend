@@ -37,6 +37,7 @@ export default function AdminMembershipPage() {
         setIsLoading(false);
       } catch (error: any) {
         setErrMsg(error.message);
+        setIsLoading(false);
       }
     };
     fetchData();
@@ -44,16 +45,20 @@ export default function AdminMembershipPage() {
 
   const handleDelete = async (id: number) => {
     try {
+      setIsLoading(true);
       const { data } = await axios.delete(`${BACKENDURL}/level/${id}`);
       setLevels(data);
       setErrMsg("");
+      setIsLoading(false);
     } catch (error: any) {
       setErrMsg(error.message);
+      setIsLoading(false);
     }
   };
 
   const handleConfirmAdd = async () => {
     try {
+      setIsLoading(true);
       const newData = {
         title: editTitle,
         discount: Number(editDiscount),
@@ -62,8 +67,10 @@ export default function AdminMembershipPage() {
       const { data } = await axios.post(`${BACKENDURL}/level`, newData);
       setLevels(data);
       setErrMsg("");
+      setIsLoading(false);
     } catch (error: any) {
       setErrMsg(error.message);
+      setIsLoading(false);
     }
   };
 
@@ -72,6 +79,7 @@ export default function AdminMembershipPage() {
     originalRequirement: string
   ) => {
     try {
+      setIsLoading(true);
       const newData: updatedLevel = {
         id: id,
         title: editTitle,
@@ -83,8 +91,10 @@ export default function AdminMembershipPage() {
       const { data } = await axios.put(`${BACKENDURL}/level`, newData);
       setLevels(data);
       setErrMsg("");
+      setIsLoading(false);
     } catch (error: any) {
       setErrMsg(error.message);
+      setIsLoading(false);
     }
   };
 

@@ -55,6 +55,7 @@ export default function AdminUserPage() {
       setIsLoading(false);
     } catch (error: any) {
       setErrMsg(error.message);
+      setIsLoading(false);
     }
   };
 
@@ -77,6 +78,7 @@ export default function AdminUserPage() {
       handleSearch();
     } catch (error: any) {
       setErrMsg(error.message);
+      setIsLoading(false);
     }
   };
 
@@ -96,6 +98,7 @@ export default function AdminUserPage() {
       setEditVal("");
     } catch (error: any) {
       setErrMsg(error.message);
+      setIsLoading(false);
     }
   };
 
@@ -204,8 +207,8 @@ export default function AdminUserPage() {
         </select>
         {type !== "all" && (
           <input
+            value={keyword}
             className="input input-bordered input-sm w-full"
-            placeholder="All"
             onChange={(e) => setKeyword(e.target.value)}
           />
         )}
