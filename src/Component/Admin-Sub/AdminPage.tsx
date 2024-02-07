@@ -8,6 +8,7 @@ import AdminNoticePage from "./AdminNoticePage";
 import { useAuth0 } from "@auth0/auth0-react";
 import logo from "../img/boardousell-logo.png";
 import AdminMembershipPage from "./AdminMembershipPage";
+import AdminCategoryPage from "./AdminCategoryPage";
 
 export default function AdminPage() {
   const [currentTab, setCurrentTab] = useState<string>("user");
@@ -33,6 +34,9 @@ export default function AdminPage() {
     case "membership":
       currentTabDisplay = <AdminMembershipPage />;
       break;
+    case "category":
+      currentTabDisplay = <AdminCategoryPage />;
+      break;
   }
   return (
     <div className="min-h-screen max-h-screen">
@@ -53,6 +57,7 @@ export default function AdminPage() {
         >
           <Tab label="Product" value="product" />
           <Tab label="Order" value="order" />
+          <Tab label="Category" value="category" />
           <Tab label="Infomation" value="infomation" />
           <Tab label="Notice" value="notice" />
           <Tab label="User" value="user" />

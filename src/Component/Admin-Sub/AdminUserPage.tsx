@@ -14,7 +14,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 type user = {
-  id: 1;
+  id: number;
   email: string;
   name: string;
   isAdmin: boolean;
@@ -24,13 +24,13 @@ type user = {
     title: string;
   };
 };
-type key = "email" | "name" | "phone";
+type key = "email" | "name" | "phone" | "all";
 
 export default function AdminUserPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<user[]>([]);
   const [keyword, setKeyword] = useState<string>("");
-  const [type, setType] = useState<key>("email");
+  const [type, setType] = useState<key>("all");
   const [errMsg, setErrMsg] = useState("");
   const [editId, setEditId] = useState<boolean | number | null>(null);
   const [editVal, setEditVal] = useState<string>("");
@@ -39,12 +39,18 @@ export default function AdminUserPage() {
   const handleSearch = async () => {
     try {
       setIsLoading(true);
-      const { data } = await axios.get(
-        `${BACKENDURL}/user/admin?${
-          !!keyword.length ? type + "=" + keyword : ""
-        }`
-      );
-      setUsers(data);
+      if (type === "all") {
+        const { data } = await axios.get(`${BACKENDURL}/user/admin`);
+        setUsers(data);
+      } else {
+        const { data } = await axios.get(
+          `${BACKENDURL}/user/admin?${
+            !!keyword.length ? type + "=" + keyword : ""
+          }`
+        );
+        setUsers(data);
+      }
+
       setErrMsg("");
       setIsLoading(false);
     } catch (error: any) {
@@ -93,7 +99,7 @@ export default function AdminUserPage() {
     }
   };
 
-  const userDiplay = users.map((user: user) => {
+  const userDisplay = users.map((user: user) => {
     return (
       <Accordion
         expanded={expand === user.id}
@@ -102,7 +108,7 @@ export default function AdminUserPage() {
       >
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography>
-            {type}: {user[type]}
+            {type === "all" ? `name: ${user.name}` : `${type}: ${user[type]}`}
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -184,24 +190,32 @@ export default function AdminUserPage() {
         <select
           value={type}
           className="select select-sm select-bordered"
-          onChange={(e) => setType(e.target.value as key)}
+          onChange={(e) => {
+            if (e.target.value === "all") {
+              setKeyword("");
+            }
+            setType(e.target.value as key);
+          }}
         >
+          <option value="all">All</option>
           <option value="email">Email</option>
           <option value="name">Name</option>
           <option value="phone">Phone</option>
         </select>
-        <input
-          className="input input-bordered input-sm w-full"
-          placeholder="All"
-          onChange={(e) => setKeyword(e.target.value)}
-        />
+        {type !== "all" && (
+          <input
+            className="input input-bordered input-sm w-full"
+            placeholder="All"
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+        )}
 
         <button className="btn btn-md btn-square" onClick={handleSearch}>
           <SearchRoundedIcon />
         </button>
       </div>
       <div className="w-5/6">
-        {isLoading ? <CircularProgress /> : userDiplay}
+        {isLoading ? <CircularProgress /> : userDisplay}
       </div>
     </div>
   );
