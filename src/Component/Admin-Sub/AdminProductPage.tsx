@@ -73,6 +73,16 @@ export default function AdminProductPage() {
           setTotalPage(Math.ceil(nameDataRes.data.count / 5));
           setProducts(nameDataRes.data.data);
           break;
+        case "stocks":
+          if (!searchInput.length) {
+            throw new Error("Please Enter Amount/LowerLimit-UpperLimit.");
+          }
+          const stockDataRes = await axios.get(
+            `${BACKENDURL}/product/admin/stocks/${searchInput}/1`
+          );
+          setTotalPage(Math.ceil(stockDataRes.data.count / 5));
+          setProducts(stockDataRes.data.data);
+          break;
         default:
           throw new Error("No Search Found.");
       }
@@ -82,6 +92,7 @@ export default function AdminProductPage() {
       setIsLoading(false);
       setErrMsg("");
     } catch (error: any) {
+      console.log(error);
       setErrMsg(error.message);
       setIsLoading(false);
     }
@@ -106,6 +117,12 @@ export default function AdminProductPage() {
           );
           setProducts(nameDataRes.data.data);
           break;
+        case "stocks":
+          const stockDataRes = await axios.get(
+            `${BACKENDURL}/product/admin/stocks/${currentSearch.input}/${newPage}`
+          );
+          setProducts(stockDataRes.data.data);
+          break;
         default:
           throw new Error("Somethings wrong with the search page.");
       }
@@ -126,13 +143,17 @@ export default function AdminProductPage() {
     );
   });
 
-  const productDisplay = products.map((product) => (
-    <ProductEditForm
-      product={product}
-      categories={categories}
-      key={product.id}
-    />
-  ));
+  const productDisplay = products.length ? (
+    products.map((product) => (
+      <ProductEditForm
+        product={product}
+        categories={categories}
+        key={product.id}
+      />
+    ))
+  ) : (
+    <div>No Products Found.</div>
+  );
 
   return (
     <div className="flex flex-col items-center">
@@ -155,7 +176,7 @@ export default function AdminProductPage() {
           <input
             className="input input-bordered input-sm w-full"
             value={searchInput}
-            placeholder={type === "stocks" ? "Range:[Lower]-[Upper]" : ""}
+            placeholder={type === "stocks" ? "1 or 10-20" : ""}
             onChange={(e) => setSearchInput(e.target.value)}
           />
         )}
