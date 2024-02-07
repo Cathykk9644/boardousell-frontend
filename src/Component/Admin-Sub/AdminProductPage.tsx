@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import { CircularProgress, Pagination } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { BACKENDURL } from "../../constant";
@@ -13,10 +12,10 @@ type product = {
   name: string;
   description: string;
   stocks: number;
-  productPhotos?: [{ id: number; url: string }];
-  categories?: [{ id: number; name: string }];
-  newproduct?: [{ id: number }];
-  onsale?: [{ id: number; discount: number }];
+  productPhotos: { id: number; url: string; thumbnail: boolean }[];
+  categories: { id: number; name: string }[];
+  newproduct?: { id: number };
+  onsale?: { id: number; discount: number };
 };
 
 type search = {
@@ -33,6 +32,7 @@ export default function AdminProductPage() {
   const [searchInput, setSearchInput] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [totalPage, setTotalPage] = useState<number>(0);
+  const [open, setOpen] = useState<number | null>(null);
   const [currentSearch, setCurrentSearch] = useState<search>(null);
   const [errMsg, setErrMsg] = useState("");
   useEffect(() => {
@@ -106,27 +106,26 @@ export default function AdminProductPage() {
     }
   };
 
-  console.log(products);
-  const handleChange = async (
+  const handleChangePage = async (
     e: React.ChangeEvent<unknown>,
-    newPage: number
+    page: number
   ) => {
     try {
       setIsLoading(true);
       switch (currentSearch?.type) {
         case "all":
           const allDataRes = await axios.get(
-            `${BACKENDURL}/product/admin/all/${newPage}`
+            `${BACKENDURL}/product/admin/all/${page}`
           );
           setProducts(allDataRes.data.data);
           break;
         default:
           const { data } = await axios.get(
-            `${BACKENDURL}/product/admin/${currentSearch?.type}/${currentSearch?.input}/${newPage}`
+            `${BACKENDURL}/product/admin/${currentSearch?.type}/${currentSearch?.input}/${page}`
           );
           setProducts(data.data);
       }
-      setCurrentPage(newPage);
+      setCurrentPage(page);
       setIsLoading(false);
       setErrMsg("");
     } catch (error: any) {
@@ -145,11 +144,16 @@ export default function AdminProductPage() {
 
   const productDisplay = products.length ? (
     products.map((product) => (
-      <ProductEditForm
-        product={product}
-        categories={categories}
-        key={product.id}
-      />
+      <div className="w-full my-2" key={product.id}>
+        <ProductEditForm
+          product={product}
+          categories={categories}
+          open={open === product.id}
+          setOpen={setOpen}
+          setErrMsg={setErrMsg}
+          setProducts={setProducts}
+        />
+      </div>
     ))
   ) : (
     <div>No Products Found.</div>
@@ -202,7 +206,7 @@ export default function AdminProductPage() {
             page={currentPage}
             variant="outlined"
             shape="rounded"
-            onChange={handleChange}
+            onChange={handleChangePage}
           />
         )}
       </div>
