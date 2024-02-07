@@ -2,6 +2,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Backdrop,
   Typography,
 } from "@mui/material";
 
@@ -50,6 +51,23 @@ export default function ProductEditForm({
 
   const handleCheckBox = () => {};
 
+  const handleCategory = async (e: {
+    target: { value: string; checked: boolean };
+  }) => {
+    try {
+      setIsLoading(true);
+      const { data } = await axios.put(`${BACKENDURL}/category/product`, {
+        category: e.target.value,
+        link: e.target.checked,
+        productId: product.id,
+      });
+      updateProduct(data);
+    } catch (error) {
+      setErrMsg("Somethings wrong. Cannot change for now");
+      setIsLoading(false);
+    }
+  };
+
   const handleThumbnail = async (photoId: number) => {
     try {
       setIsLoading(true);
@@ -57,43 +75,38 @@ export default function ProductEditForm({
         `${BACKENDURL}/product/photo/thumbnail/`,
         { photoId }
       );
-      setProducts((prev: product[]) => {
-        const newProducts: product[] = [...prev];
-        const index = newProducts.findIndex(
-          (findProduct) => findProduct.id === product.id
-        );
-        newProducts[index] = data;
-        return newProducts;
-      });
-      setErrMsg("");
-      setIsLoading(false);
+      updateProduct(data);
     } catch (error) {
-      setErrMsg("Cannot delete for now");
+      setErrMsg("Somethings Wrong. Cannot delete for now");
       setIsLoading(false);
     }
   };
+
   const handleDelete = async (photoId: number) => {
     try {
       setIsLoading(true);
       const { data } = await axios.delete(
         `${BACKENDURL}/product/photo/${photoId}`
       );
-      setProducts((prev: product[]) => {
-        const newProducts: product[] = [...prev];
-        const index = newProducts.findIndex(
-          (findProduct) => findProduct.id === product.id
-        );
-        newProducts[index] = data;
-        return newProducts;
-      });
-      setIsLoading(false);
-      setErrMsg("");
+      updateProduct(data);
     } catch (error) {
-      setErrMsg("Cannot delete for now");
+      setErrMsg("Somethings wrong. Cannot delete for now");
       setIsLoading(false);
     }
   };
 
+  const updateProduct = (data: product) => {
+    setProducts((prev: product[]) => {
+      const newProducts: product[] = [...prev];
+      const index = newProducts.findIndex(
+        (findProduct) => findProduct.id === product.id
+      );
+      newProducts[index] = data;
+      return newProducts;
+    });
+    setErrMsg("");
+    setIsLoading(false);
+  };
   const photoDisplay = !!product.productPhotos.length ? (
     product.productPhotos.map((photo) => {
       return (
@@ -135,6 +148,7 @@ export default function ProductEditForm({
   for (const category of product.categories) {
     hashProductCat[category.name] = true;
   }
+  console.log(product);
   const categoryDisplay = categories.map((category) => {
     return (
       <tr key={category}>
@@ -143,8 +157,9 @@ export default function ProductEditForm({
           <input
             className="checkbox"
             type="checkbox"
-            checked={hashProductCat[category]}
-            onChange={handleCheckBox}
+            value={category}
+            checked={!!hashProductCat[category]}
+            onChange={handleCategory}
           />
         </td>
       </tr>
@@ -157,73 +172,69 @@ export default function ProductEditForm({
         <Typography sx={{ width: "70%" }}>{product.name}</Typography>
         <Typography sx={{ width: "30%" }}>Stocks: {product.stocks}</Typography>
       </AccordionSummary>
-
-      {isLoading ? (
-        <AccordionDetails>
-          <CircularProgress />
-        </AccordionDetails>
-      ) : (
-        <AccordionDetails>
-          <table className="table border-b-2 border-neutral">
-            <tbody>
+      <AccordionDetails>
+        <Backdrop open={isLoading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
+        <table className="table border-b-2 border-neutral">
+          <tbody>
+            <tr>
+              <th>Name:</th>
+              <td>{product.name}</td>
+            </tr>
+            <tr>
+              <th>Stocks:</th>
+              <td>{product.stocks}</td>
+            </tr>
+            <tr>
+              <th>Price:</th>
+              <td>{product.price}</td>
+            </tr>
+            <tr>
+              <th>New Product:</th>
+              <td>
+                <input
+                  className="checkbox"
+                  type="checkbox"
+                  checked={!!product.newproduct}
+                  onChange={handleCheckBox}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>On sale:</th>
+              <td>
+                <input
+                  className="checkbox"
+                  type="checkbox"
+                  checked={!!product.onsale}
+                  onChange={handleCheckBox}
+                />
+              </td>
+            </tr>
+            {!!product.onsale && (
               <tr>
-                <th>Name:</th>
-                <td>{product.name}</td>
+                <th>Discount:</th>
+                <td>{product.onsale.discount}</td>
               </tr>
-              <tr>
-                <th>Stocks:</th>
-                <td>{product.stocks}</td>
-              </tr>
-              <tr>
-                <th>Price:</th>
-                <td>{product.price}</td>
-              </tr>
-              <tr>
-                <th>New Product:</th>
-                <td>
-                  <input
-                    className="checkbox"
-                    type="checkbox"
-                    checked={!!product.newproduct}
-                    onChange={handleCheckBox}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>On sale:</th>
-                <td>
-                  <input
-                    className="checkbox"
-                    type="checkbox"
-                    checked={!!product.onsale}
-                    onChange={handleCheckBox}
-                  />
-                </td>
-              </tr>
-              {!!product.onsale && (
-                <tr>
-                  <th>Discount:</th>
-                  <td>{product.onsale.discount}</td>
-                </tr>
-              )}
-            </tbody>
+            )}
+          </tbody>
+        </table>
+        <div className="p-4">
+          <b className="text-md">Photos:</b>
+          <div className="flex flex-wrap">{photoDisplay}</div>
+        </div>
+        <div className="p-4">
+          <b className="text-md">Description:</b>
+          <p>{product.description}</p>
+        </div>
+        <div className="p-4 space-y-2">
+          <b className="text-xl ">Category:</b>
+          <table className="table">
+            <tbody> {categoryDisplay}</tbody>
           </table>
-          <div className="p-4">
-            <b className="text-md">Photos:</b>
-            <div className="flex flex-wrap">{photoDisplay}</div>
-          </div>
-          <div className="p-4">
-            <b className="text-md">Description:</b>
-            <p>{product.description}</p>
-          </div>
-          <div className="p-4 space-y-2">
-            <b className="text-xl ">Category:</b>
-            <table className="table">
-              <tbody> {categoryDisplay}</tbody>
-            </table>
-          </div>
-        </AccordionDetails>
-      )}
+        </div>
+      </AccordionDetails>
     </Accordion>
   );
 }
