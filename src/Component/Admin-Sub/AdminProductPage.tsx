@@ -51,7 +51,6 @@ export default function AdminProductPage() {
     fetchData();
   }, []);
 
-  console.log(products);
   const handleSearch = async () => {
     try {
       setIsLoading(true);
@@ -83,21 +82,31 @@ export default function AdminProductPage() {
           setTotalPage(Math.ceil(stockDataRes.data.count / 5));
           setProducts(stockDataRes.data.data);
           break;
+        case "category":
+          const categoryDataRes = await axios.get(
+            `${BACKENDURL}/product/admin/category/${selectedCategory}/1`
+          );
+          setTotalPage(Math.ceil(categoryDataRes.data.count / 5));
+          setProducts(categoryDataRes.data.data);
+          break;
         default:
           throw new Error("No Search Found.");
       }
       setCurrentPage(1);
-      setCurrentSearch({ type: type, input: searchInput });
+      setCurrentSearch({
+        type: type,
+        input: type === "category" ? selectedCategory : searchInput,
+      });
       setSearchInput("");
       setIsLoading(false);
       setErrMsg("");
     } catch (error: any) {
-      console.log(error);
       setErrMsg(error.message);
       setIsLoading(false);
     }
   };
 
+  console.log(products);
   const handleChange = async (
     e: React.ChangeEvent<unknown>,
     newPage: number
@@ -111,20 +120,11 @@ export default function AdminProductPage() {
           );
           setProducts(allDataRes.data.data);
           break;
-        case "name":
-          const nameDataRes = await axios.get(
-            `${BACKENDURL}/product/admin/name/${currentSearch.input}/${newPage}`
-          );
-          setProducts(nameDataRes.data.data);
-          break;
-        case "stocks":
-          const stockDataRes = await axios.get(
-            `${BACKENDURL}/product/admin/stocks/${currentSearch.input}/${newPage}`
-          );
-          setProducts(stockDataRes.data.data);
-          break;
         default:
-          throw new Error("Somethings wrong with the search page.");
+          const { data } = await axios.get(
+            `${BACKENDURL}/product/admin/${currentSearch?.type}/${currentSearch?.input}/${newPage}`
+          );
+          setProducts(data.data);
       }
       setCurrentPage(newPage);
       setIsLoading(false);
