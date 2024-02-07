@@ -49,6 +49,29 @@ export default function ProductEditForm({
   };
 
   const handleCheckBox = () => {};
+
+  const handleThumbnail = async (photoId: number) => {
+    try {
+      setIsLoading(true);
+      const { data } = await axios.put(
+        `${BACKENDURL}/product/photo/thumbnail/`,
+        { photoId }
+      );
+      setProducts((prev: product[]) => {
+        const newProducts: product[] = [...prev];
+        const index = newProducts.findIndex(
+          (findProduct) => findProduct.id === product.id
+        );
+        newProducts[index] = data;
+        return newProducts;
+      });
+      setErrMsg("");
+      setIsLoading(false);
+    } catch (error) {
+      setErrMsg("Cannot delete for now");
+      setIsLoading(false);
+    }
+  };
   const handleDelete = async (photoId: number) => {
     try {
       setIsLoading(true);
@@ -64,8 +87,10 @@ export default function ProductEditForm({
         return newProducts;
       });
       setIsLoading(false);
+      setErrMsg("");
     } catch (error) {
       setErrMsg("Cannot delete for now");
+      setIsLoading(false);
     }
   };
 
@@ -94,8 +119,9 @@ export default function ProductEditForm({
             <input
               className="checkbox"
               type="checkbox"
+              disabled={photo.thumbnail}
               checked={photo.thumbnail}
-              onChange={handleCheckBox}
+              onChange={() => handleThumbnail(photo.id)}
             />
           </div>
         </div>
