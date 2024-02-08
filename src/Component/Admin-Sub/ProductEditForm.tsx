@@ -61,6 +61,7 @@ export default function ProductEditForm({
   const [editInput, setEditInput] = useState<string>("");
   const [fileValue, setFileValue] = useState<File[]>([]);
   const [fileName, setFileName] = useState<string[]>([]);
+
   const handleChange = () => {
     if (open) {
       setOpen(null);
@@ -68,6 +69,19 @@ export default function ProductEditForm({
   };
 
   const handleCheckBox = () => {};
+
+  const handleChangeNewProduct = async (isNew: boolean) => {
+    try {
+      const { data } = await axios.put(
+        `${BACKENDURL}/product/newProduct/${product.id}`,
+        { isNew: isNew }
+      );
+      updateProduct(data);
+    } catch (error) {
+      setErrMsg("Somethings wrong. Cannot update.");
+      setIsLoading(false);
+    }
+  };
 
   const handleConfirmEdit = async () => {
     try {
@@ -407,7 +421,7 @@ export default function ProductEditForm({
                   className="checkbox"
                   type="checkbox"
                   checked={!!product.newproduct}
-                  onChange={handleCheckBox}
+                  onChange={(e) => handleChangeNewProduct(e.target.checked)}
                 />
               </td>
             </tr>
