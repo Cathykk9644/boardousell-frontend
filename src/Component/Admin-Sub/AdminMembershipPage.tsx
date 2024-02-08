@@ -29,6 +29,15 @@ export default function AdminMembershipPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
+    if (errMsg.length) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [errMsg]);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);

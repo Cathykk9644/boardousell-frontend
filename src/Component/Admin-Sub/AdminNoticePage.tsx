@@ -6,6 +6,14 @@ export default function AdminNoticePage() {
   const [keyword, setKeyword] = useState<string>("");
   const [errMsg, setErrMsg] = useState("");
 
+  useEffect(() => {
+    if (errMsg.length) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [errMsg]);
   const handleSearch = () => {
     try {
     } catch (error: any) {

@@ -40,3 +40,10 @@ html {
   min-width: 300px;
   min-height: 300px;
 }
+
+.table-cell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -12,7 +12,12 @@ type product = {
   name: string;
   description: string;
   stocks: number;
-  productPhotos: { id: number; url: string; thumbnail: boolean }[];
+  productPhotos: {
+    id: number;
+    url: string;
+    thumbnail: boolean;
+    fileName: string;
+  }[];
   categories: { id: number; name: string }[];
   newproduct?: { id: number };
   onsale?: { id: number; discount: number };
@@ -35,6 +40,16 @@ export default function AdminProductPage() {
   const [open, setOpen] = useState<number | null>(null);
   const [currentSearch, setCurrentSearch] = useState<search>(null);
   const [errMsg, setErrMsg] = useState("");
+
+  useEffect(() => {
+    if (errMsg.length) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [errMsg]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {

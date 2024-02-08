@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 
@@ -7,6 +7,14 @@ export default function AdminInfoPage() {
   const [keyword, setKeyword] = useState<string>("");
   const [errMsg, setErrMsg] = useState("");
 
+  useEffect(() => {
+    if (errMsg.length) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [errMsg]);
   const handleSearch = () => {
     try {
     } catch (error: any) {

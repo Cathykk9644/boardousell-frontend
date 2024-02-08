@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
@@ -35,7 +35,14 @@ export default function AdminUserPage() {
   const [editId, setEditId] = useState<boolean | number | null>(null);
   const [editVal, setEditVal] = useState<string>("");
   const [expand, setExpanded] = useState<number | null>(null);
-
+  useEffect(() => {
+    if (errMsg.length) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [errMsg]);
   const handleSearch = async () => {
     try {
       setIsLoading(true);

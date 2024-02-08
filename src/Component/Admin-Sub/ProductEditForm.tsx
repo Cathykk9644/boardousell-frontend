@@ -12,6 +12,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
 import axios from "axios";
 import { BACKENDURL } from "../../constant";
+import { storage } from "../../firebase";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 
 type product = {
   id: number;
@@ -19,7 +26,12 @@ type product = {
   name: string;
   description: string;
   stocks: number;
-  productPhotos: { id: number; url: string; thumbnail: boolean }[];
+  productPhotos: {
+    id: number;
+    url: string;
+    thumbnail: boolean;
+    fileName: string;
+  }[];
   categories: { id: number; name: string }[];
   newproduct?: { id: number };
   onsale?: { id: number; discount: number };
@@ -86,13 +98,17 @@ export default function ProductEditForm({
     }
   };
 
-  const handleDelete = async (photoId: number) => {
+  const handleDelete = async (photoId: number, deletefileName: string) => {
     try {
       setIsLoading(true);
       const { data } = await axios.delete(
         `${BACKENDURL}/product/photo/${photoId}`
       );
-      // Need to add Delete file from firebase storage here
+      const storageRef = ref(
+        storage,
+        `/product/${product.name}/${deletefileName}`
+      );
+      await deleteObject(storageRef);
       updateProduct(data);
     } catch (error) {
       setErrMsg("Somethings wrong. Cannot delete for now");
@@ -121,7 +137,40 @@ export default function ProductEditForm({
     setFileValue((prev) => prev.filter((file) => file.name !== name));
   };
 
-  const handleUploadFile = () => {};
+  const handleUploadFile = async () => {
+    for (const photo of product.productPhotos) {
+      if (fileName.includes(photo.fileName)) {
+        return setErrMsg(
+          `${photo.fileName} is already in used, please changed name first.`
+        );
+      }
+    }
+    try {
+      setIsLoading(true);
+      for (const file of fileValue) {
+        const storageRef = ref(
+          storage,
+          `/product/${product.name}/${file.name}`
+        );
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        const { data } = await axios.post(`${BACKENDURL}/product/photo/`, {
+          url,
+          fileName: file.name,
+          productId: product.id,
+        });
+        updateProduct(data);
+        setIsLoading(true);
+      }
+      setIsLoading(false);
+      setFileName([]);
+      setFileValue([]);
+    } catch (error) {
+      console.log(error);
+      setErrMsg("Somethings went wrong, cannot upload photos now.");
+      setIsLoading(false);
+    }
+  };
 
   const updateProduct = (data: product) => {
     setProducts((prev: product[]) => {
@@ -153,7 +202,7 @@ export default function ProductEditForm({
           <div className="flex flex-col items-center m-5">
             <button
               className="btn btn-sm btn-square"
-              onClick={() => handleDelete(photo.id)}
+              onClick={() => handleDelete(photo.id, photo.fileName)}
             >
               <DeleteIcon />
             </button>
@@ -196,10 +245,8 @@ export default function ProductEditForm({
   });
 
   const inputFileDisplay = fileName.map((name) => (
-    <tr key={name} className="w-full">
-      <td>
-        <span className="w-60">{name}</span>
-      </td>
+    <tr key={name}>
+      <td className="table-cell ">{name}</td>
       <td>
         <button
           className="btn btn-sm btn-square btn-ghost"
@@ -218,8 +265,8 @@ export default function ProductEditForm({
         <Typography sx={{ width: "30%" }}>Stocks: {product.stocks}</Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <Backdrop open={isLoading}>
-          <CircularProgress color="inherit" />
+        <Backdrop open={isLoading} sx={{ zIndex: 99 }}>
+          <CircularProgress />
         </Backdrop>
         <table className="table border-b-2 border-neutral">
           <tbody>
