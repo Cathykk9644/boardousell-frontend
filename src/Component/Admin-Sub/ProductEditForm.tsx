@@ -5,7 +5,7 @@ import {
   Backdrop,
   Typography,
 } from "@mui/material";
-
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { CircularProgress } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -33,7 +33,7 @@ type props = {
   setProducts: Function;
 };
 
-type editType = "name" | "Stocks" | "Price" | "Description";
+type editType = "name" | "Stocks" | "Price" | "Description" | null;
 export default function ProductEditForm({
   product,
   categories,
@@ -43,6 +43,10 @@ export default function ProductEditForm({
   setProducts,
 }: props) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [editType, setEditType] = useState<editType>(null);
+  const [editInput, setEditInput] = useState<string>("");
+  const [fileValue, setFileValue] = useState<File[]>([]);
+  const [fileName, setFileName] = useState<string[]>([]);
   const handleChange = () => {
     if (open) {
       setOpen(null);
@@ -88,12 +92,36 @@ export default function ProductEditForm({
       const { data } = await axios.delete(
         `${BACKENDURL}/product/photo/${photoId}`
       );
+      // Need to add Delete file from firebase storage here
       updateProduct(data);
     } catch (error) {
       setErrMsg("Somethings wrong. Cannot delete for now");
       setIsLoading(false);
     }
   };
+
+  const handleAddFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) {
+      return setErrMsg("Can't find your file while uploading photo.");
+    }
+    const newFileNames = [...fileName];
+    const newFileValue = [...fileValue];
+    for (const file of e.target.files) {
+      if (!newFileNames.includes(file.name)) {
+        newFileNames.push(file.name);
+        newFileValue.push(file);
+      }
+    }
+    setFileName([...newFileNames]);
+    setFileValue([...newFileValue]);
+  };
+
+  const handleDeleteFile = (name: string) => {
+    setFileName((prev) => prev.filter((fileName) => fileName !== name));
+    setFileValue((prev) => prev.filter((file) => file.name !== name));
+  };
+
+  const handleUploadFile = () => {};
 
   const updateProduct = (data: product) => {
     setProducts((prev: product[]) => {
@@ -107,6 +135,7 @@ export default function ProductEditForm({
     setErrMsg("");
     setIsLoading(false);
   };
+
   const photoDisplay = !!product.productPhotos.length ? (
     product.productPhotos.map((photo) => {
       return (
@@ -148,7 +177,7 @@ export default function ProductEditForm({
   for (const category of product.categories) {
     hashProductCat[category.name] = true;
   }
-  console.log(product);
+
   const categoryDisplay = categories.map((category) => {
     return (
       <tr key={category}>
@@ -165,6 +194,22 @@ export default function ProductEditForm({
       </tr>
     );
   });
+
+  const inputFileDisplay = fileName.map((name) => (
+    <tr key={name} className="w-full">
+      <td>
+        <span className="w-60">{name}</span>
+      </td>
+      <td>
+        <button
+          className="btn btn-sm btn-square btn-ghost"
+          onClick={() => handleDeleteFile(name)}
+        >
+          <DeleteIcon />
+        </button>
+      </td>
+    </tr>
+  ));
 
   return (
     <Accordion expanded={open} onChange={handleChange}>
@@ -223,6 +268,41 @@ export default function ProductEditForm({
         <div className="p-4">
           <b className="text-md">Photos:</b>
           <div className="flex flex-wrap">{photoDisplay}</div>
+          <div className="mt-3">
+            <b>Upload photo: </b>
+            <input
+              className="file-input file-input-sm"
+              type="file"
+              accept="image/png, image/jpeg"
+              multiple
+              onChange={handleAddFile}
+            />
+          </div>
+          {!!fileName.length && (
+            <table className="table border border-2 border-neutral">
+              <tbody>
+                <tr>
+                  <th>Uploaded Photos:</th>
+                  <td></td>
+                </tr>
+                {inputFileDisplay}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>
+                    <button
+                      className="btn-sm btn flex flex-row items-center"
+                      onClick={handleUploadFile}
+                    >
+                      Sumbit
+                      <UploadFileIcon />
+                    </button>
+                  </th>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          )}
         </div>
         <div className="p-4">
           <b className="text-md">Description:</b>
@@ -230,8 +310,9 @@ export default function ProductEditForm({
         </div>
         <div className="p-4 space-y-2">
           <b className="text-xl ">Category:</b>
+
           <table className="table">
-            <tbody> {categoryDisplay}</tbody>
+            <tbody>{categoryDisplay}</tbody>
           </table>
         </div>
       </AccordionDetails>
