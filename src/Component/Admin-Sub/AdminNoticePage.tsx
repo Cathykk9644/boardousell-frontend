@@ -1,9 +1,19 @@
-import { useEffect, useState } from "react";
-import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import { CircularProgress } from "@mui/material";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { BACKENDURL } from "../../constant";
+import NoticeEditForm from "./AdminNotice/NoticeEditForm";
 
+type notice = {
+  id: number;
+  title: string;
+  url?: string;
+  detail: string;
+};
 export default function AdminNoticePage() {
-  const [notices, setNotices] = useState([]);
-  const [keyword, setKeyword] = useState<string>("");
+  const [notices, setNotices] = useState<notice[]>([]);
+  const [expand, setExpand] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
@@ -14,24 +24,38 @@ export default function AdminNoticePage() {
       });
     }
   }, [errMsg]);
-  const handleSearch = () => {
-    try {
-    } catch (error: any) {
-      setErrMsg(error.message);
-    }
-  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const { data } = await axios.get(`${BACKENDURL}/notice`);
+        setNotices(data);
+        setIsLoading(false);
+      } catch (error) {
+        setErrMsg("Cannot get data");
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const noticeDisplay = notices.map((notice) => (
+    <NoticeEditForm
+      open={expand === notice.id}
+      notice={notice}
+      setErrMsg={setErrMsg}
+      setExpand={setExpand}
+      setNotices={setNotices}
+      key={notice.id}
+    />
+  ));
+
   return (
     <div className="flex flex-col items-center">
       {!!errMsg.length && <span className="text-error m-1 ">{errMsg}</span>}
-      <div className="flex items-center justify-center">
-        <span className="text-md">Search Notices:</span>
-        <input
-          className="input input-bordered input-md mx-3"
-          placeholder="All"
-        />
-        <button className="btn btn-md btn-square " onClick={handleSearch}>
-          <SearchRoundedIcon />
-        </button>
+      <div className="w-5/6 flex flex-col items-center">
+        {isLoading ? <CircularProgress /> : noticeDisplay}
       </div>
     </div>
   );

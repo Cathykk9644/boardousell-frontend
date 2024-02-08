@@ -3,8 +3,8 @@ import { CircularProgress, Pagination } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { BACKENDURL } from "../../constant";
 import axios from "axios";
-import ProductEditForm from "./ProductEditForm";
-import ProductAddForm from "./ProductAddForm";
+import ProductEditForm from "./AdminProduct/ProductEditForm";
+import ProductAddForm from "./AdminProduct/ProductAddForm";
 
 type key = "all" | "name" | "stocks" | "category";
 type product = {

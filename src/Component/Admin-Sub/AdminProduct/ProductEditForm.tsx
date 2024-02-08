@@ -13,8 +13,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
 import axios from "axios";
-import { BACKENDURL } from "../../constant";
-import { storage } from "../../firebase";
+import { BACKENDURL } from "../../../constant";
+import { storage } from "../../../firebase";
 import {
   deleteObject,
   getDownloadURL,
@@ -264,13 +264,12 @@ export default function ProductEditForm({
           className="flex items-end justify-between border-2 w-full sm:w-2/5 m-1"
           key={photo.id}
         >
-          <a href={photo.url} target="_blank">
-            <img
-              className="w-32 m-3"
-              src={photo.url}
-              alt={photo.id.toString()}
-            />
-          </a>
+          <img
+            className="w-32 m-3 cursor-pointer"
+            src={photo.url}
+            alt={photo.id.toString()}
+            onClick={() => window.open(photo.url)}
+          />
           <div className="flex flex-col items-center m-5">
             <button
               className="btn btn-sm btn-square"

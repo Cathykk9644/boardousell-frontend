@@ -10,9 +10,9 @@ import { useState } from "react";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
-import { BACKENDURL } from "../../constant";
+import { BACKENDURL } from "../../../constant";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { storage } from "../../firebase";
+import { storage } from "../../../firebase";
 type product = {
   id: number;
   price: number;

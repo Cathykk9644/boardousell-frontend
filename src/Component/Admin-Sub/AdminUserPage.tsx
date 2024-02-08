@@ -32,7 +32,7 @@ export default function AdminUserPage() {
   const [keyword, setKeyword] = useState<string>("");
   const [type, setType] = useState<key>("all");
   const [errMsg, setErrMsg] = useState("");
-  const [editId, setEditId] = useState<boolean | number | null>(null);
+  const [editId, setEditId] = useState<number | null>(null);
   const [editVal, setEditVal] = useState<string>("");
   const [expand, setExpanded] = useState<number | null>(null);
   useEffect(() => {
@@ -68,7 +68,8 @@ export default function AdminUserPage() {
 
   const handleChange = (userId: number) => {
     if (editVal) {
-      handleConfirmEdit();
+      setEditId(null);
+      setEditVal("");
     }
     setExpanded((prev) => (prev === userId ? null : userId));
   };
@@ -109,86 +110,90 @@ export default function AdminUserPage() {
     }
   };
 
-  const userDisplay = users.map((user: user) => {
-    return (
-      <Accordion
-        expanded={expand === user.id}
-        onChange={() => handleChange(user.id)}
-        key={user.id}
-      >
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>
-            {type === "all" ? `name: ${user.name}` : `${type}: ${user[type]}`}
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <table className="table">
-            <tbody>
-              <tr>
-                <th>Name:</th>
-                <td>{user.name}</td>
-              </tr>
-              <tr>
-                <th>Email:</th>
-                <td>{user.email}</td>
-              </tr>
-              <tr>
-                <th>Phone:</th>
-                <td>{user.phone}</td>
-              </tr>
-              <tr>
-                <th>Membership:</th>
-                <td>{user.level.title}</td>
-              </tr>
-              <tr>
-                <th>Points:</th>
-                {editId === user.id ? (
-                  <td className="flex flex-start">
-                    <input
-                      className="input input-sm"
-                      value={editVal}
-                      onChange={(e) => {
-                        if (!isNaN(Number(e.target.value))) {
-                          setEditVal(e.target.value);
-                        }
-                      }}
-                    />
-                    <button
-                      className="btn btn-ghost btn-sm btn-square"
-                      onClick={handleConfirmEdit}
-                    >
-                      <DoneRoundedIcon />
-                    </button>
-                  </td>
-                ) : (
-                  <td>
-                    {user.points}
-                    <button
-                      className="ml-3 btn btn-ghost btn-sm btn-square"
-                      onClick={() => handleEdit(user.id, user.points)}
-                    >
-                      <EditRoundedIcon />
-                    </button>
-                  </td>
-                )}
-              </tr>
-              <tr>
-                <th>Admin:</th>
-                <td>
-                  <input
-                    type="checkbox"
-                    checked={user.isAdmin}
-                    className="checkbox checkbox-sm"
-                    onChange={(e) => handleAdminChange(e, user.id)}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </AccordionDetails>
-      </Accordion>
-    );
-  });
+  const userDisplay = users.length
+    ? users.map((user: user) => {
+        return (
+          <Accordion
+            expanded={expand === user.id}
+            onChange={() => handleChange(user.id)}
+            key={user.id}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography>
+                {type === "all"
+                  ? `name: ${user.name}`
+                  : `${type}: ${user[type]}`}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <table className="table">
+                <tbody>
+                  <tr>
+                    <th>Name:</th>
+                    <td>{user.name}</td>
+                  </tr>
+                  <tr>
+                    <th>Email:</th>
+                    <td>{user.email}</td>
+                  </tr>
+                  <tr>
+                    <th>Phone:</th>
+                    <td>{user.phone}</td>
+                  </tr>
+                  <tr>
+                    <th>Membership:</th>
+                    <td>{user.level.title}</td>
+                  </tr>
+                  <tr>
+                    <th>Points:</th>
+                    {editId === user.id ? (
+                      <td className="flex flex-start">
+                        <input
+                          className="input input-sm"
+                          value={editVal}
+                          onChange={(e) => {
+                            if (!isNaN(Number(e.target.value))) {
+                              setEditVal(e.target.value);
+                            }
+                          }}
+                        />
+                        <button
+                          className="btn btn-ghost btn-sm btn-square"
+                          onClick={handleConfirmEdit}
+                        >
+                          <DoneRoundedIcon />
+                        </button>
+                      </td>
+                    ) : (
+                      <td>
+                        {user.points}
+                        <button
+                          className="ml-3 btn btn-ghost btn-sm btn-square"
+                          onClick={() => handleEdit(user.id, user.points)}
+                        >
+                          <EditRoundedIcon />
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                  <tr>
+                    <th>Admin:</th>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={user.isAdmin}
+                        className="checkbox checkbox-sm"
+                        onChange={(e) => handleAdminChange(e, user.id)}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </AccordionDetails>
+          </Accordion>
+        );
+      })
+    : "No user found in this current search.";
 
   return (
     <div className="flex flex-col items-center">
@@ -222,7 +227,7 @@ export default function AdminUserPage() {
           <SearchRoundedIcon />
         </button>
       </div>
-      <div className="w-5/6">
+      <div className="w-5/6 flex flex-col items-center">
         {isLoading ? <CircularProgress /> : userDisplay}
       </div>
     </div>

@@ -206,7 +206,7 @@ export default function AdminMembershipPage() {
   ) : (
     <div className="flex flex-col items-center">
       {!!errMsg.length && <span className="text-error m-1 ">{errMsg}</span>}
-      <div className="w-5/6">
+      <div className="w-full sm:w-5/6">
         <table className="table">
           <thead>
             <tr>
