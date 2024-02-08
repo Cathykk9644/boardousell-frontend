@@ -261,7 +261,7 @@ export default function ProductEditForm({
     product.productPhotos.map((photo) => {
       return (
         <div
-          className="flex items-end justify-between border-2 w-full sm:w-3/4 m-1"
+          className="flex items-end justify-between border-2 w-full sm:w-2/5 m-1"
           key={photo.id}
         >
           <a href={photo.url} target="_blank">
@@ -476,7 +476,7 @@ export default function ProductEditForm({
         </table>
         <div className="p-4">
           <b className="text-md">Photos:</b>
-          <div className="flex flex-wrap">{photoDisplay}</div>
+          <div className="flex flex-wrap justify-around">{photoDisplay}</div>
           <div className="mt-3">
             <b>Upload photo: </b>
             <input

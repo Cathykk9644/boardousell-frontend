@@ -21,6 +21,7 @@ module.exports = {
     "./src/Component/Admin-Sub/AdminMembershipPage.tsx",
     "./src/Component/Admin-Sub/AdminCategoryPage.tsx",
     "./src/Component/Admin-Sub/ProductEditForm.tsx",
+    "./src/Component/Admin-Sub/ProductAddForm.tsx",
     "./src/Component/SearchPage.tsx",
     "./src/Component/AboutUsPage.tsx",
     "./src/Component/CheckoutPage.tsx",

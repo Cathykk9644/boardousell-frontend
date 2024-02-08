@@ -4,6 +4,7 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { BACKENDURL } from "../../constant";
 import axios from "axios";
 import ProductEditForm from "./ProductEditForm";
+import ProductAddForm from "./ProductAddForm";
 
 type key = "all" | "name" | "stocks" | "category";
 type product = {
@@ -38,6 +39,8 @@ export default function AdminProductPage() {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [totalPage, setTotalPage] = useState<number>(0);
   const [open, setOpen] = useState<number | null>(null);
+  const [isAdding, setIsAdding] = useState<boolean>(false);
+  const [newAddedProducts, setNewAddedProducts] = useState<product[]>([]);
   const [currentSearch, setCurrentSearch] = useState<search>(null);
   const [errMsg, setErrMsg] = useState("");
 
@@ -113,6 +116,7 @@ export default function AdminProductPage() {
         input: type === "category" ? selectedCategory : searchInput,
       });
       setSearchInput("");
+      setNewAddedProducts([]);
       setIsLoading(false);
       setErrMsg("");
     } catch (error: any) {
@@ -174,11 +178,24 @@ export default function AdminProductPage() {
     <div>No Products Found.</div>
   );
 
+  const newProductDisplay = newAddedProducts
+    ? newAddedProducts.map((product) => (
+        <div className="w-full my-2" key={product.id}>
+          <ProductEditForm
+            product={product}
+            categories={categories}
+            open={open === product.id}
+            setOpen={setOpen}
+            setErrMsg={setErrMsg}
+            setProducts={setNewAddedProducts}
+          />
+        </div>
+      ))
+    : null;
+
   return (
     <div className="flex flex-col items-center">
-      {!!errMsg.length && (
-        <span className="text-error m-1 w-min-">{errMsg}</span>
-      )}
+      {!!errMsg.length && <span className="text-error m-1">{errMsg}</span>}
       <div className="flex items-center justify-between w-full space-x-3">
         <span className="text-md">Products:</span>
         <select
@@ -224,6 +241,22 @@ export default function AdminProductPage() {
             onChange={handleChangePage}
           />
         )}
+      </div>
+      <ProductAddForm
+        open={isAdding}
+        categories={categories}
+        setIsAdding={setIsAdding}
+        setNewAddedProducts={setNewAddedProducts}
+      />
+      <button
+        className="btn btn-wide btn-outline my-5"
+        onClick={() => setIsAdding(true)}
+      >
+        Add Product
+      </button>
+      <div className="w-5/6 flex flex-col items-center">
+        {!!newAddedProducts.length && <h1>New Added Products:</h1>}
+        {newProductDisplay}
       </div>
     </div>
   );

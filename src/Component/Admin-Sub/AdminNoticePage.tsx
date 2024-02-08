@@ -22,9 +22,7 @@ export default function AdminNoticePage() {
   };
   return (
     <div className="flex flex-col items-center">
-      {!!errMsg.length && (
-        <span className="text-error m-1 w-min-">{errMsg}</span>
-      )}
+      {!!errMsg.length && <span className="text-error m-1 ">{errMsg}</span>}
       <div className="flex items-center justify-center">
         <span className="text-md">Search Notices:</span>
         <input

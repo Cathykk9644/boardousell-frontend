@@ -205,9 +205,7 @@ export default function AdminMembershipPage() {
     <CircularProgress />
   ) : (
     <div className="flex flex-col items-center">
-      {!!errMsg.length && (
-        <span className="text-error m-1 w-min-">{errMsg}</span>
-      )}
+      {!!errMsg.length && <span className="text-error m-1 ">{errMsg}</span>}
       <div className="w-5/6">
         <table className="table">
           <thead>
