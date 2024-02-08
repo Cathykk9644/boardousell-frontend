@@ -8,6 +8,7 @@ import {
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { CircularProgress } from "@mui/material";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
@@ -68,7 +69,60 @@ export default function ProductEditForm({
 
   const handleCheckBox = () => {};
 
-  const handleEdit = () => {};
+  const handleConfirmEdit = async () => {
+    try {
+      if (editType === "discount") {
+        if (product.onsale) {
+          const { data } = await axios.put(
+            `${BACKENDURL}/product/discount/${product.onsale.id}`,
+            { discount: editInput }
+          );
+          updateProduct(data);
+        }
+      } else if (editType !== null) {
+        const { data } = await axios.put(
+          `${BACKENDURL}/product/info/${product.id}`,
+          { [editType]: editInput }
+        );
+        updateProduct(data);
+      } else {
+        throw new Error();
+      }
+      setEditInput("");
+      setEditType(null);
+    } catch (error) {
+      setErrMsg("Somethings wrong. Cannot update.");
+      setIsLoading(false);
+    }
+  };
+
+  const handleEdit = (type: editType) => {
+    if (type === editType) {
+      handleConfirmEdit();
+      return;
+    }
+    switch (type) {
+      case "description":
+        setEditInput(product.description);
+        break;
+      case "discount":
+        product.onsale && setEditInput(product.onsale.discount.toString());
+        break;
+      case "name":
+        setEditInput(product.name);
+        break;
+      case "price":
+        setEditInput(product.price.toString());
+        break;
+      case "stocks":
+        setEditInput(product.stocks.toString());
+        break;
+      default:
+        return;
+    }
+    setEditType(type);
+  };
+
   const handleCategory = async (e: {
     target: { value: string; checked: boolean };
   }) => {
@@ -280,9 +334,17 @@ export default function ProductEditForm({
                   type="input"
                   value={editType === "name" ? editInput : product.name}
                   disabled={editType !== "name"}
+                  onChange={(e) => setEditInput(e.target.value)}
                 />
-                <button className="btn btn-sm btn-square">
-                  <EditRoundedIcon />
+                <button
+                  className="btn btn-sm btn-square"
+                  onClick={() => handleEdit("name")}
+                >
+                  {editType === "name" ? (
+                    <DoneRoundedIcon />
+                  ) : (
+                    <EditRoundedIcon />
+                  )}
                 </button>
               </td>
             </tr>
@@ -294,9 +356,21 @@ export default function ProductEditForm({
                   type="input"
                   value={editType === "stocks" ? editInput : product.stocks}
                   disabled={editType !== "stocks"}
+                  onChange={(e) => {
+                    if (!isNaN(Number(e.target.value))) {
+                      setEditInput(e.target.value);
+                    }
+                  }}
                 />
-                <button className="btn btn-sm btn-square">
-                  <EditRoundedIcon />
+                <button
+                  className="btn btn-sm btn-square"
+                  onClick={() => handleEdit("stocks")}
+                >
+                  {editType === "stocks" ? (
+                    <DoneRoundedIcon />
+                  ) : (
+                    <EditRoundedIcon />
+                  )}
                 </button>
               </td>
             </tr>
@@ -308,9 +382,21 @@ export default function ProductEditForm({
                   type="input"
                   value={editType === "price" ? editInput : product.price}
                   disabled={editType !== "price"}
+                  onChange={(e) => {
+                    if (!isNaN(Number(e.target.value))) {
+                      setEditInput(e.target.value);
+                    }
+                  }}
                 />
-                <button className="btn btn-sm btn-square">
-                  <EditRoundedIcon />
+                <button
+                  className="btn btn-sm btn-square"
+                  onClick={() => handleEdit("price")}
+                >
+                  {editType === "price" ? (
+                    <DoneRoundedIcon />
+                  ) : (
+                    <EditRoundedIcon />
+                  )}
                 </button>
               </td>
             </tr>
@@ -349,9 +435,21 @@ export default function ProductEditForm({
                         : product.onsale.discount
                     }
                     disabled={editType !== "discount"}
+                    onChange={(e) => {
+                      if (!isNaN(Number(e.target.value))) {
+                        setEditInput(e.target.value);
+                      }
+                    }}
                   />
-                  <button className="btn btn-sm btn-square">
-                    <EditRoundedIcon />
+                  <button
+                    className="btn btn-sm btn-square"
+                    onClick={() => handleEdit("discount")}
+                  >
+                    {editType === "discount" ? (
+                      <DoneRoundedIcon />
+                    ) : (
+                      <EditRoundedIcon />
+                    )}
                   </button>
                 </td>
               </tr>
@@ -403,9 +501,17 @@ export default function ProductEditForm({
             className="textarea h-36"
             value={editType === "description" ? editInput : product.description}
             disabled={editType !== "description"}
+            onChange={(e) => setEditInput(e.target.value)}
           />
-          <button className="btn btn-sm mt-2 btn-neutral">
-            Edit <EditRoundedIcon />
+          <button
+            className="btn btn-sm mt-2 btn-neutral"
+            onClick={() => handleEdit("description")}
+          >
+            {editType === "description" ? (
+              <DoneRoundedIcon />
+            ) : (
+              <EditRoundedIcon />
+            )}
           </button>
         </div>
         <div className="p-4 space-y-2">
