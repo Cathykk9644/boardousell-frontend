@@ -68,12 +68,14 @@ export default function ProductEditForm({
     } else setOpen(product.id);
   };
 
-  const handleCheckBox = () => {};
-
-  const handleChangeNewProduct = async (isNew: boolean) => {
+  const handleCheckBox = async (updateType: string, isNew: boolean) => {
+    if (editType === "discount") {
+      setEditType(null);
+      setEditInput("");
+    }
     try {
       const { data } = await axios.put(
-        `${BACKENDURL}/product/newProduct/${product.id}`,
+        `${BACKENDURL}/product/${updateType}/${product.id}`,
         { isNew: isNew }
       );
       updateProduct(data);
@@ -421,7 +423,9 @@ export default function ProductEditForm({
                   className="checkbox"
                   type="checkbox"
                   checked={!!product.newproduct}
-                  onChange={(e) => handleChangeNewProduct(e.target.checked)}
+                  onChange={(e) =>
+                    handleCheckBox("newProduct", e.target.checked)
+                  }
                 />
               </td>
             </tr>
@@ -432,7 +436,7 @@ export default function ProductEditForm({
                   className="checkbox"
                   type="checkbox"
                   checked={!!product.onsale}
-                  onChange={handleCheckBox}
+                  onChange={(e) => handleCheckBox("onsale", e.target.checked)}
                 />
               </td>
             </tr>
