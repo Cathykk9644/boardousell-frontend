@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { CircularProgress } from "@mui/material";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
@@ -45,7 +46,7 @@ type props = {
   setProducts: Function;
 };
 
-type editType = "name" | "Stocks" | "Price" | "Description" | null;
+type editType = "name" | "stocks" | "price" | "discount" | "description" | null;
 export default function ProductEditForm({
   product,
   categories,
@@ -67,6 +68,7 @@ export default function ProductEditForm({
 
   const handleCheckBox = () => {};
 
+  const handleEdit = () => {};
   const handleCategory = async (e: {
     target: { value: string; checked: boolean };
   }) => {
@@ -189,7 +191,7 @@ export default function ProductEditForm({
     product.productPhotos.map((photo) => {
       return (
         <div
-          className="flex items-end justify-between border-2 w-full sm:w-1/2 m-1"
+          className="flex items-end justify-between border-2 w-full sm:w-3/4 m-1"
           key={photo.id}
         >
           <a href={photo.url} target="_blank">
@@ -272,15 +274,45 @@ export default function ProductEditForm({
           <tbody>
             <tr>
               <th>Name:</th>
-              <td>{product.name}</td>
+              <td className="flex justify-between">
+                <input
+                  className="input input-sm w-3/4"
+                  type="input"
+                  value={editType === "name" ? editInput : product.name}
+                  disabled={editType !== "name"}
+                />
+                <button className="btn btn-sm btn-square">
+                  <EditRoundedIcon />
+                </button>
+              </td>
             </tr>
             <tr>
               <th>Stocks:</th>
-              <td>{product.stocks}</td>
+              <td className="flex justify-between">
+                <input
+                  className="input input-sm w-3/4"
+                  type="input"
+                  value={editType === "stocks" ? editInput : product.stocks}
+                  disabled={editType !== "stocks"}
+                />
+                <button className="btn btn-sm btn-square">
+                  <EditRoundedIcon />
+                </button>
+              </td>
             </tr>
             <tr>
               <th>Price:</th>
-              <td>{product.price}</td>
+              <td className="flex justify-between">
+                <input
+                  className="input input-sm w-3/4"
+                  type="input"
+                  value={editType === "price" ? editInput : product.price}
+                  disabled={editType !== "price"}
+                />
+                <button className="btn btn-sm btn-square">
+                  <EditRoundedIcon />
+                </button>
+              </td>
             </tr>
             <tr>
               <th>New Product:</th>
@@ -307,7 +339,21 @@ export default function ProductEditForm({
             {!!product.onsale && (
               <tr>
                 <th>Discount:</th>
-                <td>{product.onsale.discount}</td>
+                <td className="flex justify-between">
+                  <input
+                    className="input input-sm w-3/4"
+                    type="input"
+                    value={
+                      editType === "discount"
+                        ? editInput
+                        : product.onsale.discount
+                    }
+                    disabled={editType !== "discount"}
+                  />
+                  <button className="btn btn-sm btn-square">
+                    <EditRoundedIcon />
+                  </button>
+                </td>
               </tr>
             )}
           </tbody>
@@ -351,13 +397,19 @@ export default function ProductEditForm({
             </table>
           )}
         </div>
-        <div className="p-4">
+        <div className="p-4 flex flex-col">
           <b className="text-md">Description:</b>
-          <p>{product.description}</p>
+          <textarea
+            className="textarea h-36"
+            value={editType === "description" ? editInput : product.description}
+            disabled={editType !== "description"}
+          />
+          <button className="btn btn-sm mt-2 btn-neutral">
+            Edit <EditRoundedIcon />
+          </button>
         </div>
         <div className="p-4 space-y-2">
           <b className="text-xl ">Category:</b>
-
           <table className="table">
             <tbody>{categoryDisplay}</tbody>
           </table>
