@@ -10,9 +10,13 @@ type center = {
 export default function GoogleMap({
   location,
   setError,
+  setErrMsg,
+  setPreview,
 }: {
   location: string;
-  setError: Function;
+  setError?: Function;
+  setErrMsg?: Function;
+  setPreview?: Function;
 }) {
   const [center, setCenter] = useState<center>(null);
 
@@ -27,10 +31,15 @@ export default function GoogleMap({
           lng: data.results[0].geometry.location.lng,
         });
       } catch (error) {
-        setError({
-          backHome: false,
-          message: "Oh. Sorry, cannot load google map for now.",
-        });
+        if (setError) {
+          setError({
+            backHome: false,
+            message: "Oh. Sorry, cannot load google map for now.",
+          });
+        } else if (setErrMsg && setPreview) {
+          setErrMsg("Please enter correct location.");
+          setPreview(null);
+        }
       }
     };
     getCenter();
