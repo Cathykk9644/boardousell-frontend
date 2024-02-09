@@ -198,7 +198,7 @@ export default function AdminUserPage() {
   return (
     <div className="flex flex-col items-center">
       {!!errMsg.length && <span className="text-error m-1 ">{errMsg}</span>}
-      <div className="flex items-center justify-between w-full space-x-3">
+      <div className="flex items-center justify-between w-full space-x-3 sm:w-1/2">
         <span className="text-md">Users:</span>
         <select
           value={type}

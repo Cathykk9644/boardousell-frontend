@@ -1,7 +1,10 @@
 import { Backdrop, CircularProgress } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
+import InsertLinkRoundedIcon from "@mui/icons-material/InsertLinkRounded";
 import { BACKENDURL } from "../../constant";
+import CategoryLinkingForm from "./AdminCategory/CategoryLinkingForm";
 
 type category = {
   id: number;
@@ -11,8 +14,10 @@ type category = {
 export default function AdminCategoryPage() {
   const [input, setInput] = useState<string>("");
   const [categories, setCategories] = useState<category[]>([]);
+  const [linking, setLinking] = useState<category | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errMsg, setErrMsg] = useState<string>("");
+
   useEffect(() => {
     if (errMsg.length) {
       window.scrollTo({
@@ -53,45 +58,80 @@ export default function AdminCategoryPage() {
     }
   };
 
-  console.log(categories);
+  const handleDeleteCategory = async (categoryId: number) => {
+    try {
+      setIsLoading(true);
+      await axios.delete(`${BACKENDURL}/category/${categoryId}`);
+      setCategories((prev) =>
+        prev.filter((target) => target.id !== categoryId)
+      );
+      setErrMsg("");
+      setIsLoading(false);
+    } catch (error) {
+      setErrMsg("Somethings went wrong, cannot load category");
+      setIsLoading(false);
+    }
+  };
 
   const categoryDisplay = categories.map((category) => {
     return (
       <tr key={category.id}>
-        <th></th>
-        <td></td>
+        <th>{category.name}</th>
+        <td className="space-x-2">
+          <button
+            className="btn btn-sm btn-square btn-outline"
+            onClick={() => handleDeleteCategory(category.id)}
+          >
+            <DeleteIcon />
+          </button>
+          <button
+            className="btn btn-sm btn-square btn-outline"
+            onClick={() => setLinking(category)}
+          >
+            <InsertLinkRoundedIcon />
+          </button>
+        </td>
       </tr>
     );
   });
 
   return (
     <div className="flex flex-col items-center">
+      {!!errMsg.length && <span className="text-error m-1 ">{errMsg}</span>}
+      <div className="sm:w-1/2">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>
+                <input
+                  className="input input-sm input-bordered"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                />
+              </th>
+              <th>
+                <button
+                  className="btn btn-sm btn-outline my-5"
+                  onClick={handleAddCategory}
+                >
+                  Add Category
+                </button>
+              </th>
+            </tr>
+            <tr>
+              <th>Category:</th>
+              <th>Actions:</th>
+            </tr>
+          </thead>
+          <tbody>{categoryDisplay}</tbody>
+        </table>
+      </div>
       <Backdrop open={isLoading} sx={{ zIndex: 99 }}>
         <CircularProgress />
       </Backdrop>
-      {!!errMsg.length && <span className="text-error m-1 ">{errMsg}</span>}
-
-      <div className="">
-        <table className="table">
-          <thead>
-            <th>
-              <input
-                className="input input-sm input-bordered"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-              />
-            </th>
-            <th>
-              <button
-                className="btn btn-sm btn-outline my-5"
-                onClick={handleAddCategory}
-              >
-                Add Category
-              </button>
-            </th>
-          </thead>
-        </table>
-      </div>
+      {!!linking && (
+        <CategoryLinkingForm category={linking} setLinking={setLinking} />
+      )}
     </div>
   );
 }
