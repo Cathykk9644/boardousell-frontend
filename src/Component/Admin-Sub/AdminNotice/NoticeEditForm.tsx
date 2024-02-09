@@ -4,9 +4,13 @@ import {
   AccordionSummary,
   Backdrop,
   CircularProgress,
+  Divider,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
+
+import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import { useState } from "react";
 import { storage } from "../../../firebase";
 import {
@@ -84,6 +88,48 @@ export default function NoticeEditForm({
     }
   };
 
+  const handleConfirmEdit = async () => {
+    if (editType && notice[editType] === editInput) {
+      return setErrMsg("");
+    }
+    console.log("here");
+    try {
+      setIsLoading(true);
+      if (editType) {
+        const { data } = await axios.put(`${BACKENDURL}/notice/info`, {
+          noticeId: notice.id,
+          [editType]: editInput,
+        });
+        updateNotice(data);
+      }
+      setIsLoading(false);
+      setErrMsg("");
+    } catch (error) {
+      setErrMsg("Somethings went wrong, please edit again");
+      setIsLoading(false);
+    }
+  };
+
+  const handleEdit = (type: editType) => {
+    if (editType) {
+      handleConfirmEdit();
+    }
+    if (editType === type) {
+      setEditType(null);
+      setEditInput("");
+      return;
+    }
+    switch (type) {
+      case "detail":
+        setEditInput(notice.detail);
+        break;
+      case "title":
+        setEditInput(notice.title);
+        break;
+    }
+    setEditType(type);
+  };
+
   const updateNotice = (data: notice) => {
     setNotices((prev: notice[]) => {
       const newNotices: notice[] = [...prev];
@@ -131,7 +177,37 @@ export default function NoticeEditForm({
             </button>
           </div>
         </div>
-        <div></div>
+        <div className="flex flex-col my-2">
+          <div className="flex flex-row justify-between">
+            <span className="w-1/6">Title: </span>
+            <input
+              className="input input-sm w-4/6"
+              value={editType === "title" ? editInput : notice.title}
+              disabled={editType !== "title"}
+              onChange={(e) => setEditInput(e.target.value)}
+            />
+            <button
+              className="btn btn-sm btn-square"
+              onClick={() => handleEdit("title")}
+            >
+              {editType === "title" ? <DoneRoundedIcon /> : <EditRoundedIcon />}
+            </button>
+          </div>
+          <Divider>Details:</Divider>
+          <textarea
+            className="textarea w-full h-36"
+            value={editType === "detail" ? editInput : notice.detail}
+            disabled={editType !== "detail"}
+            onChange={(e) => setEditInput(e.target.value)}
+          />
+          <button
+            className="btn btn-sm btn-accent w-full my-1"
+            onClick={() => handleEdit("detail")}
+          >
+            {editType === "detail" ? "Done" : "Edit"}
+            {editType === "detail" ? <DoneRoundedIcon /> : <EditRoundedIcon />}
+          </button>
+        </div>
       </AccordionDetails>
     </Accordion>
   );
