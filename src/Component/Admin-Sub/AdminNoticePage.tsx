@@ -3,6 +3,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { BACKENDURL } from "../../constant";
 import NoticeEditForm from "./AdminNotice/NoticeEditForm";
+import NoticeAddForm from "./AdminNotice/NoticeAddForm";
 
 type notice = {
   id: number;
@@ -14,6 +15,7 @@ export default function AdminNoticePage() {
   const [notices, setNotices] = useState<notice[]>([]);
   const [expand, setExpand] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isAdding, setIsAdding] = useState<boolean>(false);
   const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
@@ -54,9 +56,20 @@ export default function AdminNoticePage() {
   return (
     <div className="flex flex-col items-center">
       {!!errMsg.length && <span className="text-error m-1 ">{errMsg}</span>}
+      <button
+        className="btn btn-wide btn-outline my-5"
+        onClick={() => setIsAdding(true)}
+      >
+        Add Notice
+      </button>
       <div className="w-5/6 flex flex-col items-center">
         {isLoading ? <CircularProgress /> : noticeDisplay}
       </div>
+      <NoticeAddForm
+        open={isAdding}
+        setOpen={setIsAdding}
+        setNotices={setNotices}
+      />
     </div>
   );
 }

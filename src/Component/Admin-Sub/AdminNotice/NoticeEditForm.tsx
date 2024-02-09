@@ -4,6 +4,10 @@ import {
   AccordionSummary,
   Backdrop,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -46,6 +50,7 @@ export default function NoticeEditForm({
   const [editInput, setEditInput] = useState<string>("");
   const [editType, setEditType] = useState<editType>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isWarning, setIsWarning] = useState<boolean>(false);
 
   const handleChange = () => {
     if (open) {
@@ -141,6 +146,22 @@ export default function NoticeEditForm({
     setIsLoading(false);
   };
 
+  const handleDeleteNotice = async () => {
+    try {
+      await axios.delete(`${BACKENDURL}/notice/delete/${notice.id}`);
+      setExpand(null);
+      setIsLoading(false);
+      setIsWarning(false);
+      setErrMsg("");
+      setNotices((prev: notice[]) =>
+        prev.filter((target) => target.id !== notice.id)
+      );
+    } catch (error) {
+      setErrMsg("Somethings went wrong, please delete again");
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Accordion className="w-full" expanded={open} onChange={handleChange}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -208,6 +229,30 @@ export default function NoticeEditForm({
             {editType === "detail" ? <DoneRoundedIcon /> : <EditRoundedIcon />}
           </button>
         </div>
+        <button
+          className="btn btn-error w-1/2"
+          onClick={() => setIsWarning(true)}
+        >
+          Delete notice
+          <DeleteIcon />
+        </button>
+        <Dialog open={isWarning}>
+          <DialogTitle>Do you want to delete this notice?</DialogTitle>
+          <DialogContent>
+            The notice cannot be retrieved after deleted.
+          </DialogContent>
+          <DialogActions>
+            <button className="btn btn-error" onClick={handleDeleteNotice}>
+              Delete
+            </button>
+            <button
+              className="btn btn-outline"
+              onClick={() => setIsWarning(false)}
+            >
+              Cancel
+            </button>
+          </DialogActions>
+        </Dialog>
       </AccordionDetails>
     </Accordion>
   );
