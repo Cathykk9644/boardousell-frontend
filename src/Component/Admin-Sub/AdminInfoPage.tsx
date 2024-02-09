@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 
-import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+type info = {
+  id: number;
+  name: "Phone" | "Link" | "Email" | "Map";
+  detail: string;
+};
 
+//Only Need Add and Delete
 export default function AdminInfoPage() {
-  const [infos, setInfos] = useState([]);
-  const [keyword, setKeyword] = useState<string>("");
+  const [infos, setInfos] = useState<info[]>([]);
   const [errMsg, setErrMsg] = useState("");
+  const [isLoading, setIsLoading] = useState();
 
   useEffect(() => {
     if (errMsg.length) {
@@ -15,25 +20,15 @@ export default function AdminInfoPage() {
       });
     }
   }, [errMsg]);
-  const handleSearch = () => {
-    try {
-    } catch (error: any) {
-      setErrMsg(error.message);
-    }
-  };
+
+  const infoDisplay = infos.map((info) => {
+    return <div></div>;
+  });
+
   return (
     <div className="flex flex-col items-center">
       {!!errMsg.length && <span className="text-error m-1 ">{errMsg}</span>}
-      <div className="flex items-center justify-center">
-        <span className="text-md">Search Infomations:</span>
-        <input
-          className="input input-bordered input-md mx-3"
-          placeholder="All"
-        />
-        <button className="btn btn-md btn-square " onClick={handleSearch}>
-          <SearchRoundedIcon />
-        </button>
-      </div>
+      <div className="flex flex-col items-center w-5/6">{infoDisplay}</div>
     </div>
   );
 }

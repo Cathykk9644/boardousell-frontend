@@ -1,5 +1,6 @@
 import {
   Accordion,
+  AccordionActions,
   AccordionDetails,
   AccordionSummary,
   Backdrop,
@@ -198,9 +199,9 @@ export default function NoticeEditForm({
             </button>
           </div>
         </div>
-        <div className="flex flex-col my-2">
-          <div className="flex flex-row justify-between">
-            <span className="w-1/6">Title: </span>
+        <div className="flex flex-col items-center justify-center sm:w-1/2 sm:pl-3 my-2">
+          <div className="flex flex-row justify-between border-y-2 py-2 w-full">
+            <span className="w-1/6 text-xl">Title: </span>
             <input
               className="input input-sm w-4/6"
               value={editType === "title" ? editInput : notice.title}
@@ -214,7 +215,7 @@ export default function NoticeEditForm({
               {editType === "title" ? <DoneRoundedIcon /> : <EditRoundedIcon />}
             </button>
           </div>
-          <Divider>Details:</Divider>
+          <span className="self-start text-xl">Details:</span>
           <textarea
             className="textarea w-full h-36"
             value={editType === "detail" ? editInput : notice.detail}
@@ -229,31 +230,30 @@ export default function NoticeEditForm({
             {editType === "detail" ? <DoneRoundedIcon /> : <EditRoundedIcon />}
           </button>
         </div>
-        <button
-          className="btn btn-error w-1/2"
-          onClick={() => setIsWarning(true)}
-        >
+      </AccordionDetails>
+      <AccordionActions className="flex">
+        <button className="btn btn-error" onClick={() => setIsWarning(true)}>
           Delete notice
           <DeleteIcon />
         </button>
-        <Dialog open={isWarning}>
-          <DialogTitle>Do you want to delete this notice?</DialogTitle>
-          <DialogContent>
-            The notice cannot be retrieved after deleted.
-          </DialogContent>
-          <DialogActions>
-            <button className="btn btn-error" onClick={handleDeleteNotice}>
-              Delete
-            </button>
-            <button
-              className="btn btn-outline"
-              onClick={() => setIsWarning(false)}
-            >
-              Cancel
-            </button>
-          </DialogActions>
-        </Dialog>
-      </AccordionDetails>
+      </AccordionActions>
+      <Dialog open={isWarning}>
+        <DialogTitle>Do you want to delete this notice?</DialogTitle>
+        <DialogContent>
+          The notice cannot be retrieved after deleted.
+        </DialogContent>
+        <DialogActions>
+          <button className="btn btn-error" onClick={handleDeleteNotice}>
+            Delete
+          </button>
+          <button
+            className="btn btn-outline"
+            onClick={() => setIsWarning(false)}
+          >
+            Cancel
+          </button>
+        </DialogActions>
+      </Dialog>
     </Accordion>
   );
 }

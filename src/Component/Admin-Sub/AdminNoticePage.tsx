@@ -1,6 +1,6 @@
 import { CircularProgress } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BACKENDURL } from "../../constant";
 import NoticeEditForm from "./AdminNotice/NoticeEditForm";
 import NoticeAddForm from "./AdminNotice/NoticeAddForm";
