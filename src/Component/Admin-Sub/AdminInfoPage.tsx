@@ -36,7 +36,7 @@ export default function AdminInfoPage() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const { data } = await axios.get(`${BACKENDURL}/infomation/admin`);
+        const { data } = await axios.get(`${BACKENDURL}/infomation/`);
         setInfos(data);
         setIsLoading(false);
       } catch (error) {
