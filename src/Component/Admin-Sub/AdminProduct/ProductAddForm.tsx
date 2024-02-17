@@ -13,22 +13,7 @@ import axios from "axios";
 import { BACKENDURL } from "../../../constant";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../../firebase";
-type product = {
-  id: number;
-  price: number;
-  name: string;
-  description: string;
-  stock: number;
-  productPhotos: {
-    id: number;
-    url: string;
-    thumbnail: boolean;
-    fileName: string;
-  }[];
-  categories: { id: number; name: string }[];
-  newproduct?: { id: number };
-  onsale?: { id: number; discount: number };
-};
+import { product } from "../../../type";
 
 type props = {
   open: boolean;

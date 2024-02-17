@@ -10,27 +10,10 @@ import {
 import { BACKENDURL } from "../constant";
 import noImage from "./img/no-image.jpg";
 import { Pagination } from "@mui/material";
-
-type product = {
-  id: number;
-  name: string;
-  price: number;
-  stock: number;
-  onsale?: {
-    discount: number;
-  };
-  productPhotos: [{ url?: string }];
-};
+import { product, outletProps } from "../type";
 type res = {
   resultAmount: number;
   result: product[];
-};
-type outletProps = {
-  userId: number;
-  handleAddWishItem: Function;
-  handleAddCart: Function;
-  handleDeleteCart: Function;
-  setError: Function;
 };
 
 export default function SearchPage() {

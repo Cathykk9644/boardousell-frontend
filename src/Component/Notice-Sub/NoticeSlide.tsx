@@ -6,19 +6,12 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { MobileStepper } from "@mui/material";
 import { Link } from "react-router-dom";
 import { BACKENDURL } from "../../constant";
+import { notice } from "../../type";
 
-interface noticeDetail {
-  id: number;
-  title: string;
-  url: string | null;
-}
-
-type notice = noticeDetail[];
 type animation = "next" | "prev" | "reset" | null;
 
-//Need to add Notice Detail Page.
 export default function NoticeSlide({ setError }: { setError: Function }) {
-  const [notices, setNotices] = useState<notice>([]);
+  const [notices, setNotices] = useState<notice[]>([]);
   const [currentNotice, setCurrentNotice] = useState<number>(0);
   const [startAnimation, setStartAnimation] = useState<animation>(null);
 

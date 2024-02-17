@@ -12,18 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
-type user = {
-  id: number;
-  email: string;
-  name: string;
-  isAdmin: boolean;
-  points: number;
-  phone: number;
-  level: {
-    title: string;
-  };
-};
+import { user } from "../../type";
 type key = "email" | "name" | "phone" | "all";
 
 export default function AdminUserPage() {

@@ -5,34 +5,8 @@ import { Link, useOutletContext } from "react-router-dom";
 import { BACKENDURL } from "../constant";
 import ProductList from "./Sub-Component/ProductList";
 import NoticeSlide from "./Notice-Sub/NoticeSlide";
+import { outletProps, product, category } from "../type";
 
-type outletProps = {
-  userId: number;
-  handleAddWishItem: Function;
-  handleAddCart: Function;
-  handleDeleteCart: Function;
-  setError: Function;
-};
-
-type product = {
-  id: number;
-  price: number;
-  name: string;
-  stock: number;
-  onsale?: {
-    discount: number;
-  };
-  productPhotos: [
-    {
-      url?: string;
-    }
-  ];
-};
-
-type category = {
-  id: number;
-  name: string;
-};
 type suggestCategory = {
   products: product[];
   category: string;

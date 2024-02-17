@@ -5,29 +5,20 @@ import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { BACKENDURL } from "../constant";
-type outletProps = {
-  userId: number;
-  handleAddWishItem: Function;
-  handleAddCart: Function;
-  handleDeleteCart: Function;
-  setError: Function;
+import { outletProps, level } from "../type";
+
+type userLevel = {
+  points: number;
+  level: level;
 };
 
-type levelInfo = {
-  points: number;
-  level: {
-    title: string;
-    requirement: number;
-    discount: number;
-  };
-} | null;
 export default function UserPage() {
   const { userId, setError } = useOutletContext<outletProps>();
   const [email, setEmail] = useState<string>("");
   const [editing, setEditing] = useState<"name" | "phone" | null>(null);
   const [name, setName] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
-  const [levelInfo, setLevelInfo] = useState<levelInfo>(null);
+  const [levelInfo, setLevelInfo] = useState<userLevel | null>(null);
   const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
   useEffect(() => {
     if (isLoading) {

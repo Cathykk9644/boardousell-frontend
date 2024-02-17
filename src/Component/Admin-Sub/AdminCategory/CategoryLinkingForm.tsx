@@ -11,17 +11,11 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 
 import axios from "axios";
 import { BACKENDURL } from "../../../constant";
+import { category, product } from "../../../type";
 
 type props = {
-  category: {
-    id: number;
-    name: string;
-  };
+  category: category;
   setLinking: Function;
-};
-type product = {
-  id: number;
-  name: string;
 };
 
 type linkedProducts = {

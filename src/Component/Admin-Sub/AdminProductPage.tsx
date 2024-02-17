@@ -5,25 +5,10 @@ import { BACKENDURL } from "../../constant";
 import axios from "axios";
 import ProductEditForm from "./AdminProduct/ProductEditForm";
 import ProductAddForm from "./AdminProduct/ProductAddForm";
+import { category } from "../../type";
+import { product } from "../../type";
 
 type key = "all" | "name" | "stock" | "category";
-type category = { id: number; name: string };
-type product = {
-  id: number;
-  price: number;
-  name: string;
-  description: string;
-  stock: number;
-  productPhotos: {
-    id: number;
-    url: string;
-    thumbnail: boolean;
-    fileName: string;
-  }[];
-  categories: category[];
-  newproduct?: { id: number };
-  onsale?: { id: number; discount: number };
-};
 
 type search = {
   type: key;

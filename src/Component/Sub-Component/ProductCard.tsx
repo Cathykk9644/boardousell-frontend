@@ -2,23 +2,11 @@ import StarsIcon from "@mui/icons-material/Stars";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import noImage from "../img/no-image.jpg";
 import { useNavigate } from "react-router-dom";
+import { product } from "../../type";
 type props = {
   handleAddWishItem: Function;
   handleAddCart: Function;
-  product: {
-    id: number;
-    price: number;
-    name: string;
-    stock: number;
-    onsale?: {
-      discount: number;
-    };
-    productPhotos: [
-      {
-        url?: string;
-      }
-    ];
-  } | null;
+  product: product;
 };
 
 //Need to add shopping Cart function

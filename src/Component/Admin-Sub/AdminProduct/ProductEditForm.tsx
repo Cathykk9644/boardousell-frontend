@@ -21,23 +21,8 @@ import {
   ref,
   uploadBytes,
 } from "firebase/storage";
+import { product } from "../../../type";
 
-type product = {
-  id: number;
-  price: number;
-  name: string;
-  description: string;
-  stock: number;
-  productPhotos: {
-    id: number;
-    url: string;
-    thumbnail: boolean;
-    fileName: string;
-  }[];
-  categories: { id: number; name: string }[];
-  newproduct?: { id: number };
-  onsale?: { id: number; discount: number };
-};
 type props = {
   product: product;
   categories: string[];

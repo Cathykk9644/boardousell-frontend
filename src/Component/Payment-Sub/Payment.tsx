@@ -8,15 +8,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { BACKENDURL } from "../../constant";
 import { useParams } from "react-router-dom";
-type order = {
-  id: number;
-  userId: number;
-  address: string;
-  amount: number;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-};
+import { order } from "../../type";
+
 export default function Payment({
   setError,
   setOrderInfo,

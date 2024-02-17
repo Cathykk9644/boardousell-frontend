@@ -4,19 +4,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Divider, Drawer } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { item } from "../../type";
 
-type item = {
-  id: number;
-  product: {
-    id: number;
-    price: number;
-    name: string;
-    stock: number;
-    onsale?: {
-      discount: number;
-    };
-  };
-};
 type props = {
   open: boolean;
   setDrawer: Function;

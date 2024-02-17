@@ -12,14 +12,11 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { BACKENDURL } from "../../constant";
 import { useAuth0 } from "@auth0/auth0-react";
+import { category } from "../../type";
 type props = {
   open: boolean;
   setDrawer: Function;
   setError: Function;
-};
-type category = {
-  id: number;
-  name: string;
 };
 
 export default function Navibar({ open, setDrawer, setError }: props) {

@@ -7,17 +7,19 @@ type center = {
   lng: number;
 } | null;
 
+type props = {
+  location: string;
+  setError?: Function;
+  setErrMsg?: Function;
+  setPreview?: Function;
+};
+
 export default function GoogleMap({
   location,
   setError,
   setErrMsg,
   setPreview,
-}: {
-  location: string;
-  setError?: Function;
-  setErrMsg?: Function;
-  setPreview?: Function;
-}) {
+}: props) {
   const [center, setCenter] = useState<center>(null);
 
   useEffect(() => {

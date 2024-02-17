@@ -4,20 +4,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import { BACKENDURL } from "../constant";
 import { Stack } from "@mui/material";
 import { useAuth0 } from "@auth0/auth0-react";
-type outletProps = {
-  userId: number;
-  handleAddWishItem: Function;
-  handleAddCart: Function;
-  handleDeleteCart: Function;
-  setError: Function;
-};
-type order = {
-  id: number;
-  amount: number;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-};
+import { order, outletProps } from "../type";
 
 export default function OrderListPage() {
   const { userId, setError } = useOutletContext<outletProps>();

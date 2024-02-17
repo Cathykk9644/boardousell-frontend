@@ -24,13 +24,8 @@ import {
 } from "firebase/storage";
 import axios from "axios";
 import { BACKENDURL } from "../../../constant";
+import { notice } from "../../../type";
 
-type notice = {
-  id: number;
-  title: string;
-  url?: string;
-  detail: string;
-};
 type props = {
   open: boolean;
   notice: notice;

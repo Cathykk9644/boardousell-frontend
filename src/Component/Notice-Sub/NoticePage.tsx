@@ -4,24 +4,12 @@ import { BACKENDURL } from "../../constant";
 import NoticeSlide from "./NoticeSlide";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useOutletContext, useParams } from "react-router-dom";
-
-type noticeDetail = {
-  id: number;
-  title: string;
-  url: string;
-  detail: string;
-  createdAt: string;
-} | null;
-
-type noticeList = noticeDetail[];
-type params = {
-  noticeId: string;
-};
+import { useOutletContext, useParams, Params } from "react-router-dom";
+import { notice } from "../../type";
 
 export default function NoticePage() {
-  const [noticeList, setNoticeList] = useState<noticeList>([]);
-  const { noticeId } = useParams<params>();
+  const [noticeList, setNoticeList] = useState<notice[]>([]);
+  const { noticeId } = useParams<Params>();
   const [currentNoticeId, setCurrentNoticeId] = useState<number | undefined>(
     Number(noticeId)
   );

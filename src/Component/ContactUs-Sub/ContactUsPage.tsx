@@ -3,18 +3,15 @@ import GoogleMap from "./GoogleMap";
 import axios from "axios";
 import { DISCLAIMER } from "../../constant";
 import { useOutletContext } from "react-router-dom";
+import { infomation } from "../../type";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
-type infomation = {
-  name: "Link" | "Map" | "Email" | "Phone";
-  detail: string;
-};
 type hash = {
   [key: string]: infomation[];
 };
 
 export default function ContactUsPage() {
-  const [infomations, setInfomations] = useState<infomation[] | null>(null);
+  const [infomations, setInfomations] = useState<infomation[]>([]);
   const { setError }: { setError: Function } = useOutletContext();
   useEffect(() => {
     const fetchData = async () => {
@@ -46,7 +43,7 @@ export default function ContactUsPage() {
     fetchData();
   }, [setError]);
 
-  const infoDisplay = infomations?.map((info: infomation) => {
+  const infoDisplay = infomations.map((info: infomation) => {
     switch (info.name) {
       case "Phone":
         return (

@@ -13,51 +13,10 @@ import Payment from "./Payment-Sub/Payment";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useAuth0 } from "@auth0/auth0-react";
+import { order, user, product, message, outletProps } from "../type";
 const stripePromise = loadStripe(
   process.env.REACT_APP_STRIPE_KEY ? process.env.REACT_APP_STRIPE_KEY : ""
 );
-
-type order = {
-  id: number;
-  userId: number;
-  address: string;
-  amount: number;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-type user = {
-  points: number;
-  level: {
-    title: string;
-    requirement: number;
-  };
-};
-
-type product = {
-  id: number;
-  name: string;
-  productorder: {
-    amount: number;
-  };
-};
-
-type message = {
-  id: number;
-  isUserReceiver: boolean;
-  detail: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-type outletProps = {
-  userId: number;
-  handleAddWishItem: Function;
-  handleAddCart: Function;
-  handleDeleteCart: Function;
-  setError: Function;
-};
 
 export default function OrderPage() {
   const { orderId } = useParams<Params>();

@@ -6,7 +6,6 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import React, { useState } from "react";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";

@@ -5,17 +5,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { CircularProgress, Dialog } from "@mui/material";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import GoogleMap from "../ContactUs-Sub/GoogleMap";
+import { infomation } from "../../type";
 
-type name = "Phone" | "Link" | "Email" | "Map";
-type info = {
-  id: number;
-  name: name;
-  detail: string;
-};
-
-//Only Need Add and Delete
 export default function AdminInfoPage() {
-  const [infos, setInfos] = useState<info[]>([]);
+  const [infos, setInfos] = useState<infomation[]>([]);
   const [errMsg, setErrMsg] = useState("");
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [editName, setEditName] = useState<string>("Phone");
@@ -50,7 +43,9 @@ export default function AdminInfoPage() {
   const deleteInfo = async (infoId: number) => {
     try {
       await axios.delete(`${BACKENDURL}/infomation/${infoId}`);
-      setInfos((prev: info[]) => prev.filter((info) => info.id !== infoId));
+      setInfos((prev: infomation[]) =>
+        prev.filter((info) => info.id !== infoId)
+      );
       setErrMsg("");
       setIsLoading(false);
     } catch (error) {
@@ -59,7 +54,7 @@ export default function AdminInfoPage() {
     }
   };
 
-  const handleClick = (name: name, detail: string) => {
+  const handleClick = (name: infomation["name"], detail: string) => {
     switch (name) {
       case "Link":
         if (detail.startsWith("http")) {

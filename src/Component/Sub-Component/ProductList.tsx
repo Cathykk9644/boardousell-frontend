@@ -1,26 +1,10 @@
 import { Pagination } from "@mui/material";
 import ProductCard from "./ProductCard";
 import React, { useState } from "react";
-
-type product = {
-  id: number;
-  price: number;
-  name: string;
-  stock: number;
-  onsale?: {
-    discount: number;
-  };
-  productPhotos: [
-    {
-      url?: string;
-    }
-  ];
-};
-
-type products = product[];
+import { product } from "../../type";
 
 type props = {
-  products: products;
+  products: product[];
   handleAddWishItem: Function;
   handleAddCart: Function;
 };
@@ -32,7 +16,7 @@ export default function ProductList({
 }: props) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [startAnimation, setStartAnimation] = useState<string>();
-  const dividedList: products[] = [];
+  const dividedList: product[][] = [];
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);

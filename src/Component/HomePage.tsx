@@ -1,35 +1,14 @@
 import ProductList from "./Sub-Component/ProductList";
 import NoticeSlide from "./Notice-Sub/NoticeSlide";
 import { CircularProgress } from "@mui/material";
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useOutletContext } from "react-router-dom";
 import { BACKENDURL } from "../constant";
-
-type outletProps = {
-  handleAddWishItem: Function;
-  handleAddCart: Function;
-  setError: Function;
-};
-type product = {
-  id: number;
-  price: number;
-  name: string;
-  stock: number;
-  onsale?: {
-    discount: number;
-  };
-  productPhotos: [
-    {
-      url?: string;
-    }
-  ];
-};
-type products = product[];
+import { product, outletProps } from "../type";
 
 export default function HomePage() {
-  const [newProducts, setNewProduct] = useState<products>([]);
+  const [newProducts, setNewProduct] = useState<product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { handleAddWishItem, handleAddCart, setError }: outletProps =
     useOutletContext();

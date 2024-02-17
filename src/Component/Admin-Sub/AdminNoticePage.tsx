@@ -4,13 +4,7 @@ import { useEffect, useState } from "react";
 import { BACKENDURL } from "../../constant";
 import NoticeEditForm from "./AdminNotice/NoticeEditForm";
 import NoticeAddForm from "./AdminNotice/NoticeAddForm";
-
-type notice = {
-  id: number;
-  title: string;
-  url?: string;
-  detail: string;
-};
+import { notice } from "../../type";
 export default function AdminNoticePage() {
   const [notices, setNotices] = useState<notice[]>([]);
   const [expand, setExpand] = useState<number | null>(null);

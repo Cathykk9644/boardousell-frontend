@@ -8,30 +8,12 @@ import ShoppingCart from "./Component/Sub-Component/ShoppingCart";
 import ErrorPage from "./Component/Sub-Component/ErrorPage";
 import { useAuth0 } from "@auth0/auth0-react";
 import AdminPage from "./Component/Admin-Sub/AdminPage";
+import { item, outletProps } from "./type";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
-type item = {
-  id: number;
-  product: {
-    id: number;
-    price: number;
-    name: string;
-    stock: number;
-    onsale?: {
-      discount: number;
-    };
-  };
-};
 type anime = "wish" | "cart" | null;
 type drawer = "nav" | anime;
 
-type outletProps = {
-  userId: number;
-  handleAddWishItem: Function;
-  handleAddCart: Function;
-  handleDeleteCart: Function;
-  setError: Function;
-};
 export default function App() {
   const [userId, setUserId] = useState<number>(0);
   const { isAuthenticated, isLoading, loginWithRedirect, user } = useAuth0();

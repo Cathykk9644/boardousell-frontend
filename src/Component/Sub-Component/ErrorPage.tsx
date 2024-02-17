@@ -4,6 +4,7 @@ type props = {
   error: { backHome: boolean; message: string } | null;
   handleError: Function;
 };
+
 export default function ErrorPage({ error, handleError }: props) {
   return (
     <Dialog open={!!error} onClose={() => handleError()}>

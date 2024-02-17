@@ -5,11 +5,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import InsertLinkRoundedIcon from "@mui/icons-material/InsertLinkRounded";
 import { BACKENDURL } from "../../constant";
 import CategoryLinkingForm from "./AdminCategory/CategoryLinkingForm";
-
-type category = {
-  id: number;
-  name: string;
-};
+import { category } from "../../type";
 
 export default function AdminCategoryPage() {
   const [input, setInput] = useState<string>("");

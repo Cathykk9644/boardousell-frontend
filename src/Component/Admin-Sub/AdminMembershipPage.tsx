@@ -5,20 +5,8 @@ import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import { CircularProgress } from "@mui/material";
 import axios from "axios";
 import { BACKENDURL } from "../../constant";
+import { level } from "../../type";
 
-type level = {
-  id: number;
-  title: string;
-  requirement: number;
-  discount: number;
-};
-
-type updatedLevel = {
-  id: number;
-  title: string;
-  requirement?: number;
-  discount: number;
-};
 export default function AdminMembershipPage() {
   const [levels, setLevels] = useState<level[]>([]);
   const [errMsg, setErrMsg] = useState("");
@@ -89,7 +77,12 @@ export default function AdminMembershipPage() {
   ) => {
     try {
       setIsLoading(true);
-      const newData: updatedLevel = {
+      const newData: {
+        id: number;
+        title: string;
+        requirement?: number;
+        discount: number;
+      } = {
         id: id,
         title: editTitle,
         discount: Number(editDiscount),

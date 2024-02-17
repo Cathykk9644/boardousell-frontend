@@ -7,51 +7,15 @@ import noImage from "./img/no-image.jpg";
 import StarsIcon from "@mui/icons-material/Stars";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ProductList from "./Sub-Component/ProductList";
-
-type params = {
-  productId: string;
-};
-
-type product = {
-  id: number;
-  price: number;
-  name: string;
-  description: string;
-  stock: number;
-  onsale?: {
-    discount: number;
-  };
-} | null;
-
-type suggestProduct = {
-  id: number;
-  price: number;
-  name: string;
-  stock: number;
-  onsale?: {
-    discount: number;
-  };
-  productPhotos: [
-    {
-      url?: string;
-    }
-  ];
-};
-
-type outletProps = {
-  userId: number;
-  handleAddWishItem: Function;
-  handleAddCart: Function;
-  setError: Function;
-};
+import { product, outletProps } from "../type";
 
 export default function ProductPage() {
-  const { productId } = useParams<params>();
-  const [productInfo, setProductInfo] = useState<product>(null);
+  const { productId } = useParams<string>();
+  const [productInfo, setProductInfo] = useState<product | null>(null);
   const [photoList, setPhotoList] = useState<string[]>([]);
   const [categoryList, setCategoryList] = useState<string[]>([]);
   const [suggestCategory, setSuggestCategory] = useState<string>("");
-  const [suggestProducts, setSuggestProducts] = useState<suggestProduct[]>([]);
+  const [suggestProducts, setSuggestProducts] = useState<product[]>([]);
   const [isLoadingProduct, setIsLoadingProduct] = useState<boolean>(false);
   const { handleAddWishItem, handleAddCart, setError } =
     useOutletContext<outletProps>();
@@ -72,7 +36,7 @@ export default function ProductPage() {
         );
         let randomIndex = Math.floor(Math.random() * flatCategoryList.length);
         let randomCategory = flatCategoryList[randomIndex];
-        const suggestProductRes: { data: suggestProduct[] } = await axios.get(
+        const suggestProductRes: { data: product[] } = await axios.get(
           `${BACKENDURL}/category/suggest/${randomCategory}`
         );
         const filterSuggestProducts = suggestProductRes.data.filter(

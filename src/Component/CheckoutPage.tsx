@@ -4,57 +4,22 @@ import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import RemoveIcon from "@mui/icons-material/Remove";
 import StarsIcon from "@mui/icons-material/Stars";
 import { useAuth0 } from "@auth0/auth0-react";
+import { product, item, outletProps, user } from "../type";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
-type checkoutList = {
-  id: number;
-  price: number;
-  name: string;
-  stock: number;
+type checkoutList = product & {
   amounts: number;
-  onsale?: {
-    discount: number;
-  };
 };
 
 type checkoutListObject = {
   [key: number]: checkoutList;
 };
 
-type item = {
-  id: number;
-  product: {
-    id: number;
-    price: number;
-    name: string;
-    stock: number;
-    onsale?: {
-      discount: number;
-    };
-  };
-};
-
-type outletProps = {
-  userId: number;
-  handleAddWishItem: Function;
-  handleAddCart: Function;
-  handleDeleteCart: Function;
-  setError: Function;
-};
-type userInfo = {
-  email: string;
-  points: number;
-  phone: number;
-  level: {
-    discount: number;
-  };
-} | null;
-
 export default function CheckoutPage() {
   const { userId, handleAddWishItem, handleDeleteCart, setError } =
     useOutletContext<outletProps>();
   const [cart, setCart] = useState<item[]>([]);
-  const [userInfo, setUserInfo] = useState<userInfo>(null);
+  const [userInfo, setUserInfo] = useState<user | null>(null);
   const [address, setAddress] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [isLoadingCart, setIsLoadingCart] = useState<boolean>(false);
