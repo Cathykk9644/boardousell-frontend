@@ -15,7 +15,7 @@ type product = {
   id: number;
   name: string;
   price: number;
-  stocks: number;
+  stock: number;
   onsale?: {
     discount: number;
   };
@@ -92,7 +92,7 @@ export default function SearchPage() {
               {product.onsale &&
                 ` ${Math.round(product.price * product.onsale.discount)}`}
             </div>
-            <div>Stocks: {product.stocks}</div>
+            <div>stock: {product.stock}</div>
           </div>
           <div className="card-actions justify-end">
             <button
@@ -103,7 +103,7 @@ export default function SearchPage() {
             </button>
             <button
               className="btn btn-square btn-md"
-              disabled={!product.stocks}
+              disabled={!product.stock}
               onClick={() => handleAddCart(product.id)}
             >
               <ShoppingCartIcon />

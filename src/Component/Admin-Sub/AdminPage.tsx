@@ -11,7 +11,7 @@ import AdminMembershipPage from "./AdminMembershipPage";
 import AdminCategoryPage from "./AdminCategoryPage";
 
 export default function AdminPage() {
-  const [currentTab, setCurrentTab] = useState<string>("product");
+  const [currentTab, setCurrentTab] = useState<string>("order");
   const { logout } = useAuth0();
 
   let currentTabDisplay;
@@ -55,8 +55,8 @@ export default function AdminPage() {
           value={currentTab}
           onChange={(e, val) => setCurrentTab(val)}
         >
-          <Tab label="Product" value="product" />
           <Tab label="Order" value="order" />
+          <Tab label="Product" value="product" />
           <Tab label="Category" value="category" />
           <Tab label="Infomation" value="infomation" />
           <Tab label="Notice" value="notice" />

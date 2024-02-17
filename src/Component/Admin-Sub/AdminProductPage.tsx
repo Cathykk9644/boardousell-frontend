@@ -6,20 +6,21 @@ import axios from "axios";
 import ProductEditForm from "./AdminProduct/ProductEditForm";
 import ProductAddForm from "./AdminProduct/ProductAddForm";
 
-type key = "all" | "name" | "stocks" | "category";
+type key = "all" | "name" | "stock" | "category";
+type category = { id: number; name: string };
 type product = {
   id: number;
   price: number;
   name: string;
   description: string;
-  stocks: number;
+  stock: number;
   productPhotos: {
     id: number;
     url: string;
     thumbnail: boolean;
     fileName: string;
   }[];
-  categories: { id: number; name: string }[];
+  categories: category[];
   newproduct?: { id: number };
   onsale?: { id: number; discount: number };
 };
@@ -58,7 +59,8 @@ export default function AdminProductPage() {
       try {
         setIsLoading(true);
         const { data } = await axios.get(`${BACKENDURL}/category/all`);
-        setCategories(data);
+        const flattenData = data.map((category: category) => category.name);
+        setCategories(flattenData);
         setSelectedCategory(data[0]);
         setIsLoading(false);
       } catch (error) {
@@ -90,12 +92,12 @@ export default function AdminProductPage() {
           setTotalPage(Math.ceil(nameDataRes.data.count / 5));
           setProducts(nameDataRes.data.data);
           break;
-        case "stocks":
+        case "stock":
           if (!searchInput.length) {
             throw new Error("Please Enter Amount/LowerLimit-UpperLimit.");
           }
           const stockDataRes = await axios.get(
-            `${BACKENDURL}/product/admin/stocks/${searchInput}/1`
+            `${BACKENDURL}/product/admin/stock/${searchInput}/1`
           );
           setTotalPage(Math.ceil(stockDataRes.data.count / 5));
           setProducts(stockDataRes.data.data);
@@ -205,14 +207,14 @@ export default function AdminProductPage() {
         >
           <option value="all">All</option>
           <option value="name">Name</option>
-          <option value="stocks">Stocks</option>
+          <option value="stock">stock</option>
           <option value="category">Category</option>
         </select>
-        {(type === "stocks" || type === "name") && (
+        {(type === "stock" || type === "name") && (
           <input
             className="input input-bordered input-sm w-full"
             value={searchInput}
-            placeholder={type === "stocks" ? "1 or 10-20" : ""}
+            placeholder={type === "stock" ? "1 or 10-20" : ""}
             onChange={(e) => setSearchInput(e.target.value)}
           />
         )}

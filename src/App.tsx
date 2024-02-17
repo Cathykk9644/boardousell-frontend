@@ -16,7 +16,7 @@ type item = {
     id: number;
     price: number;
     name: string;
-    stocks: number;
+    stock: number;
     onsale?: {
       discount: number;
     };

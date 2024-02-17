@@ -17,6 +17,10 @@ type props = {
   setDrawer: Function;
   setError: Function;
 };
+type category = {
+  id: number;
+  name: string;
+};
 
 export default function Navibar({ open, setDrawer, setError }: props) {
   const [categories, setCategories] = useState<string[]>([]);
@@ -46,7 +50,8 @@ export default function Navibar({ open, setDrawer, setError }: props) {
     const fetchData = async () => {
       try {
         const { data } = await axios.get(`${BACKENDURL}/category/all`);
-        setCategories(data);
+        const flattenData = data.map((category: category) => category.name);
+        setCategories(flattenData);
       } catch (error) {
         setError({
           backHome: false,

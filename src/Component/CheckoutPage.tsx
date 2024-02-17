@@ -10,7 +10,7 @@ type checkoutList = {
   id: number;
   price: number;
   name: string;
-  stocks: number;
+  stock: number;
   amounts: number;
   onsale?: {
     discount: number;
@@ -27,7 +27,7 @@ type item = {
     id: number;
     price: number;
     name: string;
-    stocks: number;
+    stock: number;
     onsale?: {
       discount: number;
     };
@@ -130,9 +130,9 @@ export default function CheckoutPage() {
   let isAblePurchase = true;
   let tip: string | null = null;
   const productDisplay = Object.values(checkoutListObject).map((item) => {
-    if (item.amounts > item.stocks) {
+    if (item.amounts > item.stock) {
       isAblePurchase = false;
-      tip = "Sorry, we don't have enough stocks yet.";
+      tip = "Sorry, we don't have enough stock yet.";
     }
     return (
       <tr key={item.id}>
@@ -157,7 +157,7 @@ export default function CheckoutPage() {
             </div>
           </div>
         </td>
-        <td>{item.stocks}</td>
+        <td>{item.stock}</td>
         <td>
           <Link to={`/product/${item.id}`} className="max-w-min">
             {item.name}
@@ -230,7 +230,7 @@ export default function CheckoutPage() {
         <thead>
           <tr className="border border-accent">
             <th>Action</th>
-            <th>Stocks</th>
+            <th>stock</th>
             <th>Product</th>
             <th>Nos</th>
             <th>Price</th>

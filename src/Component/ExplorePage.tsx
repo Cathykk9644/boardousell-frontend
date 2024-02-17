@@ -18,7 +18,7 @@ type product = {
   id: number;
   price: number;
   name: string;
-  stocks: number;
+  stock: number;
   onsale?: {
     discount: number;
   };
@@ -29,6 +29,10 @@ type product = {
   ];
 };
 
+type category = {
+  id: number;
+  name: string;
+};
 type suggestCategory = {
   products: product[];
   category: string;
@@ -47,7 +51,7 @@ export default function ExplorePage() {
       try {
         setIsLoading(true);
         const onsaleRes = await axios.get(`${BACKENDURL}/product/onsale`);
-        const categoryList: { data: string[] } = await axios.get(
+        const categoryList: { data: category[] } = await axios.get(
           `${BACKENDURL}/category/all`
         );
         const randomIndexFirst = Math.floor(
@@ -71,10 +75,16 @@ export default function ExplorePage() {
           const products: { data: product[] } = await axios.get(
             `${BACKENDURL}/category/suggest/${category}`
           );
-          rawSuggestList.push({ category: category, products: products.data });
+          rawSuggestList.push({
+            category: category.name,
+            products: products.data,
+          });
         }
+        const flattenData = categoryList.data.map(
+          (category: category) => category.name
+        );
         setSuggestLists(rawSuggestList);
-        setCategories(categoryList.data);
+        setCategories(flattenData);
         setOnsaleList(onsaleRes.data);
         setIsLoading(false);
       } catch (error) {

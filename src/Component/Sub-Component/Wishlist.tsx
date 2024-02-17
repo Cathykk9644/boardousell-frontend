@@ -11,7 +11,7 @@ type item = {
     id: number;
     price: number;
     name: string;
-    stocks: number;
+    stock: number;
     onsale?: {
       discount: number;
     };
@@ -72,11 +72,11 @@ export default function Wishlist({
             {item.product.onsale
               ? Math.round(item.product.price * item.product.onsale.discount)
               : item.product.price}
-            <p>Stocks: {item.product.stocks}</p>
+            <p>stock: {item.product.stock}</p>
           </div>
           <button
             className="m-1 btn btn-sm btn-square self-center"
-            disabled={!item.product.stocks}
+            disabled={!item.product.stock}
             onClick={() => handleWishToCart(item.id, item.product.id)}
           >
             <AddShoppingCartIcon />

@@ -45,7 +45,7 @@ type product = {
 
 type message = {
   id: number;
-  isUserReceived: boolean;
+  isUserReceiver: boolean;
   detail: string;
   createdAt: string;
   updatedAt: string;
@@ -119,7 +119,7 @@ export default function OrderPage() {
     try {
       const { data } = await axios.post(`${BACKENDURL}/message`, {
         orderId: Number(orderId),
-        isUserReceived: false,
+        isUserReceiver: false,
         detail: input,
       });
       setMessageList((prev) => [...prev, data]);
@@ -215,12 +215,12 @@ export default function OrderPage() {
   const messageDisplay = messageList.map((message) => {
     return (
       <div
-        className={`chat ${message.isUserReceived ? "chat-start" : "chat-end"}`}
+        className={`chat ${message.isUserReceiver ? "chat-start" : "chat-end"}`}
         key={message.id}
       >
         <div
           className={`chat-bubble ${
-            message.isUserReceived
+            message.isUserReceiver
               ? "chat-bubble-success"
               : "chat-bubble-accent"
           }`}

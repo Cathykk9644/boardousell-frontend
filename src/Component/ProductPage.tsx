@@ -17,7 +17,7 @@ type product = {
   price: number;
   name: string;
   description: string;
-  stocks: number;
+  stock: number;
   onsale?: {
     discount: number;
   };
@@ -27,7 +27,7 @@ type suggestProduct = {
   id: number;
   price: number;
   name: string;
-  stocks: number;
+  stock: number;
   onsale?: {
     discount: number;
   };
@@ -144,7 +144,7 @@ export default function ProductPage() {
             </span>
           )}
         </span>
-        <span>Stocks: {productInfo?.stocks}</span>
+        <span>stock: {productInfo?.stock}</span>
       </div>
       <div className="flex justify-between space-x-3">
         <button
@@ -156,7 +156,7 @@ export default function ProductPage() {
         <button
           className="btn w-1/2"
           onClick={() => handleAddCart(productId)}
-          disabled={!productInfo?.stocks}
+          disabled={!productInfo?.stock}
         >
           <ShoppingCartIcon />
         </button>

@@ -10,7 +10,7 @@ type item = {
     id: number;
     price: number;
     name: string;
-    stocks: number;
+    stock: number;
     onsale?: {
       discount: number;
     };
@@ -71,7 +71,7 @@ export default function ShoppingCart({
           {item.product.onsale
             ? Math.round(item.product.price * item.product.onsale.discount)
             : item.product.price}
-          <p>Stocks: {item.product.stocks}</p>
+          <p>stock: {item.product.stock}</p>
         </div>
       </li>
     );

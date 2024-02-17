@@ -27,7 +27,7 @@ type product = {
   price: number;
   name: string;
   description: string;
-  stocks: number;
+  stock: number;
   productPhotos: {
     id: number;
     url: string;
@@ -47,7 +47,7 @@ type props = {
   setProducts: Function;
 };
 
-type editType = "name" | "stocks" | "price" | "discount" | "description" | null;
+type editType = "name" | "stock" | "price" | "discount" | "description" | null;
 export default function ProductEditForm({
   product,
   categories,
@@ -130,8 +130,8 @@ export default function ProductEditForm({
       case "price":
         setEditInput(product.price.toString());
         break;
-      case "stocks":
-        setEditInput(product.stocks.toString());
+      case "stock":
+        setEditInput(product.stock.toString());
         break;
       default:
         return;
@@ -333,7 +333,7 @@ export default function ProductEditForm({
     <Accordion expanded={open} onChange={handleChange}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography sx={{ width: "70%" }}>{product.name}</Typography>
-        <Typography sx={{ width: "30%" }}>Stocks: {product.stocks}</Typography>
+        <Typography sx={{ width: "30%" }}>stock: {product.stock}</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Backdrop open={isLoading} sx={{ zIndex: 99 }}>
@@ -364,13 +364,13 @@ export default function ProductEditForm({
               </td>
             </tr>
             <tr>
-              <th>Stocks:</th>
+              <th>stock:</th>
               <td className="flex justify-between">
                 <input
                   className="input input-sm w-3/4"
                   type="input"
-                  value={editType === "stocks" ? editInput : product.stocks}
-                  disabled={editType !== "stocks"}
+                  value={editType === "stock" ? editInput : product.stock}
+                  disabled={editType !== "stock"}
                   onChange={(e) => {
                     if (!isNaN(Number(e.target.value))) {
                       setEditInput(e.target.value);
@@ -379,9 +379,9 @@ export default function ProductEditForm({
                 />
                 <button
                   className="btn btn-sm btn-square"
-                  onClick={() => handleEdit("stocks")}
+                  onClick={() => handleEdit("stock")}
                 >
-                  {editType === "stocks" ? (
+                  {editType === "stock" ? (
                     <DoneRoundedIcon />
                   ) : (
                     <EditRoundedIcon />

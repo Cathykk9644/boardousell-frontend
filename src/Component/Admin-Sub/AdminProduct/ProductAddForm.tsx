@@ -18,7 +18,7 @@ type product = {
   price: number;
   name: string;
   description: string;
-  stocks: number;
+  stock: number;
   productPhotos: {
     id: number;
     url: string;
@@ -46,7 +46,7 @@ export default function ProductAddForm({
   const [name, setName] = useState<string>("");
   const [price, setPrice] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [stocks, setStocks] = useState<string>("");
+  const [stock, setStock] = useState<string>("");
   const [fileValue, setFileValue] = useState<File[]>([]);
   const [fileName, setFileName] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
@@ -98,7 +98,7 @@ export default function ProductAddForm({
         name,
         description,
         price: Number(price),
-        stocks: Number(stocks),
+        stock: Number(stock),
       };
       const basicRes = await axios.post(
         `${BACKENDURL}/product/create`,
@@ -152,7 +152,7 @@ export default function ProductAddForm({
       setName("");
       setPrice("");
       setDescription("");
-      setStocks("");
+      setStock("");
       setFileValue([]);
       setFileName([]);
       setSelectedCategory([]);
@@ -232,15 +232,15 @@ export default function ProductAddForm({
               </td>
             </tr>
             <tr>
-              <th>Stocks:</th>
+              <th>Stock:</th>
               <td className="flex justify-between">
                 <input
                   className="input input-sm w-3/4"
                   type="input"
-                  value={stocks}
+                  value={stock}
                   onChange={(e) => {
                     if (!isNaN(Number(e.target.value))) {
-                      setStocks(e.target.value);
+                      setStock(e.target.value);
                     }
                   }}
                 />

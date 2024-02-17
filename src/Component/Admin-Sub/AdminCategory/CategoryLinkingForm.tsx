@@ -1,4 +1,10 @@
-import { Dialog, DialogContent, DialogTitle, List } from "@mui/material";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  List,
+  ListItem,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
@@ -18,13 +24,15 @@ type product = {
   name: string;
 };
 
+type linkedProducts = {
+  [key: number]: product;
+};
+
 export default function CategoryLinkingForm({ category, setLinking }: props) {
   const [errMsg, setErrMsg] = useState<string>("");
   const [input, setInput] = useState<string>("");
   const [products, setProducts] = useState<product[]>([]);
-  const [linkedProducts, setLinkedProducts] = useState<{
-    [key: number]: product;
-  }>();
+  const [linkedProducts, setLinkedProducts] = useState<linkedProducts>([]);
   const [isLoading, setIsloading] = useState<boolean>(false);
   useEffect(() => {
     const fetchData = async () => {
@@ -66,9 +74,47 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
     }
   };
 
-  console.log(products);
+  const handleCheckBox = async (link: boolean, product: product) => {
+    try {
+      setIsloading(true);
+      await axios.put(`${BACKENDURL}/category/product`, {
+        link,
+        productId: product.id,
+        category: category.name,
+      });
+      if (link) {
+        setLinkedProducts((prev) => {
+          return { [product.id]: product, ...prev };
+        });
+      } else {
+        setLinkedProducts((prev) => {
+          const newData = { ...prev };
+          delete newData[product.id];
+          return newData;
+        });
+      }
+      setIsloading(false);
+      setErrMsg("");
+    } catch (error) {
+      setIsloading(false);
+      setErrMsg("Somethings went wrong, cannot search now.");
+    }
+  };
+
   const productDisplay = products.map((product) => {
-    return <div key={product.id}></div>;
+    return (
+      <ListItem key={product.id}>
+        <div className="w-full flex justify-start ">
+          <input
+            className="checkbox mr-5 checkbox-accent"
+            type="checkbox"
+            checked={!!linkedProducts[product.id]}
+            onChange={(e) => handleCheckBox(e.target.checked, product)}
+          />
+          {product.name}
+        </div>
+      </ListItem>
+    );
   });
 
   return (

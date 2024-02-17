@@ -30,7 +30,7 @@ export default function AdminCategoryPage() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const { data } = await axios.get(`${BACKENDURL}/category/admin/all`);
+        const { data } = await axios.get(`${BACKENDURL}/category/all`);
         setCategories(data);
         setErrMsg("");
         setIsLoading(false);

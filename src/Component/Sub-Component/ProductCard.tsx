@@ -9,7 +9,7 @@ type props = {
     id: number;
     price: number;
     name: string;
-    stocks: number;
+    stock: number;
     onsale?: {
       discount: number;
     };
@@ -57,7 +57,7 @@ export default function ProductCard({
           ) : (
             <span>HKD${product.price}</span>
           )}
-          <span>Stocks: {product.stocks}</span>
+          <span>stock: {product.stock}</span>
         </div>
       </div>
       <div className="card-actions flex justify-end mb-1 mr-1">
@@ -69,7 +69,7 @@ export default function ProductCard({
         </button>
         <button
           className="btn w-11 h-11"
-          disabled={!product.stocks}
+          disabled={!product.stock}
           onClick={() => handleAddCart(product.id)}
         >
           <ShoppingCartIcon />
