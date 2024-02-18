@@ -15,8 +15,8 @@ type checkoutListObject = {
   [key: number]: checkoutList;
 };
 
-export default function CheckoutPage() {
-  const { userId, handleAddWishItem, handleDeleteCart, setError } =
+export default function CheckoutPage(): JSX.Element {
+  const { userId, handleAddItem, handleDeleteItem, setError } =
     useOutletContext<outletProps>();
   const [cart, setCart] = useState<item[]>([]);
   const [userInfo, setUserInfo] = useState<user | null>(null);
@@ -61,7 +61,7 @@ export default function CheckoutPage() {
   const handleCartToWish = (productId: number) => {
     try {
       handleReduceAmount(productId);
-      handleAddWishItem(productId);
+      handleAddItem(productId, "wishlist");
     } catch (error) {
       setError({
         backHome: true,
@@ -73,7 +73,7 @@ export default function CheckoutPage() {
   const handleReduceAmount = (productId: number) => {
     try {
       const cartId = findCartId(productId);
-      handleDeleteCart(cartId);
+      handleDeleteItem(cartId, "cart");
       setCart((prev) => prev.filter((item) => item.id !== cartId));
     } catch (error) {
       setError({
@@ -112,7 +112,7 @@ export default function CheckoutPage() {
               </button>
             </div>
 
-            <div className="tooltip" data-tip="Reduce one ">
+            <div className="tooltip" data-tip="Reduce one">
               <button
                 className="btn btn-sm btn-square btn-outline"
                 onClick={() => handleReduceAmount(item.id)}
@@ -160,7 +160,7 @@ export default function CheckoutPage() {
 
   const handleConfirm = async () => {
     try {
-      if (userInfo && !userInfo.phone) {
+      if (!userInfo?.phone) {
         await axios.put(`${BACKENDURL}/user/${userId}`, { phone: phone });
       }
       const productIdList = cart.map((item) => item.product.id);
@@ -183,7 +183,7 @@ export default function CheckoutPage() {
     isAblePurchase = false;
     tip = "You do not have anythings in the cart";
   }
-  if (!phone.length && userInfo && !userInfo.phone) {
+  if (!phone.length && !userInfo?.phone) {
     isAblePurchase = false;
     tip = "Please Add Phone Number Before checkout";
   }
@@ -210,7 +210,7 @@ export default function CheckoutPage() {
             <td className="border-t-2 border-accent">Total:</td>
             <td className="border-t-2 border-accent">${totalAmount}</td>
           </tr>
-          {userInfo && userInfo?.level.discount < 1 && (
+          {userInfo && userInfo.level.discount < 1 && (
             <tr>
               <td></td>
               <td></td>
@@ -219,7 +219,7 @@ export default function CheckoutPage() {
               <td>{userInfo.level.discount * 100}%</td>
             </tr>
           )}
-          {userInfo && userInfo?.level.discount < 1 && (
+          {userInfo && userInfo.level.discount < 1 && (
             <tr>
               <td></td>
               <td></td>
@@ -241,7 +241,7 @@ export default function CheckoutPage() {
           onChange={(e) => setAddress(e.target.value)}
         />
 
-        {userInfo && !userInfo.phone && (
+        {!userInfo?.phone && (
           <div className="flex justify-between items-center">
             <label>Phone: </label>
             <input

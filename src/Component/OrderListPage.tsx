@@ -6,7 +6,7 @@ import { Stack } from "@mui/material";
 import { useAuth0 } from "@auth0/auth0-react";
 import { order, outletProps } from "../type";
 
-export default function OrderListPage() {
+export default function OrderListPage(): JSX.Element {
   const { userId, setError } = useOutletContext<outletProps>();
   const [orderList, setOrderList] = useState<order[]>([]);
   const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();

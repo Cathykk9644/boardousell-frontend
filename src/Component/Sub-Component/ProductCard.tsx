@@ -4,17 +4,12 @@ import noImage from "../img/no-image.jpg";
 import { useNavigate } from "react-router-dom";
 import { product } from "../../type";
 type props = {
-  handleAddWishItem: Function;
-  handleAddCart: Function;
+  handleAddItem: Function;
   product: product;
 };
 
 //Need to add shopping Cart function
-export default function ProductCard({
-  product,
-  handleAddWishItem,
-  handleAddCart,
-}: props) {
+export default function ProductCard({ product, handleAddItem }: props) {
   const navi = useNavigate();
 
   return !product ? null : (
@@ -51,14 +46,14 @@ export default function ProductCard({
       <div className="card-actions flex justify-end mb-1 mr-1">
         <button
           className="btn w-11 h-11"
-          onClick={() => handleAddWishItem(product.id)}
+          onClick={() => handleAddItem(product.id, "wishlist")}
         >
           <StarsIcon />
         </button>
         <button
           className="btn w-11 h-11"
           disabled={!product.stock}
-          onClick={() => handleAddCart(product.id)}
+          onClick={() => handleAddItem(product.id, "cart")}
         >
           <ShoppingCartIcon />
         </button>

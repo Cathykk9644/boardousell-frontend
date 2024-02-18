@@ -10,7 +10,7 @@ type props = {
   open: boolean;
   setDrawer: Function;
   wishlist: item[];
-  handleDeleteWish: Function;
+  handleDeleteItem: Function;
   handleWishToCart: Function;
   startAnime: boolean;
   setAnime: Function;
@@ -20,11 +20,11 @@ export default function Wishlist({
   open,
   setDrawer,
   wishlist,
-  handleDeleteWish,
+  handleDeleteItem,
   handleWishToCart,
   startAnime,
   setAnime,
-}: props) {
+}: props): JSX.Element {
   const navi = useNavigate();
 
   const handleGoProduct = async (productId: number) => {
@@ -42,10 +42,9 @@ export default function Wishlist({
         }`}
         key={item.id}
       >
-        {" "}
         <button
           className="m-1 btn btn-sm btn-square"
-          onClick={() => handleDeleteWish(item.id)}
+          onClick={() => handleDeleteItem(item.id, "wishlist")}
         >
           <DeleteIcon />
         </button>
@@ -94,7 +93,7 @@ export default function Wishlist({
               className="btn btn-secondary border-neutral ring-1 rounded-3xl"
               onClick={() => setDrawer("wish")}
             >
-              <StarsIcon className="" />
+              <StarsIcon />
             </button>
           </div>
         </div>

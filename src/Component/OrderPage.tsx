@@ -18,7 +18,7 @@ const stripePromise = loadStripe(
   process.env.REACT_APP_STRIPE_KEY ? process.env.REACT_APP_STRIPE_KEY : ""
 );
 
-export default function OrderPage() {
+export default function OrderPage(): JSX.Element {
   const { orderId } = useParams<Params>();
   const [orderInfo, setOrderInfo] = useState<order>();
   const [userInfo, setUserInfo] = useState<user>();
@@ -29,6 +29,7 @@ export default function OrderPage() {
   const navi = useNavigate();
   const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
   const { userId, setError } = useOutletContext<outletProps>();
+
   useEffect(() => {
     if (isLoading) {
       return;

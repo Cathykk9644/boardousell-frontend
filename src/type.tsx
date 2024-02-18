@@ -59,11 +59,7 @@ export type user = {
   isAdmin: boolean;
   points: number;
   phone: number;
-  level: {
-    discount: number;
-    title: string;
-    requirement: number;
-  };
+  level: level;
 };
 
 export type notice = {
@@ -82,8 +78,7 @@ export type infomation = {
 
 export type outletProps = {
   userId: number;
-  handleAddWishItem: Function;
-  handleAddCart: Function;
-  handleDeleteCart: Function;
+  handleAddItem: Function;
+  handleDeleteItem: Function;
   setError: Function;
 };

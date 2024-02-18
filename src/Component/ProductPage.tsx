@@ -9,7 +9,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ProductList from "./Sub-Component/ProductList";
 import { product, outletProps } from "../type";
 
-export default function ProductPage() {
+export default function ProductPage(): JSX.Element {
   const { productId } = useParams<string>();
   const [productInfo, setProductInfo] = useState<product | null>(null);
   const [photoList, setPhotoList] = useState<string[]>([]);
@@ -17,8 +17,7 @@ export default function ProductPage() {
   const [suggestCategory, setSuggestCategory] = useState<string>("");
   const [suggestProducts, setSuggestProducts] = useState<product[]>([]);
   const [isLoadingProduct, setIsLoadingProduct] = useState<boolean>(false);
-  const { handleAddWishItem, handleAddCart, setError } =
-    useOutletContext<outletProps>();
+  const { handleAddItem, setError } = useOutletContext<outletProps>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -113,13 +112,13 @@ export default function ProductPage() {
       <div className="flex justify-between space-x-3">
         <button
           className="btn w-1/2"
-          onClick={() => handleAddWishItem(productId)}
+          onClick={() => handleAddItem(productId, "wishlist")}
         >
           <StarsIcon />
         </button>
         <button
           className="btn w-1/2"
-          onClick={() => handleAddCart(productId)}
+          onClick={() => handleAddItem(productId, "cart")}
           disabled={!productInfo?.stock}
         >
           <ShoppingCartIcon />
@@ -161,8 +160,7 @@ export default function ProductPage() {
           !!suggestProducts.length && (
             <ProductList
               products={suggestProducts}
-              handleAddCart={handleAddCart}
-              handleAddWishItem={handleAddWishItem}
+              handleAddItem={handleAddItem}
             />
           )
         )}

@@ -5,14 +5,14 @@ import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { BACKENDURL } from "../constant";
-import { outletProps, level } from "../type";
+import { outletProps, level, user } from "../type";
 
 type userLevel = {
   points: number;
   level: level;
 };
 
-export default function UserPage() {
+export default function UserPage(): JSX.Element {
   const { userId, setError } = useOutletContext<outletProps>();
   const [email, setEmail] = useState<string>("");
   const [editing, setEditing] = useState<"name" | "phone" | null>(null);
@@ -20,6 +20,7 @@ export default function UserPage() {
   const [phone, setPhone] = useState<string>("");
   const [levelInfo, setLevelInfo] = useState<userLevel | null>(null);
   const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
+
   useEffect(() => {
     if (isLoading) {
       return;
@@ -29,7 +30,9 @@ export default function UserPage() {
     }
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`${BACKENDURL}/user/${userId}`);
+        const { data }: { data: user } = await axios.get(
+          `${BACKENDURL}/user/${userId}`
+        );
         setEmail(data.email);
         setName(data.name);
         setPhone(data.phone ? data.phone.toString() : "");
@@ -47,16 +50,16 @@ export default function UserPage() {
   }, [isAuthenticated, loginWithRedirect, setError, userId, isLoading]);
 
   const handleEdit = (target: "name" | "phone") => {
-    if (!editing) {
-      setEditing(target);
-    } else if (editing === target) {
-      handleUpdate(target);
+    if (editing) {
+      handleUpdate(editing);
+    }
+    if (editing === target) {
       setEditing(null);
     } else {
-      handleUpdate(editing);
       setEditing(target);
     }
   };
+
   const handleUpdate = async (target: "name" | "phone") => {
     try {
       let newData;
@@ -90,7 +93,7 @@ export default function UserPage() {
           {levelInfo?.points}/{levelInfo?.level.requirement}
         </span>
       </div>
-      You will hit next level after{" "}
+      You will hit next level after
       {levelInfo && levelInfo.level.requirement - levelInfo.points} points
     </div>
   );

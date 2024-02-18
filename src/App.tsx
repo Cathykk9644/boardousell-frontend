@@ -8,13 +8,13 @@ import ShoppingCart from "./Component/Sub-Component/ShoppingCart";
 import ErrorPage from "./Component/Sub-Component/ErrorPage";
 import { useAuth0 } from "@auth0/auth0-react";
 import AdminPage from "./Component/Admin-Sub/AdminPage";
-import { item, outletProps } from "./type";
+import { item, outletProps, user } from "./type";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
 type anime = "wish" | "cart" | null;
 type drawer = "nav" | anime;
 
-export default function App() {
+export default function App(): JSX.Element {
   const [userId, setUserId] = useState<number>(0);
   const { isAuthenticated, isLoading, loginWithRedirect, user } = useAuth0();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -31,9 +31,11 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(
+        const { data }: { data: [user, boolean] } = await axios.get(
           `${BACKENDURL}/user/login/${user?.sub}`
         );
+        //data[0] is the user Data
+        //data[1] trues means the user data is new made.
         if (data[1]) {
           await axios.put(`${BACKENDURL}/user/${data[0].id}`, {
             email: user?.email,
@@ -74,75 +76,55 @@ export default function App() {
     user?.sub,
   ]);
 
-  const handleAddWishItem = async (productId: number) => {
+  const handleAddItem = async (
+    productId: number,
+    target: "cart" | "wishlist"
+  ) => {
     if (!isAuthenticated) {
       return loginWithRedirect();
     }
     try {
-      const { data } = await axios.post(`${BACKENDURL}/wishlist`, {
+      const { data } = await axios.post(`${BACKENDURL}/${target}`, {
         userId: userId,
         productId: productId,
       });
-      setWishlist((prev) => [...prev, data]);
-      setAnime("wish");
+      if (target === "wishlist") {
+        setWishlist((prev) => [...prev, data]);
+        setAnime("wish");
+      } else {
+        setCart((prev: item[]) => [...prev, data]);
+        setAnime("cart");
+      }
     } catch (err) {
       setError({
         backHome: true,
-        message: "Oh. Sorry, cannot add wish item for now.",
+        message: `Oh. Sorry, cannot add ${target} for now.`,
       });
     }
   };
 
-  const handleDeleteWish = async (wishlistId: number) => {
+  const handleDeleteItem = async (id: number, target: "cart" | "wishlist") => {
     try {
-      await axios.delete(`${BACKENDURL}/wishlist/${wishlistId}`);
-      setWishlist((prev: item[]) =>
-        prev.filter((item: item) => item.id !== wishlistId)
-      );
+      await axios.delete(`${BACKENDURL}/${target}/${id}`);
+      const updateState = (prev: item[]) => {
+        return prev.filter((item: item) => item.id !== id);
+      };
+      if (target === "cart") {
+        setCart((prev: item[]) => updateState(prev));
+      } else {
+        setWishlist((prev: item[]) => updateState(prev));
+      }
     } catch (err) {
       setError({
         backHome: false,
-        message: "Oh. Sorry, cannot delete this wish item for now.",
-      });
-    }
-  };
-
-  const handleAddCart = async (productId: number) => {
-    if (!isAuthenticated) {
-      return loginWithRedirect();
-    }
-    try {
-      const { data } = await axios.post(`${BACKENDURL}/cart`, {
-        userId: userId,
-        productId: productId,
-      });
-      setCart((prev: item[]) => [...prev, data]);
-      setAnime("cart");
-    } catch (err) {
-      setError({
-        backHome: true,
-        message: "Oh. Sorry, cannot add this into your cart for now.",
-      });
-    }
-  };
-
-  const handleDeleteCart = async (cartId: number) => {
-    try {
-      await axios.delete(`${BACKENDURL}/cart/${cartId}`);
-      setCart((prev: item[]) =>
-        prev.filter((item: item) => item.id !== cartId)
-      );
-    } catch (error) {
-      setError({
-        backHome: false,
-        message: "Oh. Sorry, cannot delete this from your cart for now.",
+        message: `Oh. Sorry, cannot delete ${target} for now.`,
       });
     }
   };
 
   const handleWishToCart = (wishlistId: number, productId: number) => {
-    handleAddCart(productId);
-    handleDeleteWish(wishlistId);
+    handleAddItem(productId, "cart");
+    handleDeleteItem(wishlistId, "wishlist");
     setDrawer("cart");
   };
 
@@ -155,9 +137,8 @@ export default function App() {
 
   const outletProps: outletProps = {
     userId,
-    handleAddWishItem,
-    handleAddCart,
-    handleDeleteCart,
+    handleAddItem,
+    handleDeleteItem,
     setError,
   };
 
@@ -165,6 +146,7 @@ export default function App() {
     <AdminPage />
   ) : (
     <div data-theme="nord" className="min-h-screen">
+      <ErrorPage error={error} handleError={handleError} />
       <Navibar
         open={drawer === "nav"}
         setDrawer={setDrawer}
@@ -176,7 +158,7 @@ export default function App() {
           open={drawer === "wish"}
           setDrawer={setDrawer}
           wishlist={wishlist}
-          handleDeleteWish={handleDeleteWish}
+          handleDeleteItem={handleDeleteItem}
           handleWishToCart={handleWishToCart}
           startAnime={anime === "wish"}
           setAnime={setAnime}
@@ -187,7 +169,7 @@ export default function App() {
           open={drawer === "cart"}
           setDrawer={setDrawer}
           cart={cart}
-          handleDeleteCart={handleDeleteCart}
+          handleDeleteItem={handleDeleteItem}
           startAnime={anime === "cart"}
           setAnime={setAnime}
         />
@@ -203,7 +185,6 @@ export default function App() {
           </Link>
         </nav>
       </footer>
-      <ErrorPage error={error} handleError={handleError} />
     </div>
   );
 }

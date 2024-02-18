@@ -16,12 +16,11 @@ type res = {
   result: product[];
 };
 
-export default function SearchPage() {
+export default function SearchPage(): JSX.Element {
   const [products, setProducts] = useState<product[]>([]);
   const [resultAmount, setResultAmount] = useState<number>(0);
   const [query] = useSearchParams();
-  const { handleAddCart, handleAddWishItem, setError } =
-    useOutletContext<outletProps>();
+  const { handleAddItem, setError } = useOutletContext<outletProps>();
   const navi = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
@@ -40,6 +39,7 @@ export default function SearchPage() {
     };
     fetchData();
   }, [query, setError]);
+
   const handleChange = (e: React.ChangeEvent<unknown>, newPage: number) => {
     let queryString = "?";
     query.forEach((value, key) => {
@@ -80,14 +80,14 @@ export default function SearchPage() {
           <div className="card-actions justify-end">
             <button
               className="btn btn-square btn-md"
-              onClick={() => handleAddWishItem(product.id)}
+              onClick={() => handleAddItem(product.id, "wishlist")}
             >
               <StarsIcon />
             </button>
             <button
               className="btn btn-square btn-md"
               disabled={!product.stock}
-              onClick={() => handleAddCart(product.id)}
+              onClick={() => handleAddItem(product.id, "cart")}
             >
               <ShoppingCartIcon />
             </button>

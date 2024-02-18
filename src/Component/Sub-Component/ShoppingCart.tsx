@@ -9,7 +9,7 @@ type props = {
   open: boolean;
   setDrawer: Function;
   cart: item[];
-  handleDeleteCart: Function;
+  handleDeleteItem: Function;
   startAnime: boolean;
   setAnime: Function;
 };
@@ -18,10 +18,10 @@ export default function ShoppingCart({
   open,
   setDrawer,
   cart,
-  handleDeleteCart,
+  handleDeleteItem,
   startAnime,
   setAnime,
-}: props) {
+}: props): JSX.Element {
   const navi = useNavigate();
 
   const handleGoProduct = async (productId: number) => {
@@ -44,7 +44,7 @@ export default function ShoppingCart({
       >
         <button
           className="m-1 btn btn-sm btn-square"
-          onClick={() => handleDeleteCart(item.id)}
+          onClick={() => handleDeleteItem(item.id, "cart")}
         >
           <DeleteIcon />
         </button>

@@ -7,11 +7,10 @@ import { useOutletContext } from "react-router-dom";
 import { BACKENDURL } from "../constant";
 import { product, outletProps } from "../type";
 
-export default function HomePage() {
+export default function HomePage(): JSX.Element {
   const [newProducts, setNewProduct] = useState<product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { handleAddWishItem, handleAddCart, setError }: outletProps =
-    useOutletContext();
+  const { handleAddItem, setError }: outletProps = useOutletContext();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,11 +39,7 @@ export default function HomePage() {
       {isLoading ? (
         <CircularProgress className="self-center" />
       ) : (
-        <ProductList
-          products={newProducts}
-          handleAddWishItem={handleAddWishItem}
-          handleAddCart={handleAddCart}
-        />
+        <ProductList products={newProducts} handleAddItem={handleAddItem} />
       )}
     </div>
   );

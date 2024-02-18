@@ -1,4 +1,4 @@
-export default function WrongPage() {
+export default function WrongPage(): JSX.Element {
   return (
     <div className="flex flex-col p-8">
       <h1 className="text-2xl self-center">Sorry, the page cannot be found.</h1>

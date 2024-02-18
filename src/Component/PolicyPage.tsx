@@ -1,6 +1,6 @@
 import { DISCLAIMER } from "../constant";
 
-export default function PolicyPage() {
+export default function PolicyPage(): JSX.Element {
   return (
     <div className="flex flex-col items-center">
       {DISCLAIMER}

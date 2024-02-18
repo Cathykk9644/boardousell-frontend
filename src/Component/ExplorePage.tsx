@@ -17,8 +17,7 @@ export default function ExplorePage() {
   const [onsaleList, setOnsaleList] = useState<product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [suggestLists, setSuggestLists] = useState<suggestCategory[]>([]);
-  const { handleAddWishItem, handleAddCart, setError } =
-    useOutletContext<outletProps>();
+  const { handleAddItem, setError } = useOutletContext<outletProps>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +38,7 @@ export default function ExplorePage() {
             Math.random() * categoryList.data.length
           );
         }
-        const random = [
+        const random: category[] = [
           categoryList.data[randomIndexFirst],
           categoryList.data[randomIndexSecond],
         ];
@@ -47,7 +46,7 @@ export default function ExplorePage() {
 
         for (const category of random) {
           const products: { data: product[] } = await axios.get(
-            `${BACKENDURL}/category/suggest/${category}`
+            `${BACKENDURL}/category/suggest/${category.name}`
           );
           rawSuggestList.push({
             category: category.name,
@@ -79,11 +78,7 @@ export default function ExplorePage() {
         key={`suggest${item.category}`}
       >
         <h1 className="w-5/6 text-xl ">{item.category}:</h1>
-        <ProductList
-          products={item.products}
-          handleAddWishItem={handleAddWishItem}
-          handleAddCart={handleAddCart}
-        />
+        <ProductList products={item.products} handleAddItem={handleAddItem} />
       </div>
     );
   });
@@ -106,11 +101,7 @@ export default function ExplorePage() {
       ) : (
         <div className=" flex flex-col items-center">
           <h1 className="w-5/6 text-xl">On Sales:</h1>
-          <ProductList
-            products={onsaleList}
-            handleAddWishItem={handleAddWishItem}
-            handleAddCart={handleAddCart}
-          />
+          <ProductList products={onsaleList} handleAddItem={handleAddItem} />
           {suggestDisplay}
           <h1 className="w-5/6 text-lg ">Categories:</h1>
           <div className="flex flex-row w-5/6 flex-wrap">

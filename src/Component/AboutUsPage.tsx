@@ -1,6 +1,6 @@
 import { DISCLAIMER } from "../constant";
 
-export default function AboutUsPage() {
+export default function AboutUsPage(): JSX.Element {
   return (
     <div className="flex flex-col items-center min-h-screen">
       {DISCLAIMER}
