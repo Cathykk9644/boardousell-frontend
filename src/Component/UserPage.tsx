@@ -93,7 +93,7 @@ export default function UserPage(): JSX.Element {
           {levelInfo?.points}/{levelInfo?.level.requirement}
         </span>
       </div>
-      You will hit next level after
+      You will hit next level after{" "}
       {levelInfo && levelInfo.level.requirement - levelInfo.points} points
     </div>
   );

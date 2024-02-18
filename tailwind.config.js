@@ -25,6 +25,7 @@ module.exports = {
     "./src/Component/Admin-Sub/AdminNotice/NoticeEditForm.tsx",
     "./src/Component/Admin-Sub/AdminNotice/NoticeAddForm.tsx",
     "./src/Component/Admin-Sub/AdminCategory/CategoryLinkingForm.tsx",
+    "./src/Component/Admin-Sub/AdminOrder/OrderEditForm.tsx",
     "./src/Component/SearchPage.tsx",
     "./src/Component/AboutUsPage.tsx",
     "./src/Component/CheckoutPage.tsx",

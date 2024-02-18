@@ -2,21 +2,24 @@ import { useEffect, useState } from "react";
 
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { order } from "../../type";
+import { CircularProgress, Pagination } from "@mui/material";
+import OrderEditForm from "./AdminOrder/OrderEditForm";
 
 type search = {
   type: "status" | "message" | "email" | "id" | "product";
   input: string;
 };
+type page = {
+  total: number;
+  current: number;
+};
 
-//Search for Status order,
-//Search for message in created order,
-//Search using user email
-//Search using order Id
-//Search using product
 export default function AdminOrderPage() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [orders, setOrders] = useState<order[]>([]);
   const [search, setSearch] = useState<search>({ type: "status", input: "" });
-  const [keyword, setKeyword] = useState<string>("");
+  const [currentSearch, setCurrentSearch] = useState<search | null>(null);
+  const [page, setPage] = useState<page>({ total: 0, current: 0 });
   const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
@@ -62,7 +65,17 @@ export default function AdminOrderPage() {
     }
   };
 
-  console.log(search);
+  const handleChangePage = async () => {};
+
+  const ordersDisplay = orders.length ? (
+    orders.map((order) => {
+      return <OrderEditForm order={order} />;
+    })
+  ) : (
+    <div>No Orders Found.</div>
+  );
+
+  console.log(orders);
   return (
     <div className="flex flex-col items-center">
       {!!errMsg.length && <span className="text-error m-1">{errMsg}</span>}
@@ -118,6 +131,18 @@ export default function AdminOrderPage() {
         <button className="btn btn-md btn-square " onClick={handleSearch}>
           <SearchRoundedIcon />
         </button>
+      </div>
+      <div className="w-5/6 flex flex-col items-center">
+        {/* {isLoading ? <CircularProgress /> : ordersDisplay} */}
+        {!!page.total && (
+          <Pagination
+            count={page.total}
+            page={page.current}
+            variant="outlined"
+            shape="rounded"
+            onChange={handleChangePage}
+          />
+        )}
       </div>
     </div>
   );

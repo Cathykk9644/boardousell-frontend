@@ -16,9 +16,9 @@ type checkoutListObject = {
 };
 
 export default function CheckoutPage(): JSX.Element {
-  const { userId, handleAddItem, handleDeleteItem, setError } =
+  const { userId, handleAddItem, handleDeleteItem, setError, setCart } =
     useOutletContext<outletProps>();
-  const [cart, setCart] = useState<item[]>([]);
+  const [newCart, setNewCart] = useState<item[]>([]);
   const [userInfo, setUserInfo] = useState<user | null>(null);
   const [address, setAddress] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
@@ -39,7 +39,7 @@ export default function CheckoutPage(): JSX.Element {
         const { data } = await axios.get(`${BACKENDURL}/cart/info/${userId}`);
         const userDataRes = await axios.get(`${BACKENDURL}/user/${userId}`);
         setUserInfo(userDataRes.data);
-        setCart(data);
+        setNewCart(data);
         setIsLoadingCart(false);
       } catch (error) {
         setError({
@@ -54,8 +54,8 @@ export default function CheckoutPage(): JSX.Element {
   }, [userId, setError, isAuthenticated, loginWithRedirect, isLoading]);
 
   const findCartId = (productId: number): number => {
-    const index = cart.findIndex((item) => item.product.id === productId);
-    return cart[index].id;
+    const index = newCart.findIndex((item) => item.product.id === productId);
+    return newCart[index].id;
   };
 
   const handleCartToWish = (productId: number) => {
@@ -74,7 +74,7 @@ export default function CheckoutPage(): JSX.Element {
     try {
       const cartId = findCartId(productId);
       handleDeleteItem(cartId, "cart");
-      setCart((prev) => prev.filter((item) => item.id !== cartId));
+      setNewCart((prev) => prev.filter((item) => item.id !== cartId));
     } catch (error) {
       setError({
         backHome: true,
@@ -84,7 +84,7 @@ export default function CheckoutPage(): JSX.Element {
   };
 
   const checkoutListObject: checkoutListObject = {};
-  for (const item of cart) {
+  for (const item of newCart) {
     if (checkoutListObject[item.product.id]) {
       checkoutListObject[item.product.id].amounts += 1;
     } else {
@@ -144,7 +144,7 @@ export default function CheckoutPage(): JSX.Element {
   });
 
   let totalAmount = 0;
-  cart.forEach((item) => {
+  newCart.forEach((item) => {
     if (item.product.onsale) {
       totalAmount += Math.round(
         item.product.price * item.product.onsale.discount
@@ -158,18 +158,28 @@ export default function CheckoutPage(): JSX.Element {
     ? Math.round(totalAmount * userInfo.level.discount)
     : 0;
 
+  if (!newCart.length) {
+    isAblePurchase = false;
+    tip = "You do not have anythings in the cart";
+  }
+  if (!phone.length && !userInfo?.phone) {
+    isAblePurchase = false;
+    tip = "Please Add Phone Number Before checkout";
+  }
+
   const handleConfirm = async () => {
     try {
       if (!userInfo?.phone) {
         await axios.put(`${BACKENDURL}/user/${userId}`, { phone: phone });
       }
-      const productIdList = cart.map((item) => item.product.id);
+      const productIdList = newCart.map((item) => item.product.id);
       const { data } = await axios.post(`${BACKENDURL}/order`, {
         userId,
         address,
         productIdList,
         amount: discountedAmount,
       });
+      setCart([]);
       navi(`/order/${data}`);
     } catch (error) {
       setError({
@@ -178,15 +188,6 @@ export default function CheckoutPage(): JSX.Element {
       });
     }
   };
-
-  if (!cart.length) {
-    isAblePurchase = false;
-    tip = "You do not have anythings in the cart";
-  }
-  if (!phone.length && !userInfo?.phone) {
-    isAblePurchase = false;
-    tip = "Please Add Phone Number Before checkout";
-  }
 
   return (
     <div className="min-h-screen flex flex-col items-center">

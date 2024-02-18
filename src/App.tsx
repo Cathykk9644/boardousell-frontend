@@ -140,6 +140,7 @@ export default function App(): JSX.Element {
     handleAddItem,
     handleDeleteItem,
     setError,
+    setCart,
   };
 
   return isAdmin ? (

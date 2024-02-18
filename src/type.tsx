@@ -42,16 +42,6 @@ export type message = {
   updatedAt: string;
 };
 
-export type order = {
-  id: number;
-  userId: number;
-  address: string;
-  amount: number;
-  status: "Pending" | "Paid" | "Ready" | "Shipped" | "Delivered" | "Cancelled";
-  createdAt: string;
-  updatedAt: string;
-};
-
 export type user = {
   id: number;
   email: string;
@@ -60,6 +50,23 @@ export type user = {
   points: number;
   phone: number;
   level: level;
+};
+
+export type order = {
+  id: number;
+  userId: number;
+  address: string;
+  amount: number;
+  status: "Pending" | "Paid" | "Ready" | "Shipped" | "Delivered" | "Cancelled";
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    email: string;
+    name: string;
+    phone: number;
+  };
+  products: { id: number; name: string }[];
+  message: message[];
 };
 
 export type notice = {
@@ -80,5 +87,6 @@ export type outletProps = {
   userId: number;
   handleAddItem: Function;
   handleDeleteItem: Function;
+  setCart: Function;
   setError: Function;
 };
