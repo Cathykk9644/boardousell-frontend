@@ -19,7 +19,7 @@ export default function GoogleMap({
   setError,
   setErrMsg,
   setPreview,
-}: props) {
+}: props): JSX.Element {
   const [center, setCenter] = useState<center>(null);
 
   useEffect(() => {
@@ -47,12 +47,10 @@ export default function GoogleMap({
     getCenter();
   });
   return (
-    center && (
-      <APIProvider apiKey={mapApiKey ? mapApiKey : ""}>
-        <Map center={center} zoom={16} className="google-map">
-          <Marker position={center} />
-        </Map>
-      </APIProvider>
-    )
+    <APIProvider apiKey={mapApiKey ? mapApiKey : ""}>
+      <Map center={center} zoom={16} className="google-map">
+        <Marker position={center} />
+      </Map>
+    </APIProvider>
   );
 }

@@ -1,4 +1,6 @@
 import {
+  Backdrop,
+  CircularProgress,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -28,6 +30,7 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
   const [products, setProducts] = useState<product[]>([]);
   const [linkedProducts, setLinkedProducts] = useState<linkedProducts>([]);
   const [isLoading, setIsloading] = useState<boolean>(false);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -113,6 +116,9 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
 
   return (
     <Dialog open={!!category} fullWidth>
+      <Backdrop open={isLoading} sx={{ zIndex: 99 }}>
+        <CircularProgress />
+      </Backdrop>
       <DialogTitle className="flex justify-between">
         {category.name}
         <button

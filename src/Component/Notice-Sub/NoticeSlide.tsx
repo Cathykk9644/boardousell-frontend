@@ -72,42 +72,46 @@ export default function NoticeSlide({ setError }: { setError: Function }) {
     setCurrentNotice((prev) => prev - 1);
   };
 
-  const noticesDisplay: React.ReactNode | null = !!notices.length
-    ? notices.map((notice, i) => {
-        const background = notice.url === null ? noticeBackground : notice.url;
-        return (
+  const noticesDisplay = notices.map((notice, i) => {
+    const background = notice.url === null ? noticeBackground : notice.url;
+    let animationName = "none";
+    switch (startAnimation) {
+      case "next":
+        animationName = "next-notice";
+        break;
+      case "prev":
+        animationName = "prev-notice";
+        break;
+      case "reset":
+        animationName = "reset-notice";
+        break;
+    }
+
+    return (
+      <div
+        className="absolute h-full w-full "
+        key={i}
+        style={{
+          left: `${i * 100}%`,
+          transform: `translate(-${currentNotice * 100}%)`,
+          animationName: animationName,
+          animationDuration: "0.5s",
+        }}
+        onAnimationEnd={() => setStartAnimation(null)}
+      >
+        <Link to={`/notice/${notice.id}`}>
           <div
-            className="absolute h-full w-full "
-            key={i}
-            style={{
-              left: `${i * 100}%`,
-              transform: `translate(-${currentNotice * 100}%)`,
-              animationName:
-                startAnimation === "next"
-                  ? "next-notice"
-                  : startAnimation === "prev"
-                  ? "prev-notice"
-                  : startAnimation === "reset"
-                  ? "reset-notice"
-                  : "none",
-              animationDuration: "0.5s",
-            }}
-            onAnimationEnd={() => setStartAnimation(null)}
+            className="h-full w-full bg-cover bg-center"
+            style={{ backgroundImage: `url(${background})` }}
           >
-            <Link to={`/notice/${notice.id}`}>
-              <div
-                className="h-full w-full bg-cover bg-center"
-                style={{ backgroundImage: `url(${background})` }}
-              >
-                <h1 className="text-base-300 pl-2 pt-1 text-base-content bg-gradient-to-tl from-base-300 to-transparent w-max">
-                  {notice.title}
-                </h1>
-              </div>
-            </Link>
+            <h1 className="text-base-300 pl-2 pt-1 text-base-content bg-gradient-to-tl from-base-300 to-transparent w-max">
+              {notice.title}
+            </h1>
           </div>
-        );
-      })
-    : null;
+        </Link>
+      </div>
+    );
+  });
 
   return (
     <div>

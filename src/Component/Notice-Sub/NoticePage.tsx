@@ -7,11 +7,11 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useOutletContext, useParams, Params } from "react-router-dom";
 import { notice } from "../../type";
 
-export default function NoticePage() {
+export default function NoticePage(): JSX.Element {
   const [noticeList, setNoticeList] = useState<notice[]>([]);
   const { noticeId } = useParams<Params>();
-  const [currentNoticeId, setCurrentNoticeId] = useState<number | undefined>(
-    Number(noticeId)
+  const [currentNoticeId, setCurrentNoticeId] = useState<number | null>(
+    noticeId ? Number(noticeId) : null
   );
   const { setError }: { setError: Function } = useOutletContext();
 
@@ -34,29 +34,29 @@ export default function NoticePage() {
     setCurrentNoticeId(Number(noticeId));
   }, [noticeId]);
 
-  const handleExpand = async (noticeId: number | undefined) => {
-    setCurrentNoticeId((prev) => (prev === noticeId ? undefined : noticeId));
+  const handleExpand = async (noticeId: number) => {
+    setCurrentNoticeId((prev) => (prev === noticeId ? null : noticeId));
   };
 
   const listDisplay = noticeList.map((notice) => {
     return (
       <Accordion
-        key={notice?.id}
-        expanded={notice?.id === currentNoticeId}
+        key={notice.id}
+        expanded={notice.id === currentNoticeId}
         onChange={() => {
           handleExpand(notice?.id);
         }}
       >
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <div className="flex flex-col">
-            <div className="self-start">{notice?.createdAt.slice(0, 10)}</div>
+            <div className="self-start">{notice.createdAt.slice(0, 10)}</div>
             <span> {notice?.title}</span>
           </div>
         </AccordionSummary>
         <AccordionDetails>
           <div className="card">
-            {notice?.url && <img src={notice?.url} alt={notice?.title} />}
-            <div className="card-body">{notice?.detail}</div>
+            {notice.url && <img src={notice.url} alt={notice.title} />}
+            <div className="card-body">{notice.detail}</div>
           </div>
         </AccordionDetails>
       </Accordion>

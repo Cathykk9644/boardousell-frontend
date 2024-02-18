@@ -18,10 +18,12 @@ type props = {
   setOpen: Function;
   setNotices: Function;
 };
-
+type newData = {
+  title: string;
+  detail: string;
+};
 export default function NoticeAddForm({ open, setOpen, setNotices }: props) {
-  const [title, setTitle] = useState<string>("");
-  const [detail, setDetail] = useState<string>("");
+  const [newData, setNewData] = useState<newData>({ title: "", detail: "" });
   const [fileValue, setFileValue] = useState<File | null>(null);
   const [fileName, setFileName] = useState<string>("");
   const [isLoading, setIsloading] = useState<boolean>(false);
@@ -44,14 +46,14 @@ export default function NoticeAddForm({ open, setOpen, setNotices }: props) {
   };
 
   const handleAddNotice = async () => {
-    if (!title.length) {
+    if (!newData.title.length) {
       return setErrMsg("You need to add title first.");
     }
     try {
       setIsloading(true);
       const { data }: { data: notice } = await axios.post(
         `${BACKENDURL}/notice`,
-        { title, detail }
+        newData
       );
       if (fileValue) {
         const photoRef = ref(storage, `notice/notice${data.id}.jpg`);
@@ -68,8 +70,7 @@ export default function NoticeAddForm({ open, setOpen, setNotices }: props) {
         newNotices.unshift(data);
         return newNotices;
       });
-      setTitle("");
-      setDetail("");
+      setNewData({ title: "", detail: "" });
       setFileName("");
       setFileValue(null);
       setErrMsg("");
@@ -103,8 +104,10 @@ export default function NoticeAddForm({ open, setOpen, setNotices }: props) {
               <td>
                 <input
                   className="input input-sm"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  value={newData.title}
+                  onChange={(e) =>
+                    setNewData({ ...newData, title: e.target.value })
+                  }
                 />
               </td>
             </tr>
@@ -113,8 +116,10 @@ export default function NoticeAddForm({ open, setOpen, setNotices }: props) {
               <td>
                 <textarea
                   className="textarea w-full h-36"
-                  value={detail}
-                  onChange={(e) => setDetail(e.target.value)}
+                  value={newData.detail}
+                  onChange={(e) =>
+                    setNewData({ ...newData, detail: e.target.value })
+                  }
                 />
               </td>
             </tr>

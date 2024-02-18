@@ -51,7 +51,7 @@ export default function ProductList({
   }
   const productAllList = products
     ? dividedList.map((productGroup, i) => {
-        const productGroupList = productGroup?.map((product, j) => {
+        const productGroupList = productGroup.map((product, j) => {
           return (
             <ProductCard
               product={product}

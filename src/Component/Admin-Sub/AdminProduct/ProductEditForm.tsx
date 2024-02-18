@@ -32,7 +32,10 @@ type props = {
   setProducts: Function;
 };
 
-type editType = "name" | "stock" | "price" | "discount" | "description" | null;
+type edit = {
+  type: "name" | "stock" | "price" | "discount" | "description" | null;
+  input: string;
+};
 export default function ProductEditForm({
   product,
   categories,
@@ -42,8 +45,7 @@ export default function ProductEditForm({
   setProducts,
 }: props) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [editType, setEditType] = useState<editType>(null);
-  const [editInput, setEditInput] = useState<string>("");
+  const [edit, setEdit] = useState<edit>({ type: null, input: "" });
   const [fileValue, setFileValue] = useState<File[]>([]);
   const [fileName, setFileName] = useState<string[]>([]);
 
@@ -54,9 +56,8 @@ export default function ProductEditForm({
   };
 
   const handleCheckBox = async (updateType: string, isNew: boolean) => {
-    if (editType === "discount") {
-      setEditType(null);
-      setEditInput("");
+    if (edit.type === "discount") {
+      setEdit({ type: null, input: "" });
     }
     try {
       const { data } = await axios.put(
@@ -72,56 +73,55 @@ export default function ProductEditForm({
 
   const handleConfirmEdit = async () => {
     try {
-      if (editType === "discount") {
+      if (edit.type === "discount") {
         if (product.onsale) {
           const { data } = await axios.put(
             `${BACKENDURL}/product/discount/${product.onsale.id}`,
-            { discount: editInput }
+            { discount: edit.input }
           );
           updateProduct(data);
         }
-      } else if (editType !== null) {
+      } else if (edit.type !== null) {
         const { data } = await axios.put(
           `${BACKENDURL}/product/info/${product.id}`,
-          { [editType]: editInput }
+          { [edit.type]: edit.input }
         );
         updateProduct(data);
       } else {
         throw new Error();
       }
-      setEditInput("");
-      setEditType(null);
+      setEdit({ type: null, input: "" });
     } catch (error) {
       setErrMsg("Somethings wrong. Cannot update.");
       setIsLoading(false);
     }
   };
 
-  const handleEdit = (type: editType) => {
-    if (type === editType) {
+  const handleEdit = (type: edit["type"]) => {
+    if (type === edit.type) {
       handleConfirmEdit();
       return;
     }
     switch (type) {
       case "description":
-        setEditInput(product.description);
+        setEdit({ type: type, input: product.description });
         break;
       case "discount":
-        product.onsale && setEditInput(product.onsale.discount.toString());
+        product.onsale &&
+          setEdit({ type: type, input: product.onsale.discount.toString() });
         break;
       case "name":
-        setEditInput(product.name);
+        setEdit({ type: type, input: product.name });
         break;
       case "price":
-        setEditInput(product.price.toString());
+        setEdit({ type: type, input: product.price.toString() });
         break;
       case "stock":
-        setEditInput(product.stock.toString());
+        setEdit({ type: type, input: product.stock.toString() });
         break;
       default:
         return;
     }
-    setEditType(type);
   };
 
   const handleCategory = async (e: {
@@ -332,15 +332,15 @@ export default function ProductEditForm({
                 <input
                   className="input input-sm w-3/4"
                   type="input"
-                  value={editType === "name" ? editInput : product.name}
-                  disabled={editType !== "name"}
-                  onChange={(e) => setEditInput(e.target.value)}
+                  value={edit.type === "name" ? edit.input : product.name}
+                  disabled={edit.type !== "name"}
+                  onChange={(e) => setEdit({ ...edit, input: e.target.value })}
                 />
                 <button
                   className="btn btn-sm btn-square"
                   onClick={() => handleEdit("name")}
                 >
-                  {editType === "name" ? (
+                  {edit.type === "name" ? (
                     <DoneRoundedIcon />
                   ) : (
                     <EditRoundedIcon />
@@ -354,11 +354,11 @@ export default function ProductEditForm({
                 <input
                   className="input input-sm w-3/4"
                   type="input"
-                  value={editType === "stock" ? editInput : product.stock}
-                  disabled={editType !== "stock"}
+                  value={edit.type === "stock" ? edit.input : product.stock}
+                  disabled={edit.type !== "stock"}
                   onChange={(e) => {
                     if (!isNaN(Number(e.target.value))) {
-                      setEditInput(e.target.value);
+                      setEdit({ ...edit, input: e.target.value });
                     }
                   }}
                 />
@@ -366,7 +366,7 @@ export default function ProductEditForm({
                   className="btn btn-sm btn-square"
                   onClick={() => handleEdit("stock")}
                 >
-                  {editType === "stock" ? (
+                  {edit.type === "stock" ? (
                     <DoneRoundedIcon />
                   ) : (
                     <EditRoundedIcon />
@@ -380,11 +380,11 @@ export default function ProductEditForm({
                 <input
                   className="input input-sm w-3/4"
                   type="input"
-                  value={editType === "price" ? editInput : product.price}
-                  disabled={editType !== "price"}
+                  value={edit.type === "price" ? edit.input : product.price}
+                  disabled={edit.type !== "price"}
                   onChange={(e) => {
                     if (!isNaN(Number(e.target.value))) {
-                      setEditInput(e.target.value);
+                      setEdit({ ...edit, input: e.target.value });
                     }
                   }}
                 />
@@ -392,7 +392,7 @@ export default function ProductEditForm({
                   className="btn btn-sm btn-square"
                   onClick={() => handleEdit("price")}
                 >
-                  {editType === "price" ? (
+                  {edit.type === "price" ? (
                     <DoneRoundedIcon />
                   ) : (
                     <EditRoundedIcon />
@@ -432,14 +432,14 @@ export default function ProductEditForm({
                     className="input input-sm w-3/4"
                     type="input"
                     value={
-                      editType === "discount"
-                        ? editInput
+                      edit.type === "discount"
+                        ? edit.input
                         : product.onsale.discount
                     }
-                    disabled={editType !== "discount"}
+                    disabled={edit.type !== "discount"}
                     onChange={(e) => {
                       if (!isNaN(Number(e.target.value))) {
-                        setEditInput(e.target.value);
+                        setEdit({ ...edit, input: e.target.value });
                       }
                     }}
                   />
@@ -447,7 +447,7 @@ export default function ProductEditForm({
                     className="btn btn-sm btn-square"
                     onClick={() => handleEdit("discount")}
                   >
-                    {editType === "discount" ? (
+                    {edit.type === "discount" ? (
                       <DoneRoundedIcon />
                     ) : (
                       <EditRoundedIcon />
@@ -501,15 +501,17 @@ export default function ProductEditForm({
           <b className="text-md">Description:</b>
           <textarea
             className="textarea h-36"
-            value={editType === "description" ? editInput : product.description}
-            disabled={editType !== "description"}
-            onChange={(e) => setEditInput(e.target.value)}
+            value={
+              edit.type === "description" ? edit.input : product.description
+            }
+            disabled={edit.type !== "description"}
+            onChange={(e) => setEdit({ ...edit, input: e.target.value })}
           />
           <button
             className="btn btn-sm mt-2 btn-neutral"
             onClick={() => handleEdit("description")}
           >
-            {editType === "description" ? (
+            {edit.type === "description" ? (
               <DoneRoundedIcon />
             ) : (
               <EditRoundedIcon />

@@ -7,12 +7,16 @@ import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import GoogleMap from "../ContactUs-Sub/GoogleMap";
 import { infomation } from "../../type";
 
+type edit = {
+  name: infomation["name"];
+  detail: string;
+};
+
 export default function AdminInfoPage() {
   const [infos, setInfos] = useState<infomation[]>([]);
   const [errMsg, setErrMsg] = useState("");
   const [isAdding, setIsAdding] = useState<boolean>(false);
-  const [editName, setEditName] = useState<string>("Phone");
-  const [editDetail, setEditDetail] = useState<string>("");
+  const [edit, setEdit] = useState<edit>({ name: "Phone", detail: "" });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -71,13 +75,9 @@ export default function AdminInfoPage() {
   const handleAdd = async () => {
     try {
       setIsLoading(true);
-      const { data } = await axios.post(`${BACKENDURL}/infomation`, {
-        name: editName,
-        detail: editDetail,
-      });
+      const { data } = await axios.post(`${BACKENDURL}/infomation`, edit);
       setInfos((prev) => [data, ...prev]);
-      setEditDetail("");
-      setEditName("");
+      setEdit({ name: "Phone", detail: "" });
       setIsAdding(false);
       setErrMsg("");
       setIsLoading(false);
@@ -87,16 +87,19 @@ export default function AdminInfoPage() {
     }
   };
 
-  const handleEditName = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (e.target.value === "Phone" && isNaN(Number(editDetail))) {
-      setEditDetail("");
-    }
-    setEditName(e.target.value);
+  const handleChangeName = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newName: edit["name"] = e.target.value as edit["name"];
+    setEdit((prev: edit) => {
+      if (newName === "Phone" && isNaN(Number(edit.detail))) {
+        return { name: newName, detail: "" };
+      }
+      return { ...prev, name: newName };
+    });
   };
 
   const handleEditDetail = (val: string) => {
-    if (!(editName === "Phone" && isNaN(Number(val)))) {
-      setEditDetail(val);
+    if (!(edit.name === "Phone" && isNaN(Number(val)))) {
+      setEdit({ ...edit, detail: val });
     }
   };
 
@@ -151,8 +154,8 @@ export default function AdminInfoPage() {
                   <th>
                     <select
                       className="select select-sm select-bordered pl-3"
-                      value={editName}
-                      onChange={handleEditName}
+                      value={edit.name}
+                      onChange={handleChangeName}
                     >
                       <option value="Phone">Phone:</option>
                       <option value="Link">Link:</option>
@@ -164,13 +167,13 @@ export default function AdminInfoPage() {
                     <input
                       type="input"
                       className="input input-sm input-bordered"
-                      value={editDetail}
+                      value={edit.detail}
                       onChange={(e) => handleEditDetail(e.target.value)}
                     />
-                    {editName === "Map" && (
+                    {edit.name === "Map" && (
                       <button
                         className="btn btn-link btn-small"
-                        onClick={() => setPreview(editDetail)}
+                        onClick={() => setPreview(edit.detail)}
                       >
                         preview
                       </button>

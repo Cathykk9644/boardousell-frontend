@@ -22,16 +22,25 @@ type props = {
   setNewAddedProducts: Function;
 };
 
+type newData = {
+  name: string;
+  price: string;
+  description: string;
+  stock: string;
+};
+
 export default function ProductAddForm({
   open,
   categories,
   setIsAdding,
   setNewAddedProducts,
 }: props) {
-  const [name, setName] = useState<string>("");
-  const [price, setPrice] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [stock, setStock] = useState<string>("");
+  const [newData, setNewData] = useState<newData>({
+    name: "",
+    price: "",
+    description: "",
+    stock: "",
+  });
   const [fileValue, setFileValue] = useState<File[]>([]);
   const [fileName, setFileName] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
@@ -73,21 +82,15 @@ export default function ProductAddForm({
   };
 
   const handleAddProduct = async () => {
-    if (!name.length) {
+    if (!newData.name.length) {
       return setErrMsg("Please Add Product Name First.");
     }
     try {
       setIsLoading(true);
       let data: product;
-      const inputData = {
-        name,
-        description,
-        price: Number(price),
-        stock: Number(stock),
-      };
       const basicRes = await axios.post(
         `${BACKENDURL}/product/create`,
-        inputData
+        newData
       );
       data = basicRes.data;
       if (isNewProduct) {
@@ -112,7 +115,10 @@ export default function ProductAddForm({
         data.productPhotos = [];
       }
       for (const file of fileValue) {
-        const storageRef = ref(storage, `/product/${data.name}/${file.name}`);
+        const storageRef = ref(
+          storage,
+          `/product/${newData.name}/${file.name}`
+        );
         await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
         const fileRes = await axios.post(`${BACKENDURL}/product/photo/`, {
@@ -134,10 +140,7 @@ export default function ProductAddForm({
         data = categoryRes.data;
       }
       setNewAddedProducts((prev: product[]) => [...prev, data]);
-      setName("");
-      setPrice("");
-      setDescription("");
-      setStock("");
+      setNewData({ name: "", price: "", description: "", stock: "" });
       setFileValue([]);
       setFileName([]);
       setSelectedCategory([]);
@@ -211,8 +214,10 @@ export default function ProductAddForm({
                 <input
                   className="input input-sm w-3/4"
                   type="input"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={newData.name}
+                  onChange={(e) =>
+                    setNewData({ ...newData, name: e.target.value })
+                  }
                 />
               </td>
             </tr>
@@ -222,10 +227,10 @@ export default function ProductAddForm({
                 <input
                   className="input input-sm w-3/4"
                   type="input"
-                  value={stock}
+                  value={newData.stock}
                   onChange={(e) => {
                     if (!isNaN(Number(e.target.value))) {
-                      setStock(e.target.value);
+                      setNewData({ ...newData, stock: e.target.value });
                     }
                   }}
                 />
@@ -237,10 +242,10 @@ export default function ProductAddForm({
                 <input
                   className="input input-sm w-3/4"
                   type="input"
-                  value={price}
+                  value={newData.price}
                   onChange={(e) => {
                     if (!isNaN(Number(e.target.value))) {
-                      setPrice(e.target.value);
+                      setNewData({ ...newData, price: e.target.value });
                     }
                   }}
                 />
@@ -314,8 +319,10 @@ export default function ProductAddForm({
           <b className="text-md">Description:</b>
           <textarea
             className="textarea h-36"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            value={newData.description}
+            onChange={(e) =>
+              setNewData({ ...newData, description: e.target.value })
+            }
           />
         </div>
         <div className="p-4 space-y-2">

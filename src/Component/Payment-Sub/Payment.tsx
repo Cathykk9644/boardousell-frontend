@@ -16,7 +16,7 @@ export default function Payment({
 }: {
   setError: Function;
   setOrderInfo: Function;
-}) {
+}): JSX.Element {
   const stripe = useStripe();
   const elements = useElements();
   const [message, setMessage] = useState<string | null>(null);

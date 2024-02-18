@@ -13,21 +13,23 @@ type key = "all" | "name" | "stock" | "category";
 type search = {
   type: key;
   input: string;
-} | null;
+};
+
+type page = {
+  total: number;
+  current: number;
+};
 
 export default function AdminProductPage() {
   const [categories, setCategories] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<product[]>([]);
-  const [type, setType] = useState<key>("name");
-  const [searchInput, setSearchInput] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  const [totalPage, setTotalPage] = useState<number>(0);
+  const [currentSearch, setCurrentSearch] = useState<search | null>(null);
+  const [page, setPage] = useState<page>({ total: 0, current: 0 });
+  const [search, setSearch] = useState<search>({ type: "name", input: "" });
   const [open, setOpen] = useState<number | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [newAddedProducts, setNewAddedProducts] = useState<product[]>([]);
-  const [currentSearch, setCurrentSearch] = useState<search>(null);
   const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
@@ -46,7 +48,6 @@ export default function AdminProductPage() {
         const { data } = await axios.get(`${BACKENDURL}/category/all`);
         const flattenData = data.map((category: category) => category.name);
         setCategories(flattenData);
-        setSelectedCategory(data[0]);
         setIsLoading(false);
       } catch (error) {
         setErrMsg("Cannot Load all categories");
@@ -56,53 +57,73 @@ export default function AdminProductPage() {
     fetchData();
   }, []);
 
+  const handleChangeSearchType = async (newType: key) => {
+    switch (newType) {
+      case "category":
+        setSearch({ type: "category", input: categories[0] });
+        break;
+      case "stock":
+        setSearch({
+          type: "stock",
+          input: isNaN(Number(search.input)) ? "" : search.input,
+        });
+        break;
+      default:
+        setSearch({ type: newType, input: search.input });
+    }
+  };
+
   const handleSearch = async () => {
     try {
       setIsLoading(true);
-      switch (type) {
+      let res;
+      switch (search.type) {
         case "all":
-          const allDataRes = await axios.get(
-            `${BACKENDURL}/product/admin/all/1`
-          );
-          setTotalPage(Math.ceil(allDataRes.data.count / 5));
-          setProducts(allDataRes.data.data);
+          res = await axios.get(`${BACKENDURL}/product/admin/all/1`);
           break;
         case "name":
-          if (!searchInput.length) {
+          if (!search.input.length) {
             throw new Error("Please Enter Keyword.");
           }
-          const nameDataRes = await axios.get(
-            `${BACKENDURL}/product/admin/name/${searchInput}/1`
+          res = await axios.get(
+            `${BACKENDURL}/product/admin/name/${search.input}/1`
           );
-          setTotalPage(Math.ceil(nameDataRes.data.count / 5));
-          setProducts(nameDataRes.data.data);
           break;
         case "stock":
-          if (!searchInput.length) {
+          if (!search.input.length) {
             throw new Error("Please Enter Amount/LowerLimit-UpperLimit.");
           }
-          const stockDataRes = await axios.get(
-            `${BACKENDURL}/product/admin/stock/${searchInput}/1`
+          const checking = search.input.split("-");
+          if (checking.length > 2) {
+            throw new Error("Please Enter Amount/LowerLimit-UpperLimit.");
+          }
+          if (isNaN(Number(checking[0])) || !checking[0].length) {
+            throw new Error("Please Enter Amount/LowerLimit-UpperLimit.");
+          }
+          if (
+            checking.length === 2 &&
+            (!checking[1].length || isNaN(Number(checking[1])))
+          ) {
+            throw new Error("Please Enter Amount/LowerLimit-UpperLimit.");
+          }
+          res = await axios.get(
+            `${BACKENDURL}/product/admin/stock/${search.input}/1`
           );
-          setTotalPage(Math.ceil(stockDataRes.data.count / 5));
-          setProducts(stockDataRes.data.data);
           break;
         case "category":
-          const categoryDataRes = await axios.get(
-            `${BACKENDURL}/product/admin/category/${selectedCategory}/1`
+          res = await axios.get(
+            `${BACKENDURL}/product/admin/category/${search.input}/1`
           );
-          setTotalPage(Math.ceil(categoryDataRes.data.count / 5));
-          setProducts(categoryDataRes.data.data);
           break;
         default:
           throw new Error("No Search Found.");
       }
-      setCurrentPage(1);
-      setCurrentSearch({
-        type: type,
-        input: type === "category" ? selectedCategory : searchInput,
+      setPage({
+        total: Math.ceil(res.data.count / 5),
+        current: 1,
       });
-      setSearchInput("");
+      setProducts(res.data.data);
+      setCurrentSearch({ ...search });
       setNewAddedProducts([]);
       setIsLoading(false);
       setErrMsg("");
@@ -114,24 +135,24 @@ export default function AdminProductPage() {
 
   const handleChangePage = async (
     e: React.ChangeEvent<unknown>,
-    page: number
+    newPage: number
   ) => {
     try {
       setIsLoading(true);
       switch (currentSearch?.type) {
         case "all":
           const allDataRes = await axios.get(
-            `${BACKENDURL}/product/admin/all/${page}`
+            `${BACKENDURL}/product/admin/all/${newPage}`
           );
           setProducts(allDataRes.data.data);
           break;
         default:
           const { data } = await axios.get(
-            `${BACKENDURL}/product/admin/${currentSearch?.type}/${currentSearch?.input}/${page}`
+            `${BACKENDURL}/product/admin/${currentSearch?.type}/${currentSearch?.input}/${newPage}`
           );
           setProducts(data.data);
       }
-      setCurrentPage(page);
+      setPage({ current: newPage, total: page.total });
       setIsLoading(false);
       setErrMsg("");
     } catch (error: any) {
@@ -184,30 +205,42 @@ export default function AdminProductPage() {
     <div className="flex flex-col items-center">
       {!!errMsg.length && <span className="text-error m-1">{errMsg}</span>}
       <div className="flex items-center justify-between w-full space-x-3">
-        <span className="text-md">Products:</span>
         <select
-          value={type}
+          value={search.type}
           className="select select-sm select-bordered"
-          onChange={(e) => setType(e.target.value as key)}
+          onChange={(e) => handleChangeSearchType(e.target.value as key)}
         >
           <option value="all">All</option>
           <option value="name">Name</option>
           <option value="stock">stock</option>
           <option value="category">Category</option>
         </select>
-        {(type === "stock" || type === "name") && (
+        {search.type === "name" && (
           <input
             className="input input-bordered input-sm w-full"
-            value={searchInput}
-            placeholder={type === "stock" ? "1 or 10-20" : ""}
-            onChange={(e) => setSearchInput(e.target.value)}
+            value={search.input}
+            onChange={(e) =>
+              setSearch({ type: search.type, input: e.target.value })
+            }
           />
         )}
-        {type === "category" && (
+        {search.type === "stock" && (
+          <input
+            className="input input-bordered input-sm w-full"
+            value={search.input}
+            placeholder={"1 or 10-20"}
+            onChange={(e) => {
+              setSearch({ type: search.type, input: e.target.value });
+            }}
+          />
+        )}
+        {search.type === "category" && (
           <select
-            value={selectedCategory}
+            value={search.input}
             className="select select-sm select-bordered"
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) =>
+              setSearch({ type: search.type, input: e.target.value })
+            }
           >
             {option}
           </select>
@@ -219,10 +252,10 @@ export default function AdminProductPage() {
       </div>
       <div className="w-5/6 flex flex-col items-center">
         {isLoading ? <CircularProgress /> : productDisplay}
-        {!!totalPage && (
+        {!!page.total && (
           <Pagination
-            count={totalPage}
-            page={currentPage}
+            count={page.total}
+            page={page.current}
             variant="outlined"
             shape="rounded"
             onChange={handleChangePage}

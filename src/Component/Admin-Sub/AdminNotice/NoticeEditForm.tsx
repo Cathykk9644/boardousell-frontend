@@ -33,7 +33,7 @@ type props = {
   setExpand: Function;
   setNotices: Function;
 };
-type editType = "title" | "detail" | null;
+type edit = { type: "title" | "detail" | null; input: string };
 export default function NoticeEditForm({
   open,
   notice,
@@ -41,8 +41,7 @@ export default function NoticeEditForm({
   setExpand,
   setNotices,
 }: props) {
-  const [editInput, setEditInput] = useState<string>("");
-  const [editType, setEditType] = useState<editType>(null);
+  const [edit, setEdit] = useState<edit>({ type: null, input: "" });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isWarning, setIsWarning] = useState<boolean>(false);
 
@@ -88,16 +87,16 @@ export default function NoticeEditForm({
   };
 
   const handleConfirmEdit = async () => {
-    if (editType && notice[editType] === editInput) {
+    if (edit.type && notice[edit.type] === edit.input) {
       return setErrMsg("");
     }
     console.log("here");
     try {
       setIsLoading(true);
-      if (editType) {
+      if (edit.type) {
         const { data } = await axios.put(`${BACKENDURL}/notice/info`, {
           noticeId: notice.id,
-          [editType]: editInput,
+          [edit.type]: edit.input,
         });
         updateNotice(data);
       }
@@ -109,24 +108,22 @@ export default function NoticeEditForm({
     }
   };
 
-  const handleEdit = (type: editType) => {
-    if (editType) {
+  const handleEdit = (type: edit["type"]) => {
+    if (edit.type) {
       handleConfirmEdit();
     }
-    if (editType === type) {
-      setEditType(null);
-      setEditInput("");
+    if (edit.type === type) {
+      setEdit({ type: null, input: "" });
       return;
     }
     switch (type) {
       case "detail":
-        setEditInput(notice.detail);
+        setEdit({ type: type, input: notice.detail });
         break;
       case "title":
-        setEditInput(notice.title);
+        setEdit({ type: type, input: notice.title });
         break;
     }
-    setEditType(type);
   };
 
   const updateNotice = (data: notice) => {
@@ -197,30 +194,34 @@ export default function NoticeEditForm({
             <span className="w-1/6 text-xl">Title: </span>
             <input
               className="input input-sm w-4/6"
-              value={editType === "title" ? editInput : notice.title}
-              disabled={editType !== "title"}
-              onChange={(e) => setEditInput(e.target.value)}
+              value={edit.type === "title" ? edit.input : notice.title}
+              disabled={edit.type !== "title"}
+              onChange={(e) => setEdit({ ...edit, input: e.target.value })}
             />
             <button
               className="btn btn-sm btn-square"
               onClick={() => handleEdit("title")}
             >
-              {editType === "title" ? <DoneRoundedIcon /> : <EditRoundedIcon />}
+              {edit.type === "title" ? (
+                <DoneRoundedIcon />
+              ) : (
+                <EditRoundedIcon />
+              )}
             </button>
           </div>
           <span className="self-start text-xl">Details:</span>
           <textarea
             className="textarea w-full h-36"
-            value={editType === "detail" ? editInput : notice.detail}
-            disabled={editType !== "detail"}
-            onChange={(e) => setEditInput(e.target.value)}
+            value={edit.type === "detail" ? edit.input : notice.detail}
+            disabled={edit.type !== "detail"}
+            onChange={(e) => setEdit({ ...edit, input: e.target.value })}
           />
           <button
             className="btn btn-sm btn-accent w-full my-1"
             onClick={() => handleEdit("detail")}
           >
-            {editType === "detail" ? "Done" : "Edit"}
-            {editType === "detail" ? <DoneRoundedIcon /> : <EditRoundedIcon />}
+            {edit.type === "detail" ? "Done" : "Edit"}
+            {edit.type === "detail" ? <DoneRoundedIcon /> : <EditRoundedIcon />}
           </button>
         </div>
       </AccordionDetails>

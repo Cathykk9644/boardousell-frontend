@@ -13,16 +13,21 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { user } from "../../type";
-type key = "email" | "name" | "phone" | "all";
 
-export default function AdminUserPage() {
+type search = {
+  keyword: string;
+  type: "email" | "name" | "phone" | "all";
+};
+type edit = {
+  id: number | null;
+  points: string;
+};
+export default function AdminUserPage(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<user[]>([]);
-  const [keyword, setKeyword] = useState<string>("");
-  const [type, setType] = useState<key>("all");
+  const [search, setSearch] = useState<search>({ keyword: "", type: "all" });
   const [errMsg, setErrMsg] = useState("");
-  const [editId, setEditId] = useState<number | null>(null);
-  const [editVal, setEditVal] = useState<string>("");
+  const [edit, setEdit] = useState<edit>({ id: null, points: "" });
   const [expand, setExpanded] = useState<number | null>(null);
   useEffect(() => {
     if (errMsg.length) {
@@ -32,21 +37,40 @@ export default function AdminUserPage() {
       });
     }
   }, [errMsg]);
+
+  const handleChangeSearchType = (target: search["type"]) => {
+    switch (target) {
+      case "all":
+        setSearch({ type: "all", keyword: "" });
+        break;
+      case "phone":
+        setSearch((prev: search) => {
+          const newData = { ...prev };
+          newData.type = "phone";
+          if (isNaN(Number(search.keyword))) {
+            newData.keyword = "";
+          }
+          return newData;
+        });
+        break;
+      default:
+        setSearch({ type: target, keyword: search.keyword });
+    }
+  };
   const handleSearch = async () => {
     try {
       setIsLoading(true);
-      if (type === "all") {
+      if (search.type === "all") {
         const { data } = await axios.get(`${BACKENDURL}/user/admin`);
         setUsers(data);
       } else {
         const { data } = await axios.get(
           `${BACKENDURL}/user/admin?${
-            !!keyword.length ? type + "=" + keyword : ""
+            !!search.keyword.length ? search.type + "=" + search.keyword : ""
           }`
         );
         setUsers(data);
       }
-
       setErrMsg("");
       setIsLoading(false);
     } catch (error: any) {
@@ -55,10 +79,9 @@ export default function AdminUserPage() {
     }
   };
 
-  const handleChange = (userId: number) => {
-    if (editVal) {
-      setEditId(null);
-      setEditVal("");
+  const handleChangeExpand = (userId: number) => {
+    if (!!edit.id) {
+      handleConfirmEdit();
     }
     setExpanded((prev) => (prev === userId ? null : userId));
   };
@@ -79,20 +102,14 @@ export default function AdminUserPage() {
     }
   };
 
-  const handleEdit = (userId: number, val: number) => {
-    setEditId(userId);
-    setEditVal(val.toString());
-  };
-
   const handleConfirmEdit = async () => {
     try {
       setIsLoading(true);
-      await axios.put(`${BACKENDURL}/user/${editId}`, {
-        points: editVal,
+      await axios.put(`${BACKENDURL}/user/${edit.id}`, {
+        points: edit.points,
       });
       handleSearch();
-      setEditId(null);
-      setEditVal("");
+      setEdit({ id: null, points: "" });
     } catch (error: any) {
       setErrMsg(error.message);
       setIsLoading(false);
@@ -104,14 +121,14 @@ export default function AdminUserPage() {
         return (
           <Accordion
             expanded={expand === user.id}
-            onChange={() => handleChange(user.id)}
+            onChange={() => handleChangeExpand(user.id)}
             key={user.id}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography>
-                {type === "all"
+                {search.type === "all"
                   ? `name: ${user.name}`
-                  : `${type}: ${user[type]}`}
+                  : `${search.type}: ${user[search.type]}`}
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
@@ -135,14 +152,14 @@ export default function AdminUserPage() {
                   </tr>
                   <tr>
                     <th>Points:</th>
-                    {editId === user.id ? (
+                    {edit.id === user.id ? (
                       <td className="flex flex-start">
                         <input
                           className="input input-sm"
-                          value={editVal}
+                          value={edit.points}
                           onChange={(e) => {
                             if (!isNaN(Number(e.target.value))) {
-                              setEditVal(e.target.value);
+                              setEdit({ id: edit.id, points: e.target.value });
                             }
                           }}
                         />
@@ -158,7 +175,12 @@ export default function AdminUserPage() {
                         {user.points}
                         <button
                           className="ml-3 btn btn-ghost btn-sm btn-square"
-                          onClick={() => handleEdit(user.id, user.points)}
+                          onClick={() =>
+                            setEdit({
+                              id: user.id,
+                              points: user.points.toString(),
+                            })
+                          }
                         >
                           <EditRoundedIcon />
                         </button>
@@ -190,25 +212,24 @@ export default function AdminUserPage() {
       <div className="flex items-center justify-between w-full space-x-3 sm:w-1/2">
         <span className="text-md">Users:</span>
         <select
-          value={type}
+          value={search.type}
           className="select select-sm select-bordered"
-          onChange={(e) => {
-            if (e.target.value === "all") {
-              setKeyword("");
-            }
-            setType(e.target.value as key);
-          }}
+          onChange={(e) =>
+            handleChangeSearchType(e.target.value as search["type"])
+          }
         >
           <option value="all">All</option>
           <option value="email">Email</option>
           <option value="name">Name</option>
           <option value="phone">Phone</option>
         </select>
-        {type !== "all" && (
+        {search.type !== "all" && (
           <input
-            value={keyword}
+            value={search.keyword}
             className="input input-bordered input-sm w-full"
-            onChange={(e) => setKeyword(e.target.value)}
+            onChange={(e) =>
+              setSearch({ type: search.type, keyword: e.target.value })
+            }
           />
         )}
 

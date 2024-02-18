@@ -8,11 +8,13 @@ type props = {
   product: product;
 };
 
-//Need to add shopping Cart function
-export default function ProductCard({ product, handleAddItem }: props) {
+export default function ProductCard({
+  product,
+  handleAddItem,
+}: props): JSX.Element {
   const navi = useNavigate();
 
-  return !product ? null : (
+  return (
     <div className="card w-44 m-2 md:w-52 bg-accent text-accent-content shadow-xl">
       <img
         className="my-5 h-32 object-contain cursor-pointer"

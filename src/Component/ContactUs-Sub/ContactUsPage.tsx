@@ -7,10 +7,10 @@ import { infomation } from "../../type";
 const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
 
 type hash = {
-  [key: string]: infomation[];
+  [K in infomation["name"]]: infomation[];
 };
 
-export default function ContactUsPage() {
+export default function ContactUsPage(): JSX.Element {
   const [infomations, setInfomations] = useState<infomation[]>([]);
   const { setError }: { setError: Function } = useOutletContext();
   useEffect(() => {
@@ -19,13 +19,9 @@ export default function ContactUsPage() {
         const { data }: { data: infomation[] } = await axios.get(
           `${BACKENDURL}/infomation`
         );
-        const hashInfo: hash = {};
+        const hashInfo: hash = { Email: [], Link: [], Map: [], Phone: [] };
         for (const info of data) {
-          if (!hashInfo[info.name]) {
-            hashInfo[info.name] = [info];
-          } else {
-            hashInfo[info.name].push(info);
-          }
+          hashInfo[info.name]!.push(info);
         }
         setInfomations([
           ...hashInfo["Phone"],

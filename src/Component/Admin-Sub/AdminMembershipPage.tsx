@@ -7,13 +7,21 @@ import axios from "axios";
 import { BACKENDURL } from "../../constant";
 import { level } from "../../type";
 
+type editInput = {
+  title: string;
+  requirement: string;
+  discount: string;
+};
+
 export default function AdminMembershipPage() {
   const [levels, setLevels] = useState<level[]>([]);
   const [errMsg, setErrMsg] = useState("");
   const [editId, setEditId] = useState<number | "new" | null>(null);
-  const [editTitle, setEditTitle] = useState<string>("");
-  const [editRequire, setEditRequire] = useState<string>("");
-  const [editDiscount, setEditDiscount] = useState<string>("");
+  const [editInput, setEditInput] = useState<editInput>({
+    title: "",
+    requirement: "",
+    discount: "",
+  });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -56,12 +64,7 @@ export default function AdminMembershipPage() {
   const handleConfirmAdd = async () => {
     try {
       setIsLoading(true);
-      const newData = {
-        title: editTitle,
-        discount: Number(editDiscount),
-        requirement: Number(editRequire),
-      };
-      const { data } = await axios.post(`${BACKENDURL}/level`, newData);
+      const { data } = await axios.post(`${BACKENDURL}/level`, editInput);
       setLevels(data);
       setErrMsg("");
       setIsLoading(false);
@@ -73,25 +76,36 @@ export default function AdminMembershipPage() {
 
   const handleConfirmUpdate = async (
     id: number,
-    originalRequirement: string
+    originalTitle: string,
+    originalRequirement: string,
+    originalDiscount: string
   ) => {
     try {
-      setIsLoading(true);
+      let areAllUnchanged = true;
       const newData: {
         id: number;
-        title: string;
+        title?: string;
         requirement?: number;
-        discount: number;
+        discount?: number;
       } = {
         id: id,
-        title: editTitle,
-        discount: Number(editDiscount),
       };
-      if (originalRequirement !== editRequire) {
-        newData.requirement = Number(editRequire);
+      if (originalTitle !== editInput.title) {
+        newData.title = editInput.title;
+        areAllUnchanged = false;
       }
-      const { data } = await axios.put(`${BACKENDURL}/level`, newData);
-      setLevels(data);
+      if (originalRequirement !== editInput.requirement) {
+        newData.requirement = Number(editInput.requirement);
+        areAllUnchanged = false;
+      }
+      if (originalDiscount !== editInput.discount) {
+        newData.discount = Number(editInput.discount);
+      }
+      if (!areAllUnchanged) {
+        setIsLoading(true);
+        const { data } = await axios.put(`${BACKENDURL}/level`, newData);
+        setLevels(data);
+      }
       setErrMsg("");
       setIsLoading(false);
     } catch (error: any) {
@@ -108,18 +122,18 @@ export default function AdminMembershipPage() {
   ) => {
     if (!editId) {
       setEditId(id);
-      setEditTitle(title);
-      setEditRequire(requirement);
-      setEditDiscount(discount);
+      setEditInput({
+        title: title,
+        requirement: requirement,
+        discount: discount,
+      });
       return;
     }
     if (editId === "new") {
       handleConfirmAdd();
-    } else handleConfirmUpdate(editId, requirement);
+    } else handleConfirmUpdate(editId, title, requirement, discount);
     setEditId(null);
-    setEditTitle("");
-    setEditRequire("");
-    setEditDiscount("");
+    setEditInput({ title: "", requirement: "", discount: "" });
   };
   const levelDisplay = levels.map((level) => {
     const isEditing = editId === level.id;
@@ -129,9 +143,11 @@ export default function AdminMembershipPage() {
           <td>
             <input
               className="input input-sm w-full input-bordered"
-              value={editTitle}
+              value={editInput.title}
               onChange={(e) => {
-                setEditTitle(e.target.value);
+                setEditInput((prev: editInput) => {
+                  return { ...prev, title: e.target.value };
+                });
               }}
             />
           </td>
@@ -142,10 +158,12 @@ export default function AdminMembershipPage() {
           <td>
             <input
               className="input input-sm w-full input-bordered"
-              value={editRequire}
+              value={editInput.requirement}
               onChange={(e) => {
                 if (!isNaN(Number(e.target.value)))
-                  setEditRequire(e.target.value);
+                  setEditInput((prev: editInput) => {
+                    return { ...prev, requirement: e.target.value };
+                  });
               }}
             />
           </td>
@@ -156,10 +174,12 @@ export default function AdminMembershipPage() {
           <td>
             <input
               className="input input-sm w-full input-bordered"
-              value={editDiscount}
+              value={editInput.discount}
               onChange={(e) => {
                 if (!isNaN(Number(e.target.value)))
-                  setEditDiscount(e.target.value);
+                  setEditInput((prev: editInput) => {
+                    return { ...prev, discount: e.target.value };
+                  });
               }}
             />
           </td>
@@ -216,9 +236,11 @@ export default function AdminMembershipPage() {
                 {isAdding && (
                   <input
                     className="input input-sm w-full input-bordered"
-                    value={editTitle}
+                    value={editInput.title}
                     onChange={(e) => {
-                      setEditTitle(e.target.value);
+                      setEditInput((prev: editInput) => {
+                        return { ...prev, title: e.target.value };
+                      });
                     }}
                   />
                 )}
@@ -227,10 +249,12 @@ export default function AdminMembershipPage() {
                 {isAdding && (
                   <input
                     className="input input-sm w-full input-bordered"
-                    value={editRequire}
+                    value={editInput.requirement}
                     onChange={(e) => {
                       if (!isNaN(Number(e.target.value)))
-                        setEditRequire(e.target.value);
+                        setEditInput((prev: editInput) => {
+                          return { ...prev, requirement: e.target.value };
+                        });
                     }}
                   />
                 )}
@@ -239,10 +263,12 @@ export default function AdminMembershipPage() {
                 {isAdding && (
                   <input
                     className="input input-sm w-full input-bordered"
-                    value={editDiscount}
+                    value={editInput.discount}
                     onChange={(e) => {
                       if (!isNaN(Number(e.target.value)))
-                        setEditDiscount(e.target.value);
+                        setEditInput((prev: editInput) => {
+                          return { ...prev, discount: e.target.value };
+                        });
                     }}
                   />
                 )}
