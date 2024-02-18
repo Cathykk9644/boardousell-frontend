@@ -113,6 +113,10 @@ export default function OrderPage(): JSX.Element {
     <table className="table m-2">
       <tbody>
         <tr>
+          <th>Order No.</th>
+          <td>{orderId}</td>
+        </tr>
+        <tr>
           <th>Ordering Date:</th>
           <td>{createdDate.toLocaleString()}</td>
         </tr>
@@ -130,7 +134,7 @@ export default function OrderPage(): JSX.Element {
         </tr>
         <tr>
           <th>Amount:</th>
-          <td>{orderInfo?.amount}</td>
+          <td>${orderInfo?.amount}</td>
         </tr>
       </tbody>
     </table>

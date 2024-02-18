@@ -34,20 +34,20 @@ export type level = {
   discount: number;
 };
 
+export type message = {
+  id: number;
+  isUserReceiver: boolean;
+  detail: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type order = {
   id: number;
   userId: number;
   address: string;
   amount: number;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type message = {
-  id: number;
-  isUserReceiver: boolean;
-  detail: string;
+  status: "Pending" | "Paid" | "Ready" | "Shipped" | "Delivered" | "Cancelled";
   createdAt: string;
   updatedAt: string;
 };
