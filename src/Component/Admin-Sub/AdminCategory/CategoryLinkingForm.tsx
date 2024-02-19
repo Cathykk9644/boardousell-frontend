@@ -50,7 +50,7 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
       }
     };
     fetchData();
-  }, []);
+  }, [category.id]);
 
   const handleSearch = async () => {
     try {

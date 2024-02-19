@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { order } from "../../../type";
+import { message, order } from "../../../type";
 import SendIcon from "@mui/icons-material/Send";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import {
   Accordion,
   AccordionDetails,
@@ -63,6 +65,40 @@ export default function OrderEditForm({
     }
   };
 
+  const handleEdit = async () => {
+    if (order.status === "Cancelled") {
+      return setErrMsg("Cannot change cancelled order.");
+    }
+    if (editStatus.editing) {
+      handleConfirmEdit();
+    }
+    setEditStatus({ editing: !editStatus.editing, option: order.status });
+  };
+
+  const handleConfirmEdit = async () => {
+    if (editStatus.option === order.status) {
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const { data } = await axios.put(`${BACKENDURL}/order/status`, {
+        status: editStatus.option,
+        orderId: order.id,
+      });
+      setOrders((prev: order[]) => {
+        const newOrders = [...prev];
+        const targetIndex = prev.findIndex((target) => target.id === order.id);
+        newOrders[targetIndex] = data;
+        return newOrders;
+      });
+      setErrMsg("");
+      setIsLoading(false);
+    } catch (error) {
+      setErrMsg("Oh. Sorry, cannot send message for now.");
+      setIsLoading(false);
+    }
+  };
+
   const productDisplay = order.products.map((product) => {
     return (
       <div key={product.id} className="flex justify-between">
@@ -72,6 +108,9 @@ export default function OrderEditForm({
     );
   });
 
+  order.messages.sort((a: message, b: message) => {
+    return Date.parse(a.createdAt) - Date.parse(b.createdAt);
+  });
   const messageDisplay = order.messages.map((message) => {
     return (
       <div
@@ -116,7 +155,43 @@ export default function OrderEditForm({
             </tr>
             <tr>
               <th>Status:</th>
-              <td>{order.status}</td>
+              <td>
+                <div className="flex justify-between items-center">
+                  <div>
+                    {editStatus.editing ? (
+                      <select
+                        value={editStatus.option}
+                        className="select select-sm select-bordered"
+                        onChange={(e) =>
+                          setEditStatus({
+                            ...editStatus,
+                            option: e.target.value as editStatus["option"],
+                          })
+                        }
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Ready">Ready</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                      </select>
+                    ) : (
+                      order.status
+                    )}
+                  </div>
+                  <button
+                    className="btn btn-sm btn-square"
+                    onClick={handleEdit}
+                  >
+                    {editStatus.editing ? (
+                      <DoneRoundedIcon />
+                    ) : (
+                      <EditRoundedIcon />
+                    )}
+                  </button>
+                </div>
+              </td>
             </tr>
             <tr>
               <th>User email:</th>
