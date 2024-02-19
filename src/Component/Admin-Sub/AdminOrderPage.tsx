@@ -4,6 +4,8 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { order } from "../../type";
 import { CircularProgress, Pagination } from "@mui/material";
 import OrderEditForm from "./AdminOrder/OrderEditForm";
+import axios from "axios";
+import { BACKENDURL } from "../../constant";
 
 type search = {
   type: "status" | "message" | "email" | "id" | "product";
@@ -60,8 +62,38 @@ export default function AdminOrderPage() {
 
   const handleSearch = async () => {
     try {
+      setIsLoading(true);
+      let count;
+      let data;
+      switch (search.type) {
+        case "id":
+          const idRes = await axios.get(
+            `${BACKENDURL}/order/admin/${search.input}`
+          );
+          count = idRes.data.count;
+          data = idRes.data.data;
+          break;
+        case "message":
+          const msgRes = await axios.get(
+            `${BACKENDURL}/order/message?page=1&sort=${search.input}`
+          );
+          count = msgRes.data.count;
+          data = msgRes.data.data;
+          break;
+        default:
+          const res = await axios.get(
+            `${BACKENDURL}/order/${search.type}?${search.type}=${search.input}&page=1`
+          );
+          count = res.data.count;
+          data = res.data.data;
+      }
+      setOrders(data);
+      setPage({ total: Math.ceil(count / 5), current: 1 });
+      setCurrentSearch({ ...search });
+      setIsLoading(false);
     } catch (error: any) {
       setErrMsg(error.message);
+      setIsLoading(false);
     }
   };
 
