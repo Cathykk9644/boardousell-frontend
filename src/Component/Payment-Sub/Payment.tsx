@@ -61,23 +61,24 @@ export default function Payment({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!stripe || !elements) {
-      return;
-    }
-    setIsLoading(true);
-    const { error } = await stripe.confirmPayment({
-      elements,
-      redirect: "if_required",
-    });
-    if (error) {
-      if (error.type === "card_error" || error.type === "validation_error") {
-        error.message && setMessage(error.message);
-      } else {
-        setMessage("An unexpected error occurred.");
-      }
-    }
-    setIsLoading(false);
     try {
+      if (!stripe || !elements) {
+        return;
+      }
+      setIsLoading(true);
+      const { error } = await stripe.confirmPayment({
+        elements,
+        redirect: "if_required",
+      });
+      if (error) {
+        if (error.type === "card_error" || error.type === "validation_error") {
+          error.message && setMessage(error.message);
+        } else {
+          setMessage("An unexpected error occurred.");
+        }
+        setIsLoading(false);
+        return;
+      }
       await axios.put(`${BACKENDURL}/order/paid`, { orderId });
       setOrderInfo((prev: order) => {
         return { ...prev, status: "Paid" };
@@ -88,6 +89,7 @@ export default function Payment({
         message: "Oh. Somethings goes wrong",
       });
     }
+    setIsLoading(false);
   };
 
   return (

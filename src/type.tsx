@@ -65,8 +65,8 @@ export type order = {
     name: string;
     phone: number;
   };
-  products: { id: number; name: string }[];
-  message: message[];
+  products: { id: number; name: string; productorder: { amount: number } }[];
+  messages: message[];
 };
 
 export type notice = {

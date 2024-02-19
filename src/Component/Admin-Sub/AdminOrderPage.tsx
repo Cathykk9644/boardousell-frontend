@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { order } from "../../type";
 import { CircularProgress, Pagination } from "@mui/material";
@@ -19,9 +18,13 @@ type page = {
 export default function AdminOrderPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [orders, setOrders] = useState<order[]>([]);
-  const [search, setSearch] = useState<search>({ type: "status", input: "" });
+  const [search, setSearch] = useState<search>({
+    type: "status",
+    input: "Pending",
+  });
   const [currentSearch, setCurrentSearch] = useState<search | null>(null);
   const [page, setPage] = useState<page>({ total: 0, current: 0 });
+  const [expand, setExpand] = useState<number | null>(null);
   const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
@@ -91,23 +94,65 @@ export default function AdminOrderPage() {
       setPage({ total: Math.ceil(count / 5), current: 1 });
       setCurrentSearch({ ...search });
       setIsLoading(false);
+      setErrMsg("");
     } catch (error: any) {
       setErrMsg(error.message);
       setIsLoading(false);
     }
   };
 
-  const handleChangePage = async () => {};
+  const handleChangePage = async (
+    e: React.ChangeEvent<unknown>,
+    newPage: number
+  ) => {
+    try {
+      setIsLoading(true);
+      let data;
+      switch (currentSearch!.type) {
+        case "message":
+          const msgRes = await axios.get(
+            `${BACKENDURL}/order/message?page=${newPage}&sort=${
+              currentSearch!.input
+            }`
+          );
+          data = msgRes.data.data;
+          break;
+        default:
+          const res = await axios.get(
+            `${BACKENDURL}/order/${currentSearch!.type}?${
+              currentSearch!.type
+            }=${currentSearch!.input}&page=${newPage}`
+          );
+          data = res.data.data;
+      }
+      setOrders(data);
+      setPage({ ...page, current: newPage });
+      setIsLoading(false);
+      setErrMsg("");
+    } catch (error: any) {
+      setErrMsg(error.message);
+      setIsLoading(false);
+    }
+  };
 
   const ordersDisplay = orders.length ? (
     orders.map((order) => {
-      return <OrderEditForm order={order} />;
+      return (
+        <div className="w-full my-2" key={order.id}>
+          <OrderEditForm
+            order={order}
+            open={expand === order.id}
+            setExpand={setExpand}
+            setOrders={setOrders}
+            setErrMsg={setErrMsg}
+          />
+        </div>
+      );
     })
   ) : (
     <div>No Orders Found.</div>
   );
 
-  console.log(orders);
   return (
     <div className="flex flex-col items-center">
       {!!errMsg.length && <span className="text-error m-1">{errMsg}</span>}
@@ -165,7 +210,7 @@ export default function AdminOrderPage() {
         </button>
       </div>
       <div className="w-5/6 flex flex-col items-center">
-        {/* {isLoading ? <CircularProgress /> : ordersDisplay} */}
+        {isLoading ? <CircularProgress /> : ordersDisplay}
         {!!page.total && (
           <Pagination
             count={page.total}
