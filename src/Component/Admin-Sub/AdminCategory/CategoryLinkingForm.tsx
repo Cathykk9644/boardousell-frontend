@@ -14,6 +14,7 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import axios from "axios";
 import { BACKENDURL } from "../../../constant";
 import { category, product } from "../../../type";
+import { useAuth0 } from "@auth0/auth0-react";
 
 type props = {
   category: category;
@@ -30,6 +31,7 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
   const [products, setProducts] = useState<product[]>([]);
   const [linkedProducts, setLinkedProducts] = useState<linkedProducts>([]);
   const [isLoading, setIsloading] = useState<boolean>(false);
+  const { getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,6 +45,7 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
           linkedProductHash[product.id] = product;
         }
         setLinkedProducts(linkedProductHash);
+        setErrMsg("");
         setIsloading(false);
       } catch (error) {
         setErrMsg("Cannot get data, please try again");
@@ -59,7 +62,7 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
         return setErrMsg("Please Enter Keyword");
       }
       const { data } = await axios.get(
-        `${BACKENDURL}/product/search/all/${input}`
+        `${BACKENDURL}/admin/product/search/all/${input}`
       );
       setProducts(data);
       setIsloading(false);
@@ -74,11 +77,21 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
   const handleCheckBox = async (link: boolean, product: product) => {
     try {
       setIsloading(true);
-      await axios.put(`${BACKENDURL}/category/product`, {
-        link,
-        productId: product.id,
-        category: category.name,
-      });
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      await axios.put(
+        `${BACKENDURL}/admin/category/product`,
+        {
+          link,
+          productId: product.id,
+          category: category.name,
+        },
+        config
+      );
       if (link) {
         setLinkedProducts((prev) => {
           return { [product.id]: product, ...prev };

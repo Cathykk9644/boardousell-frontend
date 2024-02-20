@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { BACKENDURL } from "../../../constant";
 import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
 
 type props = {
   order: order;
@@ -41,15 +42,25 @@ export default function OrderEditForm({
   });
   const [input, setInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { getAccessTokenSilently } = useAuth0();
 
   const handleSendMessage = async () => {
     try {
       setIsLoading(true);
-      const { data } = await axios.post(`${BACKENDURL}/message`, {
-        orderId: Number(order.id),
-        isUserReceiver: true,
-        detail: input,
-      });
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const { data } = await axios.post(
+        `${BACKENDURL}/admin/message`,
+        {
+          orderId: Number(order.id),
+          detail: input,
+        },
+        config
+      );
       setOrders((prev: order[]) => {
         const newOrders = [...prev];
         const targetIndex = prev.findIndex((target) => target.id === order.id);
@@ -81,10 +92,20 @@ export default function OrderEditForm({
     }
     try {
       setIsLoading(true);
-      const { data } = await axios.put(`${BACKENDURL}/order/status`, {
-        status: editStatus.option,
-        orderId: order.id,
-      });
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const { data } = await axios.put(
+        `${BACKENDURL}/admin/order/status`,
+        {
+          status: editStatus.option,
+          orderId: order.id,
+        },
+        config
+      );
       setOrders((prev: order[]) => {
         const newOrders = [...prev];
         const targetIndex = prev.findIndex((target) => target.id === order.id);

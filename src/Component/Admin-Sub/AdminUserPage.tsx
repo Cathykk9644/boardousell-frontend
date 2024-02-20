@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { user } from "../../type";
+import { useAuth0 } from "@auth0/auth0-react";
 
 type search = {
   keyword: string;
@@ -26,9 +27,10 @@ export default function AdminUserPage(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<user[]>([]);
   const [search, setSearch] = useState<search>({ keyword: "", type: "all" });
-  const [errMsg, setErrMsg] = useState("");
+  const [errMsg, setErrMsg] = useState<string>("");
   const [edit, setEdit] = useState<edit>({ id: null, points: "" });
   const [expand, setExpanded] = useState<number | null>(null);
+  const { getAccessTokenSilently } = useAuth0();
   useEffect(() => {
     if (errMsg.length) {
       window.scrollTo({
@@ -60,14 +62,24 @@ export default function AdminUserPage(): JSX.Element {
   const handleSearch = async () => {
     try {
       setIsLoading(true);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       if (search.type === "all") {
-        const { data } = await axios.get(`${BACKENDURL}/user/admin`);
+        const { data } = await axios.get(
+          `${BACKENDURL}/admin/user/search`,
+          config
+        );
         setUsers(data);
       } else {
         const { data } = await axios.get(
-          `${BACKENDURL}/user/admin?${
+          `${BACKENDURL}/admin/user/search?${
             !!search.keyword.length ? search.type + "=" + search.keyword : ""
-          }`
+          }`,
+          config
         );
         setUsers(data);
       }
@@ -92,9 +104,19 @@ export default function AdminUserPage(): JSX.Element {
   ) => {
     try {
       setIsLoading(true);
-      await axios.put(`${BACKENDURL}/user/${userId}`, {
-        isAdmin: e.target.checked,
-      });
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      await axios.put(
+        `${BACKENDURL}/admin/user/${userId}`,
+        {
+          isAdmin: e.target.checked,
+        },
+        config
+      );
       handleSearch();
     } catch (error: any) {
       setErrMsg(error.message);
@@ -105,9 +127,19 @@ export default function AdminUserPage(): JSX.Element {
   const handleConfirmEdit = async () => {
     try {
       setIsLoading(true);
-      await axios.put(`${BACKENDURL}/user/${edit.id}`, {
-        points: edit.points,
-      });
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      await axios.put(
+        `${BACKENDURL}/admin/user/${edit.id}`,
+        {
+          points: edit.points,
+        },
+        config
+      );
       handleSearch();
       setEdit({ id: null, points: "" });
     } catch (error: any) {

@@ -27,6 +27,7 @@ export default function AdminNoticePage() {
         setIsLoading(true);
         const { data } = await axios.get(`${BACKENDURL}/notice`);
         setNotices(data);
+        setErrMsg("");
         setIsLoading(false);
       } catch (error) {
         setErrMsg("Cannot get data");

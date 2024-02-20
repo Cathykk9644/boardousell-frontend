@@ -27,7 +27,12 @@ export default function OrderPage(): JSX.Element {
   const [input, setInput] = useState<string>("");
   const [clientSecret, setClientSecret] = useState("");
   const navi = useNavigate();
-  const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
+  const {
+    isAuthenticated,
+    loginWithRedirect,
+    isLoading,
+    getAccessTokenSilently,
+  } = useAuth0();
   const { userId, setError } = useOutletContext<outletProps>();
 
   useEffect(() => {
@@ -39,7 +44,16 @@ export default function OrderPage(): JSX.Element {
     }
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`${BACKENDURL}/order/info/${orderId}`);
+        const accessToken = await getAccessTokenSilently();
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+        const { data } = await axios.get(
+          `${BACKENDURL}/customer/order/${orderId}`,
+          config
+        );
         if (!data || data.userId !== userId) {
           return navi(`/`);
         }
@@ -51,9 +65,13 @@ export default function OrderPage(): JSX.Element {
           return Date.parse(a.createdAt) - Date.parse(b.createdAt);
         });
         setMessageList(messages);
-        const res = await axios.post(`${BACKENDURL}/payment`, {
-          amount: order.amount,
-        });
+        const res = await axios.post(
+          `${BACKENDURL}/customer/payment`,
+          {
+            amount: order.amount,
+          },
+          config
+        );
         setClientSecret(res.data.clientSecret);
       } catch (error) {
         setError({
@@ -66,6 +84,7 @@ export default function OrderPage(): JSX.Element {
       fetchData();
     }
   }, [
+    getAccessTokenSilently,
     navi,
     orderId,
     userId,
@@ -77,11 +96,20 @@ export default function OrderPage(): JSX.Element {
 
   const handleSendMessage = async () => {
     try {
-      const { data } = await axios.post(`${BACKENDURL}/message`, {
-        orderId: Number(orderId),
-        isUserReceiver: false,
-        detail: input,
-      });
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const { data } = await axios.post(
+        `${BACKENDURL}/customer/message`,
+        {
+          orderId: Number(orderId),
+          detail: input,
+        },
+        config
+      );
       setMessageList((prev) => [...prev, data]);
       setInput("");
     } catch (error) {

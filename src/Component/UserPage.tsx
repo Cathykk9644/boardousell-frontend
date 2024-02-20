@@ -19,7 +19,12 @@ export default function UserPage(): JSX.Element {
   const [name, setName] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [levelInfo, setLevelInfo] = useState<userLevel | null>(null);
-  const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
+  const {
+    isAuthenticated,
+    loginWithRedirect,
+    isLoading,
+    getAccessTokenSilently,
+  } = useAuth0();
 
   useEffect(() => {
     if (isLoading) {
@@ -30,8 +35,15 @@ export default function UserPage(): JSX.Element {
     }
     const fetchData = async () => {
       try {
+        const accessToken = await getAccessTokenSilently();
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
         const { data }: { data: user } = await axios.get(
-          `${BACKENDURL}/user/${userId}`
+          `${BACKENDURL}/customer/user/${userId}`,
+          config
         );
         setEmail(data.email);
         setName(data.name);
@@ -47,7 +59,14 @@ export default function UserPage(): JSX.Element {
     if (userId) {
       fetchData();
     }
-  }, [isAuthenticated, loginWithRedirect, setError, userId, isLoading]);
+  }, [
+    getAccessTokenSilently,
+    isAuthenticated,
+    loginWithRedirect,
+    setError,
+    userId,
+    isLoading,
+  ]);
 
   const handleEdit = (target: "name" | "phone") => {
     if (editing) {
@@ -71,7 +90,13 @@ export default function UserPage(): JSX.Element {
           newData = { phone: phone };
           break;
       }
-      await axios.put(`${BACKENDURL}/user/${userId}`, newData);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      await axios.put(`${BACKENDURL}/customer/user/${userId}`, newData, config);
     } catch (error) {
       setError({
         backHome: true,

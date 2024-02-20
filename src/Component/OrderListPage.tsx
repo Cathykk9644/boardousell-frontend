@@ -9,7 +9,12 @@ import { order, outletProps } from "../type";
 export default function OrderListPage(): JSX.Element {
   const { userId, setError } = useOutletContext<outletProps>();
   const [orderList, setOrderList] = useState<order[]>([]);
-  const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
+  const {
+    isAuthenticated,
+    loginWithRedirect,
+    isLoading,
+    getAccessTokenSilently,
+  } = useAuth0();
 
   useEffect(() => {
     if (isLoading) {
@@ -20,7 +25,16 @@ export default function OrderListPage(): JSX.Element {
     }
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`${BACKENDURL}/order/all/${userId}`);
+        const accessToken = await getAccessTokenSilently();
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+        const { data } = await axios.get(
+          `${BACKENDURL}/customer/order/all/${userId}`,
+          config
+        );
         setOrderList(data);
       } catch (error) {
         setError({
@@ -32,7 +46,14 @@ export default function OrderListPage(): JSX.Element {
     if (userId) {
       fetchData();
     }
-  }, [userId, setError, isAuthenticated, loginWithRedirect, isLoading]);
+  }, [
+    getAccessTokenSilently,
+    userId,
+    setError,
+    isAuthenticated,
+    loginWithRedirect,
+    isLoading,
+  ]);
 
   const orderListDisplay = orderList.map((order) => {
     const createdTimestamp = order ? Date.parse(order.createdAt) : 0;

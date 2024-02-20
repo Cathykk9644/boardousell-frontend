@@ -25,6 +25,7 @@ import {
 import axios from "axios";
 import { BACKENDURL } from "../../../constant";
 import { notice } from "../../../type";
+import { useAuth0 } from "@auth0/auth0-react";
 
 type props = {
   open: boolean;
@@ -44,6 +45,7 @@ export default function NoticeEditForm({
   const [edit, setEdit] = useState<edit>({ type: null, input: "" });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isWarning, setIsWarning] = useState<boolean>(false);
+  const { getAccessTokenSilently } = useAuth0();
 
   const handleChange = () => {
     if (open) {
@@ -60,10 +62,20 @@ export default function NoticeEditForm({
       const storageRef = ref(storage, `/notice/notice${notice.id}.jpg`);
       await uploadBytes(storageRef, e.target.files[0]);
       const url = await getDownloadURL(storageRef);
-      const { data } = await axios.put(`${BACKENDURL}/notice/photo`, {
-        noticeId: notice.id,
-        url,
-      });
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const { data } = await axios.put(
+        `${BACKENDURL}/admin/notice/photo`,
+        {
+          noticeId: notice.id,
+          url,
+        },
+        config
+      );
       updateNotice(data);
     } catch (error) {
       setErrMsg("Somethings went wrong, cannot change photo.");
@@ -76,8 +88,15 @@ export default function NoticeEditForm({
       setIsLoading(true);
       const storageRef = ref(storage, `/notice/notice${notice.id}.jpg`);
       await deleteObject(storageRef);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       const { data } = await axios.delete(
-        `${BACKENDURL}/notice/photo/${notice.id}`
+        `${BACKENDURL}/admin/notice/photo/${notice.id}`,
+        config
       );
       updateNotice(data);
     } catch (error) {
@@ -90,18 +109,27 @@ export default function NoticeEditForm({
     if (edit.type && notice[edit.type] === edit.input) {
       return setErrMsg("");
     }
-    console.log("here");
     try {
       setIsLoading(true);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       if (edit.type) {
-        const { data } = await axios.put(`${BACKENDURL}/notice/info`, {
-          noticeId: notice.id,
-          [edit.type]: edit.input,
-        });
-        updateNotice(data);
+        const { data } = await axios.put(
+          `${BACKENDURL}/admin/notice/info`,
+          {
+            noticeId: notice.id,
+            [edit.type]: edit.input,
+          },
+          config
+        );
+        return updateNotice(data);
       }
-      setIsLoading(false);
       setErrMsg("");
+      setIsLoading(false);
     } catch (error) {
       setErrMsg("Somethings went wrong, please edit again");
       setIsLoading(false);
@@ -139,7 +167,16 @@ export default function NoticeEditForm({
 
   const handleDeleteNotice = async () => {
     try {
-      await axios.delete(`${BACKENDURL}/notice/delete/${notice.id}`);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      await axios.delete(
+        `${BACKENDURL}/admin/notice/delete/${notice.id}`,
+        config
+      );
       setExpand(null);
       setIsLoading(false);
       setIsWarning(false);

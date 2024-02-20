@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import { BACKENDURL } from "../../constant";
 import { useParams } from "react-router-dom";
 import { order } from "../../type";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export default function Payment({
   setError,
@@ -22,6 +23,7 @@ export default function Payment({
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { orderId } = useParams();
+  const { getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
     if (!stripe) {
@@ -79,7 +81,13 @@ export default function Payment({
         setIsLoading(false);
         return;
       }
-      await axios.put(`${BACKENDURL}/order/paid`, { orderId });
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      await axios.put(`${BACKENDURL}/customer/order/paid`, { orderId }, config);
       setOrderInfo((prev: order) => {
         return { ...prev, status: "Paid" };
       });

@@ -6,6 +6,7 @@ import { CircularProgress } from "@mui/material";
 import axios from "axios";
 import { BACKENDURL } from "../../constant";
 import { level } from "../../type";
+import { useAuth0 } from "@auth0/auth0-react";
 
 type editInput = {
   title: string;
@@ -23,6 +24,7 @@ export default function AdminMembershipPage() {
     discount: "",
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
     if (errMsg.length) {
@@ -37,8 +39,15 @@ export default function AdminMembershipPage() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const { data } = await axios.get(`${BACKENDURL}/level`);
+        const accessToken = await getAccessTokenSilently();
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+        const { data } = await axios.get(`${BACKENDURL}/admin/level`, config);
         setLevels(data);
+        setErrMsg("");
         setIsLoading(false);
       } catch (error: any) {
         setErrMsg(error.message);
@@ -46,12 +55,21 @@ export default function AdminMembershipPage() {
       }
     };
     fetchData();
-  }, []);
+  }, [getAccessTokenSilently]);
 
   const handleDelete = async (id: number) => {
     try {
       setIsLoading(true);
-      const { data } = await axios.delete(`${BACKENDURL}/level/${id}`);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const { data } = await axios.delete(
+        `${BACKENDURL}/admin/level/${id}`,
+        config
+      );
       setLevels(data);
       setErrMsg("");
       setIsLoading(false);
@@ -64,7 +82,17 @@ export default function AdminMembershipPage() {
   const handleConfirmAdd = async () => {
     try {
       setIsLoading(true);
-      const { data } = await axios.post(`${BACKENDURL}/level`, editInput);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const { data } = await axios.post(
+        `${BACKENDURL}/admin/level`,
+        editInput,
+        config
+      );
       setLevels(data);
       setErrMsg("");
       setIsLoading(false);
@@ -103,7 +131,17 @@ export default function AdminMembershipPage() {
       }
       if (!areAllUnchanged) {
         setIsLoading(true);
-        const { data } = await axios.put(`${BACKENDURL}/level`, newData);
+        const accessToken = await getAccessTokenSilently();
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+        const { data } = await axios.put(
+          `${BACKENDURL}/admin/level`,
+          newData,
+          config
+        );
         setLevels(data);
       }
       setErrMsg("");

@@ -6,6 +6,7 @@ import { CircularProgress, Dialog } from "@mui/material";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import GoogleMap from "../ContactUs-Sub/GoogleMap";
 import { infomation } from "../../type";
+import { useAuth0 } from "@auth0/auth0-react";
 
 type edit = {
   name: infomation["name"];
@@ -19,6 +20,7 @@ export default function AdminInfoPage() {
   const [edit, setEdit] = useState<edit>({ name: "Phone", detail: "" });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [preview, setPreview] = useState<string | null>(null);
+  const { getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
     if (errMsg.length) {
@@ -35,6 +37,7 @@ export default function AdminInfoPage() {
         setIsLoading(true);
         const { data } = await axios.get(`${BACKENDURL}/infomation/`);
         setInfos(data);
+        setErrMsg("");
         setIsLoading(false);
       } catch (error) {
         setErrMsg("Cannot get data, please try again.");
@@ -46,7 +49,13 @@ export default function AdminInfoPage() {
 
   const deleteInfo = async (infoId: number) => {
     try {
-      await axios.delete(`${BACKENDURL}/infomation/${infoId}`);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      await axios.delete(`${BACKENDURL}/admin/infomation/${infoId}`, config);
       setInfos((prev: infomation[]) =>
         prev.filter((info) => info.id !== infoId)
       );
@@ -75,7 +84,17 @@ export default function AdminInfoPage() {
   const handleAdd = async () => {
     try {
       setIsLoading(true);
-      const { data } = await axios.post(`${BACKENDURL}/infomation`, edit);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const { data } = await axios.post(
+        `${BACKENDURL}/admin/infomation`,
+        edit,
+        config
+      );
       setInfos((prev) => [data, ...prev]);
       setEdit({ name: "Phone", detail: "" });
       setIsAdding(false);

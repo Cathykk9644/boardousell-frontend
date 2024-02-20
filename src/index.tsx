@@ -20,23 +20,18 @@ import ContactUsPage from "./Component/ContactUs-Sub/ContactUsPage";
 import SearchPage from "./Component/SearchPage";
 import { Auth0Provider } from "@auth0/auth0-react";
 
-const DOMAIN = process.env.REACT_APP_AUTH_DOMAIN
-  ? process.env.REACT_APP_AUTH_DOMAIN
-  : "";
-const CLIENTID = process.env.REACT_APP_AUTH_CLIENT_ID
-  ? process.env.REACT_APP_AUTH_CLIENT_ID
-  : "";
-
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
     <Auth0Provider
-      domain={DOMAIN}
-      clientId={CLIENTID}
+      domain={process.env.REACT_APP_AUTH_DOMAIN!}
+      clientId={process.env.REACT_APP_AUTH_CLIENT_ID!}
       authorizationParams={{
         redirect_uri: window.location.origin,
+        audience: process.env.REACT_APP_AUTH_AUDIENCE,
+        scope: "read:current_user profile email",
       }}
       cacheLocation="localstorage"
     >

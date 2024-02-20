@@ -6,6 +6,7 @@ import InsertLinkRoundedIcon from "@mui/icons-material/InsertLinkRounded";
 import { BACKENDURL } from "../../constant";
 import CategoryLinkingForm from "./AdminCategory/CategoryLinkingForm";
 import { category } from "../../type";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export default function AdminCategoryPage() {
   const [input, setInput] = useState<string>("");
@@ -13,6 +14,7 @@ export default function AdminCategoryPage() {
   const [linking, setLinking] = useState<category | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errMsg, setErrMsg] = useState<string>("");
+  const { getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
     if (errMsg.length) {
@@ -41,9 +43,19 @@ export default function AdminCategoryPage() {
   const handleAddCategory = async () => {
     try {
       setIsLoading(true);
-      const { data } = await axios.put(`${BACKENDURL}/category/`, {
-        name: input,
-      });
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const { data } = await axios.put(
+        `${BACKENDURL}/admin/category/`,
+        {
+          name: input,
+        },
+        config
+      );
       setCategories((prev) => [data, ...prev]);
       setInput("");
       setErrMsg("");
@@ -57,7 +69,13 @@ export default function AdminCategoryPage() {
   const handleDeleteCategory = async (categoryId: number) => {
     try {
       setIsLoading(true);
-      await axios.delete(`${BACKENDURL}/category/${categoryId}`);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      await axios.delete(`${BACKENDURL}/admin/category/${categoryId}`, config);
       setCategories((prev) =>
         prev.filter((target) => target.id !== categoryId)
       );

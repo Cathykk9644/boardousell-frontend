@@ -23,7 +23,12 @@ export default function CheckoutPage(): JSX.Element {
   const [address, setAddress] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [isLoadingCart, setIsLoadingCart] = useState<boolean>(false);
-  const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
+  const {
+    isAuthenticated,
+    loginWithRedirect,
+    isLoading,
+    getAccessTokenSilently,
+  } = useAuth0();
   const navi = useNavigate();
 
   useEffect(() => {
@@ -36,8 +41,20 @@ export default function CheckoutPage(): JSX.Element {
     const fetchData = async () => {
       try {
         setIsLoadingCart(true);
-        const { data } = await axios.get(`${BACKENDURL}/cart/info/${userId}`);
-        const userDataRes = await axios.get(`${BACKENDURL}/user/${userId}`);
+        const accessToken = await getAccessTokenSilently();
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+        const { data } = await axios.get(
+          `${BACKENDURL}/customer/cart/info/${userId}`,
+          config
+        );
+        const userDataRes = await axios.get(
+          `${BACKENDURL}/customer/user/${userId}`,
+          config
+        );
         setUserInfo(userDataRes.data);
         setNewCart(data);
         setIsLoadingCart(false);
@@ -51,7 +68,14 @@ export default function CheckoutPage(): JSX.Element {
     if (userId) {
       fetchData();
     }
-  }, [userId, setError, isAuthenticated, loginWithRedirect, isLoading]);
+  }, [
+    getAccessTokenSilently,
+    userId,
+    setError,
+    isAuthenticated,
+    loginWithRedirect,
+    isLoading,
+  ]);
 
   const findCartId = (productId: number): number => {
     const index = newCart.findIndex((item) => item.product.id === productId);
@@ -169,16 +193,30 @@ export default function CheckoutPage(): JSX.Element {
 
   const handleConfirm = async () => {
     try {
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       if (!userInfo?.phone) {
-        await axios.put(`${BACKENDURL}/user/${userId}`, { phone: phone });
+        await axios.put(
+          `${BACKENDURL}/customer/user/${userId}`,
+          { phone: phone },
+          config
+        );
       }
       const productIdList = newCart.map((item) => item.product.id);
-      const { data } = await axios.post(`${BACKENDURL}/order`, {
-        userId,
-        address,
-        productIdList,
-        amount: discountedAmount,
-      });
+      const { data } = await axios.post(
+        `${BACKENDURL}/customer/order`,
+        {
+          userId,
+          address,
+          productIdList,
+          amount: discountedAmount,
+        },
+        config
+      );
       setCart([]);
       navi(`/order/${data}`);
     } catch (error) {

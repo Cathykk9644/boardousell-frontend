@@ -17,7 +17,7 @@ export default function HomePage(): JSX.Element {
       try {
         setIsLoading(true);
         const productDataRes = await axios.get(
-          BACKENDURL + `/product/newProduct`
+          `${BACKENDURL}/product/newProduct`
         );
         setNewProduct(productDataRes.data);
         setIsLoading(false);

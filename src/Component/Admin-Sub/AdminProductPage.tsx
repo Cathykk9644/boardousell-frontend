@@ -7,6 +7,7 @@ import ProductEditForm from "./AdminProduct/ProductEditForm";
 import ProductAddForm from "./AdminProduct/ProductAddForm";
 import { category } from "../../type";
 import { product } from "../../type";
+import { useAuth0 } from "@auth0/auth0-react";
 
 type key = "all" | "name" | "stock" | "category";
 
@@ -30,7 +31,8 @@ export default function AdminProductPage() {
   const [open, setOpen] = useState<number | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [newAddedProducts, setNewAddedProducts] = useState<product[]>([]);
-  const [errMsg, setErrMsg] = useState("");
+  const [errMsg, setErrMsg] = useState<string>("");
+  const { getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
     if (errMsg.length) {
@@ -48,6 +50,7 @@ export default function AdminProductPage() {
         const { data } = await axios.get(`${BACKENDURL}/category/all`);
         const flattenData = data.map((category: category) => category.name);
         setCategories(flattenData);
+        setErrMsg("");
         setIsLoading(false);
       } catch (error) {
         setErrMsg("Cannot Load all categories");
@@ -76,17 +79,24 @@ export default function AdminProductPage() {
   const handleSearch = async () => {
     try {
       setIsLoading(true);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       let res;
       switch (search.type) {
         case "all":
-          res = await axios.get(`${BACKENDURL}/product/admin/all/1`);
+          res = await axios.get(`${BACKENDURL}/admin/product/all/1`, config);
           break;
         case "name":
           if (!search.input.length) {
             throw new Error("Please Enter Keyword.");
           }
           res = await axios.get(
-            `${BACKENDURL}/product/admin/name/${search.input}/1`
+            `${BACKENDURL}/admin/product/name/${search.input}/1`,
+            config
           );
           break;
         case "stock":
@@ -107,12 +117,14 @@ export default function AdminProductPage() {
             throw new Error("Please Enter Amount/LowerLimit-UpperLimit.");
           }
           res = await axios.get(
-            `${BACKENDURL}/product/admin/stock/${search.input}/1`
+            `${BACKENDURL}/admin/product/stock/${search.input}/1`,
+            config
           );
           break;
         case "category":
           res = await axios.get(
-            `${BACKENDURL}/product/admin/category/${search.input}/1`
+            `${BACKENDURL}/admin/product/category/${search.input}/1`,
+            config
           );
           break;
         default:
@@ -139,16 +151,23 @@ export default function AdminProductPage() {
   ) => {
     try {
       setIsLoading(true);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       switch (currentSearch?.type) {
         case "all":
           const allDataRes = await axios.get(
-            `${BACKENDURL}/product/admin/all/${newPage}`
+            `${BACKENDURL}/admin/product/all/${newPage}`
           );
           setProducts(allDataRes.data.data);
           break;
         default:
           const { data } = await axios.get(
-            `${BACKENDURL}/product/admin/${currentSearch?.type}/${currentSearch?.input}/${newPage}`
+            `${BACKENDURL}/admin/product/${currentSearch?.type}/${currentSearch?.input}/${newPage}`,
+            config
           );
           setProducts(data.data);
       }

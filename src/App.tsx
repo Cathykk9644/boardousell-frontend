@@ -16,7 +16,13 @@ type drawer = "nav" | anime;
 
 export default function App(): JSX.Element {
   const [userId, setUserId] = useState<number>(0);
-  const { isAuthenticated, isLoading, loginWithRedirect, user } = useAuth0();
+  const {
+    isAuthenticated,
+    isLoading,
+    loginWithRedirect,
+    user,
+    getAccessTokenSilently,
+  } = useAuth0();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [wishlist, setWishlist] = useState<item[]>([]);
   const [cart, setCart] = useState<item[]>([]);
@@ -29,28 +35,41 @@ export default function App(): JSX.Element {
   } | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAuthData = async () => {
       try {
+        const accessToken = await getAccessTokenSilently();
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
         const { data }: { data: [user, boolean] } = await axios.get(
-          `${BACKENDURL}/user/login/${user?.sub}`
+          `${BACKENDURL}/customer/user/login/${user?.sub}`,
+          config
         );
         //data[0] is the user Data
         //data[1] trues means the user data is new made.
         if (data[1]) {
-          await axios.put(`${BACKENDURL}/user/${data[0].id}`, {
-            email: user?.email,
-            name: user?.nickname,
-            phone: user?.phone_number,
-          });
+          await axios.put(
+            `${BACKENDURL}/customer/user/${data[0].id}`,
+            {
+              email: user?.email,
+              name: user?.nickname,
+              phone: user?.phone_number,
+            },
+            config
+          );
         }
         setUserId(data[0].id);
         setIsAdmin(data[0].isAdmin);
         const wishlistRes = await axios.get(
-          `${BACKENDURL}/wishlist/info/${data[0].id}`
+          `${BACKENDURL}/customer/wishlist/info/${data[0].id}`,
+          config
         );
         setWishlist(wishlistRes.data);
         const cartRes = await axios.get(
-          `${BACKENDURL}/cart/info/${data[0].id}`
+          `${BACKENDURL}/customer/cart/info/${data[0].id}`,
+          config
         );
         setCart(cartRes.data);
       } catch (err) {
@@ -61,13 +80,14 @@ export default function App(): JSX.Element {
       }
     };
     if (!isLoading && isAuthenticated) {
-      fetchData();
+      fetchAuthData();
     }
     if (!isLoading && !isAuthenticated) {
       setIsAdmin(false);
       setUserId(0);
     }
   }, [
+    getAccessTokenSilently,
     isAuthenticated,
     isLoading,
     user?.email,
@@ -84,10 +104,20 @@ export default function App(): JSX.Element {
       return loginWithRedirect();
     }
     try {
-      const { data } = await axios.post(`${BACKENDURL}/${target}`, {
-        userId: userId,
-        productId: productId,
-      });
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const { data } = await axios.post(
+        `${BACKENDURL}/customer/${target}`,
+        {
+          userId: userId,
+          productId: productId,
+        },
+        config
+      );
       if (target === "wishlist") {
         setWishlist((prev) => [...prev, data]);
         setAnime("wish");
@@ -105,7 +135,13 @@ export default function App(): JSX.Element {
 
   const handleDeleteItem = async (id: number, target: "cart" | "wishlist") => {
     try {
-      await axios.delete(`${BACKENDURL}/${target}/${id}`);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      await axios.delete(`${BACKENDURL}/customer/${target}/${id}`, config);
       const updateState = (prev: item[]) => {
         return prev.filter((item: item) => item.id !== id);
       };

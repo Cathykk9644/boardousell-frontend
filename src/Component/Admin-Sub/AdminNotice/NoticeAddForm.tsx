@@ -12,6 +12,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { BACKENDURL } from "../../../constant";
 import { storage } from "../../../firebase";
 import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
 
 type props = {
   open: boolean;
@@ -28,6 +29,7 @@ export default function NoticeAddForm({ open, setOpen, setNotices }: props) {
   const [fileName, setFileName] = useState<string>("");
   const [isLoading, setIsloading] = useState<boolean>(false);
   const [errMsg, setErrMsg] = useState<string>("");
+  const { getAccessTokenSilently } = useAuth0();
 
   type notice = {
     id: number;
@@ -51,18 +53,29 @@ export default function NoticeAddForm({ open, setOpen, setNotices }: props) {
     }
     try {
       setIsloading(true);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       const { data }: { data: notice } = await axios.post(
-        `${BACKENDURL}/notice`,
-        newData
+        `${BACKENDURL}/admin/notice`,
+        newData,
+        config
       );
       if (fileValue) {
         const photoRef = ref(storage, `notice/notice${data.id}.jpg`);
         await uploadBytes(photoRef, fileValue);
         const url = await getDownloadURL(photoRef);
-        await axios.put(`${BACKENDURL}/notice/photo`, {
-          noticeId: data.id,
-          url,
-        });
+        await axios.put(
+          `${BACKENDURL}/notice/photo`,
+          {
+            noticeId: data.id,
+            url,
+          },
+          config
+        );
         data.url = url;
       }
       setNotices((prev: notice[]) => {

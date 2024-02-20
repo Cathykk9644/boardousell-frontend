@@ -22,6 +22,7 @@ import {
   uploadBytes,
 } from "firebase/storage";
 import { product } from "../../../type";
+import { useAuth0 } from "@auth0/auth0-react";
 
 type props = {
   product: product;
@@ -48,6 +49,7 @@ export default function ProductEditForm({
   const [edit, setEdit] = useState<edit>({ type: null, input: "" });
   const [fileValue, setFileValue] = useState<File[]>([]);
   const [fileName, setFileName] = useState<string[]>([]);
+  const { getAccessTokenSilently } = useAuth0();
 
   const handleChange = () => {
     if (open) {
@@ -60,9 +62,17 @@ export default function ProductEditForm({
       setEdit({ type: null, input: "" });
     }
     try {
+      setIsLoading(true);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       const { data } = await axios.put(
-        `${BACKENDURL}/product/${updateType}/${product.id}`,
-        { isNew: isNew }
+        `${BACKENDURL}/admin/product/${updateType}/${product.id}`,
+        { isNew: isNew },
+        config
       );
       updateProduct(data);
     } catch (error) {
@@ -73,24 +83,35 @@ export default function ProductEditForm({
 
   const handleConfirmEdit = async () => {
     try {
+      setIsLoading(true);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       if (edit.type === "discount") {
         if (product.onsale) {
           const { data } = await axios.put(
-            `${BACKENDURL}/product/discount/${product.onsale.id}`,
-            { discount: edit.input }
+            `${BACKENDURL}/admin/product/discount/${product.onsale.id}`,
+            { discount: edit.input },
+            config
           );
           updateProduct(data);
         }
       } else if (edit.type !== null) {
         const { data } = await axios.put(
-          `${BACKENDURL}/product/info/${product.id}`,
-          { [edit.type]: edit.input }
+          `${BACKENDURL}/admin/product/info/${product.id}`,
+          { [edit.type]: edit.input },
+          config
         );
         updateProduct(data);
       } else {
         throw new Error();
       }
       setEdit({ type: null, input: "" });
+      setErrMsg("");
+      setIsLoading(false);
     } catch (error) {
       setErrMsg("Somethings wrong. Cannot update.");
       setIsLoading(false);
@@ -129,11 +150,21 @@ export default function ProductEditForm({
   }) => {
     try {
       setIsLoading(true);
-      const { data } = await axios.put(`${BACKENDURL}/category/product`, {
-        category: e.target.value,
-        link: e.target.checked,
-        productId: product.id,
-      });
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const { data } = await axios.put(
+        `${BACKENDURL}/admin/category/product`,
+        {
+          category: e.target.value,
+          link: e.target.checked,
+          productId: product.id,
+        },
+        config
+      );
       updateProduct(data);
     } catch (error) {
       setErrMsg("Somethings wrong. Cannot change for now");
@@ -144,9 +175,16 @@ export default function ProductEditForm({
   const handleThumbnail = async (photoId: number) => {
     try {
       setIsLoading(true);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       const { data } = await axios.put(
-        `${BACKENDURL}/product/photo/thumbnail/`,
-        { photoId }
+        `${BACKENDURL}/admin/product/photo/thumbnail/`,
+        { photoId },
+        config
       );
       updateProduct(data);
     } catch (error) {
@@ -158,8 +196,15 @@ export default function ProductEditForm({
   const handleDelete = async (photoId: number, deletefileName: string) => {
     try {
       setIsLoading(true);
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       const { data } = await axios.delete(
-        `${BACKENDURL}/product/photo/${photoId}`
+        `${BACKENDURL}/admin/product/photo/${photoId}`,
+        config
       );
       const storageRef = ref(
         storage,
@@ -211,19 +256,26 @@ export default function ProductEditForm({
         );
         await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
-        const { data } = await axios.post(`${BACKENDURL}/product/photo/`, {
-          url,
-          fileName: file.name,
-          productId: product.id,
-        });
+        const accessToken = await getAccessTokenSilently();
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+        const { data } = await axios.post(
+          `${BACKENDURL}/admin/product/photo/`,
+          {
+            url,
+            fileName: file.name,
+            productId: product.id,
+          },
+          config
+        );
         updateProduct(data);
-        setIsLoading(true);
       }
-      setIsLoading(false);
       setFileName([]);
       setFileValue([]);
     } catch (error) {
-      console.log(error);
       setErrMsg("Somethings went wrong, cannot upload photos now.");
       setIsLoading(false);
     }

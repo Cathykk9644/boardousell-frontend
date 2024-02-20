@@ -5,6 +5,7 @@ import { CircularProgress, Pagination } from "@mui/material";
 import OrderEditForm from "./AdminOrder/OrderEditForm";
 import axios from "axios";
 import { BACKENDURL } from "../../constant";
+import { useAuth0 } from "@auth0/auth0-react";
 
 type search = {
   type: "status" | "message" | "email" | "id" | "product";
@@ -26,6 +27,7 @@ export default function AdminOrderPage() {
   const [page, setPage] = useState<page>({ total: 0, current: 0 });
   const [expand, setExpand] = useState<number | null>(null);
   const [errMsg, setErrMsg] = useState("");
+  const { getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
     if (errMsg.length) {
@@ -68,24 +70,33 @@ export default function AdminOrderPage() {
       setIsLoading(true);
       let count;
       let data;
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       switch (search.type) {
         case "id":
           const idRes = await axios.get(
-            `${BACKENDURL}/order/admin/${search.input}`
+            `${BACKENDURL}/admin/order/${search.input}`,
+            config
           );
           count = idRes.data.count;
           data = idRes.data.data;
           break;
         case "message":
           const msgRes = await axios.get(
-            `${BACKENDURL}/order/message?page=1&sort=${search.input}`
+            `${BACKENDURL}/admin/order/message?page=1&sort=${search.input}`,
+            config
           );
           count = msgRes.data.count;
           data = msgRes.data.data;
           break;
         default:
           const res = await axios.get(
-            `${BACKENDURL}/order/${search.type}?${search.type}=${search.input}&page=1`
+            `${BACKENDURL}/admin/order/${search.type}?${search.type}=${search.input}&page=1`,
+            config
           );
           count = res.data.count;
           data = res.data.data;
@@ -108,20 +119,28 @@ export default function AdminOrderPage() {
     try {
       setIsLoading(true);
       let data;
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       switch (currentSearch!.type) {
         case "message":
           const msgRes = await axios.get(
-            `${BACKENDURL}/order/message?page=${newPage}&sort=${
+            `${BACKENDURL}/admin/order/message?page=${newPage}&sort=${
               currentSearch!.input
-            }`
+            }`,
+            config
           );
           data = msgRes.data.data;
           break;
         default:
           const res = await axios.get(
-            `${BACKENDURL}/order/${currentSearch!.type}?${
+            `${BACKENDURL}/admin/order/${currentSearch!.type}?${
               currentSearch!.type
-            }=${currentSearch!.input}&page=${newPage}`
+            }=${currentSearch!.input}&page=${newPage}`,
+            config
           );
           data = res.data.data;
       }

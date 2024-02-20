@@ -14,6 +14,7 @@ import { BACKENDURL } from "../../../constant";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../../firebase";
 import { product } from "../../../type";
+import { useAuth0 } from "@auth0/auth0-react";
 
 type props = {
   open: boolean;
@@ -49,6 +50,7 @@ export default function ProductAddForm({
   const [discount, setDiscount] = useState<string>("");
   const [errMsg, setErrMsg] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { getAccessTokenSilently } = useAuth0();
 
   const handleAddFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
@@ -88,26 +90,36 @@ export default function ProductAddForm({
     try {
       setIsLoading(true);
       let data: product;
+      const accessToken = await getAccessTokenSilently();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       const basicRes = await axios.post(
-        `${BACKENDURL}/product/create`,
-        newData
+        `${BACKENDURL}/admin/product/create`,
+        newData,
+        config
       );
       data = basicRes.data;
       if (isNewProduct) {
         const newProductRes = await axios.put(
-          `${BACKENDURL}/product/newProduct/${data.id}`,
-          { isNew: true }
+          `${BACKENDURL}/admin/product/newProduct/${data.id}`,
+          { isNew: true },
+          config
         );
         data = newProductRes.data;
       }
       if (isOnsale) {
         const onsaleRes = await axios.put(
-          `${BACKENDURL}/product/onsale/${data.id}`,
-          { isNew: true }
+          `${BACKENDURL}/admin/product/onsale/${data.id}`,
+          { isNew: true },
+          config
         );
         const discountRes = await axios.put(
-          `${BACKENDURL}/product/discount/${onsaleRes.data.onsale.id}`,
-          { discount }
+          `${BACKENDURL}/admin/product/discount/${onsaleRes.data.onsale.id}`,
+          { discount },
+          config
         );
         data = discountRes.data;
       }
@@ -121,22 +133,36 @@ export default function ProductAddForm({
         );
         await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
-        const fileRes = await axios.post(`${BACKENDURL}/product/photo/`, {
-          url,
-          fileName: file.name,
-          productId: data.id,
-        });
+        const accessToken = await getAccessTokenSilently();
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+        const fileRes = await axios.post(
+          `${BACKENDURL}/admin/product/photo/`,
+          {
+            url,
+            fileName: file.name,
+            productId: data.id,
+          },
+          config
+        );
         data = fileRes.data;
       }
       if (!selectedCategory.length) {
         data.categories = [];
       }
       for (const category of selectedCategory) {
-        const categoryRes = await axios.put(`${BACKENDURL}/category/product`, {
-          link: true,
-          category,
-          productId: data.id,
-        });
+        const categoryRes = await axios.put(
+          `${BACKENDURL}/admin/category/product`,
+          {
+            link: true,
+            category,
+            productId: data.id,
+          },
+          config
+        );
         data = categoryRes.data;
       }
       setNewAddedProducts((prev: product[]) => [...prev, data]);
