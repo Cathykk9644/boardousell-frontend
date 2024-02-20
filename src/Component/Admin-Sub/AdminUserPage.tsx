@@ -270,7 +270,11 @@ export default function AdminUserPage(): JSX.Element {
         </button>
       </div>
       <div className="w-5/6 flex flex-col items-center">
-        {isLoading ? <CircularProgress /> : userDisplay}
+        {isLoading ? (
+          <CircularProgress />
+        ) : (
+          <div className="w-5/6">{userDisplay}</div>
+        )}
       </div>
     </div>
   );

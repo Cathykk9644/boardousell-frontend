@@ -57,12 +57,12 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
 
   const handleSearch = async () => {
     try {
-      setIsloading(true);
       if (!input.length) {
         return setErrMsg("Please Enter Keyword");
       }
+      setIsloading(true);
       const { data } = await axios.get(
-        `${BACKENDURL}/admin/product/search/all/${input}`
+        `${BACKENDURL}/product/search/all/${input}`
       );
       setProducts(data);
       setIsloading(false);

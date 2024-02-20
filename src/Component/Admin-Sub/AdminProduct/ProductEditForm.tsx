@@ -161,7 +161,7 @@ export default function ProductEditForm({
         `${BACKENDURL}/admin/category/product`,
         {
           category: e.target.value,
-          link: e.target.checked,
+          link: !e.target.checked,
           productId: product.id,
         },
         config

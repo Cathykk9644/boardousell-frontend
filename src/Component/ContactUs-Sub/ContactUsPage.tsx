@@ -4,7 +4,7 @@ import axios from "axios";
 import { DISCLAIMER } from "../../constant";
 import { useOutletContext } from "react-router-dom";
 import { infomation } from "../../type";
-const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
+import { BACKENDURL } from "../../constant";
 
 type hash = {
   [K in infomation["name"]]: infomation[];

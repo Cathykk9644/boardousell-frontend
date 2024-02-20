@@ -5,7 +5,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import StarsIcon from "@mui/icons-material/Stars";
 import { useAuth0 } from "@auth0/auth0-react";
 import { product, item, outletProps, user } from "../type";
-const BACKENDURL: string | undefined = process.env.REACT_APP_BACKEND;
+import { BACKENDURL } from "../constant";
 
 type checkoutList = product & {
   amounts: number;
@@ -51,6 +51,7 @@ export default function CheckoutPage(): JSX.Element {
           `${BACKENDURL}/customer/cart/info/${userId}`,
           config
         );
+
         const userDataRes = await axios.get(
           `${BACKENDURL}/customer/user/${userId}`,
           config

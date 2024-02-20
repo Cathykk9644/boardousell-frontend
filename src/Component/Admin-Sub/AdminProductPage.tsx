@@ -160,7 +160,8 @@ export default function AdminProductPage() {
       switch (currentSearch?.type) {
         case "all":
           const allDataRes = await axios.get(
-            `${BACKENDURL}/admin/product/all/${newPage}`
+            `${BACKENDURL}/admin/product/all/${newPage}`,
+            config
           );
           setProducts(allDataRes.data.data);
           break;
