@@ -63,7 +63,7 @@ export default function App(): JSX.Element {
         setUserId(data[0].id);
         setIsAdmin(data[0].isAdmin);
         const wishlistRes = await axios.get(
-          `${BACKENDURL}/customer/wishlist/info/testing${data[0].id}`,
+          `${BACKENDURL}/customer/wishlist/info/${data[0].id}`,
           config
         );
         setWishlist(wishlistRes.data);
