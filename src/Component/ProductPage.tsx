@@ -50,7 +50,7 @@ export default function ProductPage(): JSX.Element {
       } catch (error) {
         setError({
           backHome: true,
-          message: "Oh. Sorry, cannot load this product for now.",
+          message: "Oh. Somethings went wrong. Cannot load this product.",
         });
       }
     };

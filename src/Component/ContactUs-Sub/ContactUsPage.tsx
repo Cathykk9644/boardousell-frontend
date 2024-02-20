@@ -32,7 +32,7 @@ export default function ContactUsPage(): JSX.Element {
       } catch (error) {
         setError({
           backHome: true,
-          message: "Oh. Sorry, cannot load infomation for now.",
+          message: "Oh. Somethings went wrong. Cannot load infomation.",
         });
       }
     };

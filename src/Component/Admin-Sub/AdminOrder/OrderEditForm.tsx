@@ -70,8 +70,8 @@ export default function OrderEditForm({
       setInput("");
       setErrMsg("");
       setIsLoading(false);
-    } catch (error) {
-      setErrMsg("Oh. Sorry, cannot send message for now.");
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot send message.");
       setIsLoading(false);
     }
   };
@@ -88,7 +88,7 @@ export default function OrderEditForm({
 
   const handleConfirmEdit = async () => {
     if (editStatus.option === order.status) {
-      return;
+      return setErrMsg("");
     }
     try {
       setIsLoading(true);
@@ -114,8 +114,8 @@ export default function OrderEditForm({
       });
       setErrMsg("");
       setIsLoading(false);
-    } catch (error) {
-      setErrMsg("Oh. Sorry, cannot send message for now.");
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot update this order status.");
       setIsLoading(false);
     }
   };

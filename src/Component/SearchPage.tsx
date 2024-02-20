@@ -33,7 +33,7 @@ export default function SearchPage(): JSX.Element {
       } catch (error) {
         setError({
           backHome: true,
-          message: "Oh. Sorry, somethings went wrong with the search.",
+          message: "Oh. Somethings went wrong. Cannot search.",
         });
       }
     };

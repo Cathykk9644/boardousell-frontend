@@ -85,8 +85,8 @@ export default function AdminUserPage(): JSX.Element {
       }
       setErrMsg("");
       setIsLoading(false);
-    } catch (error: any) {
-      setErrMsg(error.message);
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot Search Users.");
       setIsLoading(false);
     }
   };
@@ -118,8 +118,8 @@ export default function AdminUserPage(): JSX.Element {
         config
       );
       handleSearch();
-    } catch (error: any) {
-      setErrMsg(error.message);
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot update user data");
       setIsLoading(false);
     }
   };
@@ -142,8 +142,8 @@ export default function AdminUserPage(): JSX.Element {
       );
       handleSearch();
       setEdit({ id: null, points: "" });
-    } catch (error: any) {
-      setErrMsg(error.message);
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot update user data.");
       setIsLoading(false);
     }
   };

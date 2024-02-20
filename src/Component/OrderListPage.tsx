@@ -39,7 +39,7 @@ export default function OrderListPage(): JSX.Element {
       } catch (error) {
         setError({
           backHome: true,
-          message: "Oh. Sorry, cannot load your order list for now.",
+          message: "Oh. Somethings went wrong. Cannot load your order list.",
         });
       }
     };

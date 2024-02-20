@@ -24,7 +24,7 @@ export default function HomePage(): JSX.Element {
       } catch (error) {
         setError({
           backHome: false,
-          message: "Oh. Somethings went wrong for now.",
+          message: "Oh. Somethings went wrong. Cannot load products.",
         });
         setIsLoading(false);
       }

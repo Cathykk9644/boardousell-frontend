@@ -77,8 +77,8 @@ export default function NoticeEditForm({
         config
       );
       updateNotice(data);
-    } catch (error) {
-      setErrMsg("Somethings went wrong, cannot change photo.");
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot change photo.");
       setIsLoading(false);
     }
   };
@@ -99,8 +99,8 @@ export default function NoticeEditForm({
         config
       );
       updateNotice(data);
-    } catch (error) {
-      setErrMsg("Somethings went wrong, cannot remove photo.");
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot remove photo.");
       setIsLoading(false);
     }
   };
@@ -130,8 +130,8 @@ export default function NoticeEditForm({
       }
       setErrMsg("");
       setIsLoading(false);
-    } catch (error) {
-      setErrMsg("Somethings went wrong, please edit again");
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot update data.");
       setIsLoading(false);
     }
   };
@@ -184,8 +184,8 @@ export default function NoticeEditForm({
       setNotices((prev: notice[]) =>
         prev.filter((target) => target.id !== notice.id)
       );
-    } catch (error) {
-      setErrMsg("Somethings went wrong, please delete again");
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot delete this notice.");
       setIsLoading(false);
     }
   };

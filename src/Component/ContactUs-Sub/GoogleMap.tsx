@@ -36,7 +36,7 @@ export default function GoogleMap({
         if (setError) {
           setError({
             backHome: false,
-            message: "Oh. Sorry, cannot load google map for now.",
+            message: "Oh. Somethings went wrong. Cannot load map",
           });
         } else if (setErrMsg && setPreview) {
           setErrMsg("Please enter correct location.");

@@ -52,7 +52,7 @@ export default function Navibar({ open, setDrawer, setError }: props) {
       } catch (error) {
         setError({
           backHome: false,
-          message: "Oh. Sorry, cannot load categories for now.",
+          message: "Oh. Somethings went wrong. Cannot load Categories",
         });
       }
     };

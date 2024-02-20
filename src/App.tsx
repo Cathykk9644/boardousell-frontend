@@ -63,7 +63,7 @@ export default function App(): JSX.Element {
         setUserId(data[0].id);
         setIsAdmin(data[0].isAdmin);
         const wishlistRes = await axios.get(
-          `${BACKENDURL}/customer/wishlist/info/${data[0].id}`,
+          `${BACKENDURL}/customer/wishlist/info/testing${data[0].id}`,
           config
         );
         setWishlist(wishlistRes.data);
@@ -72,10 +72,10 @@ export default function App(): JSX.Element {
           config
         );
         setCart(cartRes.data);
-      } catch (err) {
+      } catch (err: any) {
         setError({
           backHome: false,
-          message: "Oh. Sorry, somethings went wrong for now.",
+          message: "Oh. Somethings went wrong. Cannot get user data.",
         });
       }
     };
@@ -128,7 +128,7 @@ export default function App(): JSX.Element {
     } catch (err) {
       setError({
         backHome: true,
-        message: `Oh. Sorry, cannot add ${target} for now.`,
+        message: `Oh. Somethings went wrong. Cannot add ${target} for now.`,
       });
     }
   };
@@ -153,7 +153,7 @@ export default function App(): JSX.Element {
     } catch (err) {
       setError({
         backHome: false,
-        message: `Oh. Sorry, cannot delete ${target} for now.`,
+        message: `Oh. Somethings went wrong. Cannot delete ${target}.`,
       });
     }
   };

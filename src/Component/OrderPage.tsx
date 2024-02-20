@@ -76,7 +76,7 @@ export default function OrderPage(): JSX.Element {
       } catch (error) {
         setError({
           backHome: true,
-          message: "Oh. Sorry, cannot load this order for now.",
+          message: "Oh. Somethings went wrong. Cannot load this order.",
         });
       }
     };
@@ -115,7 +115,7 @@ export default function OrderPage(): JSX.Element {
     } catch (error) {
       setError({
         backHome: false,
-        message: "Oh. Sorry, cannot send message for now.",
+        message: "Oh. Somethings went wrong. Cannot send message.",
       });
     }
   };

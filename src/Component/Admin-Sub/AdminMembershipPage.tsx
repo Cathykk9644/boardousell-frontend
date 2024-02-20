@@ -49,8 +49,8 @@ export default function AdminMembershipPage() {
         setLevels(data);
         setErrMsg("");
         setIsLoading(false);
-      } catch (error: any) {
-        setErrMsg(error.message);
+      } catch (err) {
+        setErrMsg("Oh. Somethings went wrong. Cannot load membership datas.");
         setIsLoading(false);
       }
     };
@@ -73,8 +73,8 @@ export default function AdminMembershipPage() {
       setLevels(data);
       setErrMsg("");
       setIsLoading(false);
-    } catch (error: any) {
-      setErrMsg(error.message);
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot delete this level.");
       setIsLoading(false);
     }
   };
@@ -96,8 +96,8 @@ export default function AdminMembershipPage() {
       setLevels(data);
       setErrMsg("");
       setIsLoading(false);
-    } catch (error: any) {
-      setErrMsg(error.message);
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot add this level.");
       setIsLoading(false);
     }
   };
@@ -146,8 +146,8 @@ export default function AdminMembershipPage() {
       }
       setErrMsg("");
       setIsLoading(false);
-    } catch (error: any) {
-      setErrMsg(error.message);
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot update this level info.");
       setIsLoading(false);
     }
   };

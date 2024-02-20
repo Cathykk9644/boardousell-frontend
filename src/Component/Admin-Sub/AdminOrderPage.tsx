@@ -106,8 +106,8 @@ export default function AdminOrderPage() {
       setCurrentSearch({ ...search });
       setIsLoading(false);
       setErrMsg("");
-    } catch (error: any) {
-      setErrMsg(error.message);
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot search orders.");
       setIsLoading(false);
     }
   };
@@ -148,8 +148,8 @@ export default function AdminOrderPage() {
       setPage({ ...page, current: newPage });
       setIsLoading(false);
       setErrMsg("");
-    } catch (error: any) {
-      setErrMsg(error.message);
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot change page.");
       setIsLoading(false);
     }
   };

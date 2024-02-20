@@ -53,10 +53,10 @@ export default function Payment({
             break;
         }
       })
-      .catch((error: any) => {
+      .catch(() => {
         setError({
-          backHome: false,
-          message: error.message,
+          backHome: true,
+          message: "Oh. Somethings went wrong. Cannot load your payment data.",
         });
       });
   }, [stripe, setError]);
@@ -93,8 +93,8 @@ export default function Payment({
       });
     } catch (error) {
       setError({
-        backHome: false,
-        message: "Oh. Somethings goes wrong",
+        backHome: true,
+        message: "Oh. Somethings goes wrong. Cannot update your order status.",
       });
     }
     setIsLoading(false);

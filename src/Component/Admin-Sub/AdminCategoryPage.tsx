@@ -32,8 +32,8 @@ export default function AdminCategoryPage() {
         setCategories(data);
         setErrMsg("");
         setIsLoading(false);
-      } catch (error) {
-        setErrMsg("Somethings went wrong, cannot load category");
+      } catch (err) {
+        setErrMsg("Oh. Somethings went wrong. Cannot load categories");
         setIsLoading(false);
       }
     };
@@ -60,8 +60,8 @@ export default function AdminCategoryPage() {
       setInput("");
       setErrMsg("");
       setIsLoading(false);
-    } catch (error) {
-      setErrMsg("Somethings went wrong, cannot load category");
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot add category.");
       setIsLoading(false);
     }
   };
@@ -82,7 +82,7 @@ export default function AdminCategoryPage() {
       setErrMsg("");
       setIsLoading(false);
     } catch (error) {
-      setErrMsg("Somethings went wrong, cannot load category");
+      setErrMsg("Oh. Somethings went wrong. Cannot delete category.");
       setIsLoading(false);
     }
   };

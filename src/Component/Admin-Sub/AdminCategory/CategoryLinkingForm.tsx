@@ -47,8 +47,8 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
         setLinkedProducts(linkedProductHash);
         setErrMsg("");
         setIsloading(false);
-      } catch (error) {
-        setErrMsg("Cannot get data, please try again");
+      } catch (err) {
+        setErrMsg("Oh. Somethings went wrong. Cannot get data.");
         setIsloading(false);
       }
     };
@@ -68,9 +68,9 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
       setIsloading(false);
       setInput("");
       setErrMsg("");
-    } catch (error) {
+    } catch (err) {
       setIsloading(false);
-      setErrMsg("Somethings went wrong, cannot search now.");
+      setErrMsg("Somethings went wrong. Cannot search now.");
     }
   };
 
@@ -105,9 +105,9 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
       }
       setIsloading(false);
       setErrMsg("");
-    } catch (error) {
+    } catch (err) {
       setIsloading(false);
-      setErrMsg("Somethings went wrong, cannot search now.");
+      setErrMsg("Somethings went wrong, Cannot update now.");
     }
   };
 

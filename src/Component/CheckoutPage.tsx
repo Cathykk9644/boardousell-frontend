@@ -61,7 +61,7 @@ export default function CheckoutPage(): JSX.Element {
       } catch (error) {
         setError({
           backHome: true,
-          message: "Oh. Sorry, cannot load your cart for now.",
+          message: "Oh. Somethings went wrong. Cannot load your cart.",
         });
       }
     };
@@ -89,7 +89,7 @@ export default function CheckoutPage(): JSX.Element {
     } catch (error) {
       setError({
         backHome: true,
-        message: "Oh. Sorry, somethings went wrong.",
+        message: "Oh. Somethings went wrong. Cannot put cart back to wishlist.",
       });
     }
   };
@@ -102,7 +102,7 @@ export default function CheckoutPage(): JSX.Element {
     } catch (error) {
       setError({
         backHome: true,
-        message: "Oh. Sorry, somethings went wrong.",
+        message: "Oh. Somethings went wrong. Cannot reduce amount.",
       });
     }
   };
@@ -222,7 +222,7 @@ export default function CheckoutPage(): JSX.Element {
     } catch (error) {
       setError({
         backHome: true,
-        message: "Oh. Sorry, somethings went wrong.",
+        message: "Oh. Somethings went wrong. Cannot confirm your order.",
       });
     }
   };

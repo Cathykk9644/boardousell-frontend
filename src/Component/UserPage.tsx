@@ -52,7 +52,7 @@ export default function UserPage(): JSX.Element {
       } catch (error) {
         setError({
           backHome: true,
-          message: "Oh. Sorry, cannot load your profile for now.",
+          message: "Oh. Somethings went wrong. Cannot load your profile.",
         });
       }
     };
@@ -100,7 +100,7 @@ export default function UserPage(): JSX.Element {
     } catch (error) {
       setError({
         backHome: true,
-        message: "Oh. Sorry, cannot update your profile for now.",
+        message: "Oh. Somethings went wrong. Cannot update your profile.",
       });
     }
   };

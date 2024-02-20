@@ -176,9 +176,9 @@ export default function ProductAddForm({
       setErrMsg("");
       setIsLoading(false);
       setIsAdding(false);
-    } catch (error) {
+    } catch (err) {
       setIsLoading(false);
-      setErrMsg(`Somethings went wrong, please try again.`);
+      setErrMsg("Oh. Somethings went wrong. Cannot add this product.");
     }
   };
 

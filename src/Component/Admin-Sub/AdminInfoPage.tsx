@@ -39,8 +39,8 @@ export default function AdminInfoPage() {
         setInfos(data);
         setErrMsg("");
         setIsLoading(false);
-      } catch (error) {
-        setErrMsg("Cannot get data, please try again.");
+      } catch (err) {
+        setErrMsg("Oh. Somethings went wrong. Cannot load infomations.");
         setIsLoading(false);
       }
     };
@@ -61,8 +61,8 @@ export default function AdminInfoPage() {
       );
       setErrMsg("");
       setIsLoading(false);
-    } catch (error) {
-      setErrMsg("Cannot dalete data, please try again.");
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot dalete infomation.");
       setIsLoading(false);
     }
   };
@@ -100,8 +100,8 @@ export default function AdminInfoPage() {
       setIsAdding(false);
       setErrMsg("");
       setIsLoading(false);
-    } catch (error) {
-      setErrMsg("Cannot add now, please try again");
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot add infomation.");
       setIsLoading(false);
     }
   };

@@ -29,8 +29,8 @@ export default function AdminNoticePage() {
         setNotices(data);
         setErrMsg("");
         setIsLoading(false);
-      } catch (error) {
-        setErrMsg("Cannot get data");
+      } catch (err) {
+        setErrMsg("Oh. Somethings went wrong. Cannot get notices.");
         setIsLoading(false);
       }
     };

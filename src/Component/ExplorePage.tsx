@@ -63,7 +63,7 @@ export default function ExplorePage() {
       } catch (error) {
         setError({
           backHome: true,
-          message: "Oh. Sorry, cannot load the product list for now.",
+          message: "Oh. Somethings went wrong. Cannot load the product list.",
         });
         setIsLoading(false);
       }

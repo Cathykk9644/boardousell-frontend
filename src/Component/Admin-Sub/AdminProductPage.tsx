@@ -52,8 +52,8 @@ export default function AdminProductPage() {
         setCategories(flattenData);
         setErrMsg("");
         setIsLoading(false);
-      } catch (error) {
-        setErrMsg("Cannot Load all categories");
+      } catch (err) {
+        setErrMsg("Oh. Somethings went wrong. Cannot load categories");
         setIsLoading(false);
       }
     };
@@ -92,7 +92,7 @@ export default function AdminProductPage() {
           break;
         case "name":
           if (!search.input.length) {
-            throw new Error("Please Enter Keyword.");
+            return setErrMsg("Please Enter Keyword.");
           }
           res = await axios.get(
             `${BACKENDURL}/admin/product/name/${search.input}/1`,
@@ -101,20 +101,20 @@ export default function AdminProductPage() {
           break;
         case "stock":
           if (!search.input.length) {
-            throw new Error("Please Enter Amount/LowerLimit-UpperLimit.");
+            return setErrMsg("Please Enter Amount/LowerLimit-UpperLimit.");
           }
           const checking = search.input.split("-");
           if (checking.length > 2) {
-            throw new Error("Please Enter Amount/LowerLimit-UpperLimit.");
+            return setErrMsg("Please Enter Amount/LowerLimit-UpperLimit.");
           }
           if (isNaN(Number(checking[0])) || !checking[0].length) {
-            throw new Error("Please Enter Amount/LowerLimit-UpperLimit.");
+            return setErrMsg("Please Enter Amount/LowerLimit-UpperLimit.");
           }
           if (
             checking.length === 2 &&
             (!checking[1].length || isNaN(Number(checking[1])))
           ) {
-            throw new Error("Please Enter Amount/LowerLimit-UpperLimit.");
+            return setErrMsg("Please Enter Amount/LowerLimit-UpperLimit.");
           }
           res = await axios.get(
             `${BACKENDURL}/admin/product/stock/${search.input}/1`,
@@ -128,7 +128,7 @@ export default function AdminProductPage() {
           );
           break;
         default:
-          throw new Error("No Search Found.");
+          return setErrMsg("No Search Found.");
       }
       setPage({
         total: Math.ceil(res.data.count / 5),
@@ -139,8 +139,8 @@ export default function AdminProductPage() {
       setNewAddedProducts([]);
       setIsLoading(false);
       setErrMsg("");
-    } catch (error: any) {
-      setErrMsg(error.message);
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot search product");
       setIsLoading(false);
     }
   };
@@ -174,8 +174,8 @@ export default function AdminProductPage() {
       setPage({ current: newPage, total: page.total });
       setIsLoading(false);
       setErrMsg("");
-    } catch (error: any) {
-      setErrMsg(error.message);
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot change page.");
       setIsLoading(false);
     }
   };

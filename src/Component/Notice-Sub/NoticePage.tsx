@@ -23,7 +23,7 @@ export default function NoticePage(): JSX.Element {
       } catch (error) {
         setError({
           backHome: true,
-          message: "Oh. Sorry, cannot load notices for now.",
+          message: "Oh. Somethings went wrong. Cannot load notices.",
         });
       }
     };

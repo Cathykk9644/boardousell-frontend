@@ -75,8 +75,8 @@ export default function ProductEditForm({
         config
       );
       updateProduct(data);
-    } catch (error) {
-      setErrMsg("Somethings wrong. Cannot update.");
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot update this product.");
       setIsLoading(false);
     }
   };
@@ -107,13 +107,14 @@ export default function ProductEditForm({
         );
         updateProduct(data);
       } else {
-        throw new Error();
+        setIsLoading(false);
+        return setErrMsg("Cannot find your updating type.");
       }
       setEdit({ type: null, input: "" });
       setErrMsg("");
       setIsLoading(false);
-    } catch (error) {
-      setErrMsg("Somethings wrong. Cannot update.");
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot update this product.");
       setIsLoading(false);
     }
   };
@@ -166,8 +167,8 @@ export default function ProductEditForm({
         config
       );
       updateProduct(data);
-    } catch (error) {
-      setErrMsg("Somethings wrong. Cannot change for now");
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot update this product.");
       setIsLoading(false);
     }
   };
@@ -187,8 +188,10 @@ export default function ProductEditForm({
         config
       );
       updateProduct(data);
-    } catch (error) {
-      setErrMsg("Somethings Wrong. Cannot delete for now");
+    } catch (err) {
+      setErrMsg(
+        "Oh. Somethings went wrong. Cannot update this product thumbnail."
+      );
       setIsLoading(false);
     }
   };
@@ -212,8 +215,8 @@ export default function ProductEditForm({
       );
       await deleteObject(storageRef);
       updateProduct(data);
-    } catch (error) {
-      setErrMsg("Somethings wrong. Cannot delete for now");
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot delete this photo.");
       setIsLoading(false);
     }
   };
@@ -275,8 +278,8 @@ export default function ProductEditForm({
       }
       setFileName([]);
       setFileValue([]);
-    } catch (error) {
-      setErrMsg("Somethings went wrong, cannot upload photos now.");
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot upload this photo.");
       setIsLoading(false);
     }
   };

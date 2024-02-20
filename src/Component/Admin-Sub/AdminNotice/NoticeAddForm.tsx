@@ -89,8 +89,8 @@ export default function NoticeAddForm({ open, setOpen, setNotices }: props) {
       setErrMsg("");
       setOpen(false);
       setIsloading(false);
-    } catch (error) {
-      setErrMsg("Sorry, cannot add now, please try again.");
+    } catch (err) {
+      setErrMsg("Oh. Somethings went wrong. Cannot add this notice.");
       setIsloading(false);
     }
   };
