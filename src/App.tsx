@@ -7,7 +7,6 @@ import Wishlist from "./Component/Sub-Component/Wishlist";
 import ShoppingCart from "./Component/Sub-Component/ShoppingCart";
 import ErrorPage from "./Component/Sub-Component/ErrorPage";
 import { useAuth0 } from "@auth0/auth0-react";
-import AdminPage from "./Component/Admin-Sub/AdminPage";
 import { item, outletProps, user } from "./type";
 import { BACKENDURL } from "./constant";
 type anime = "wish" | "cart" | null;
@@ -37,7 +36,6 @@ export default function App(): JSX.Element {
     const fetchAuthData = async () => {
       try {
         const accessToken = await getAccessTokenSilently();
-
         const config = {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -86,15 +84,10 @@ export default function App(): JSX.Element {
       setIsAdmin(false);
       setUserId(0);
     }
-  }, [
-    getAccessTokenSilently,
-    isAuthenticated,
-    isLoading,
-    user?.email,
-    user?.nickname,
-    user?.phone_number,
-    user?.sub,
-  ]);
+    if (isAdmin) {
+      navi("/admin");
+    }
+  }, [isAdmin, getAccessTokenSilently, isAuthenticated, isLoading, user, navi]);
 
   const handleAddItem = async (
     productId: number,
@@ -179,9 +172,7 @@ export default function App(): JSX.Element {
     setCart,
   };
 
-  return isAdmin ? (
-    <AdminPage />
-  ) : (
+  return (
     <div data-theme="nord" className="min-h-screen">
       <ErrorPage error={error} handleError={handleError} />
       <Navibar

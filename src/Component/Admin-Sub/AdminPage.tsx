@@ -1,5 +1,5 @@
 import { Tab, Tabs } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminProductPage from "./AdminProductPage";
 import AdminOrderPage from "./AdminOrderPage";
 import AdminUserPage from "./AdminUserPage";
@@ -9,10 +9,37 @@ import { useAuth0 } from "@auth0/auth0-react";
 import logo from "../img/boardousell-logo.png";
 import AdminMembershipPage from "./AdminMembershipPage";
 import AdminCategoryPage from "./AdminCategoryPage";
+import { useNavigate } from "react-router-dom";
+import { BACKENDURL } from "../../constant";
+import axios from "axios";
 
 export default function AdminPage() {
   const [currentTab, setCurrentTab] = useState<string>("order");
-  const { logout } = useAuth0();
+  const { logout, user, getAccessTokenSilently } = useAuth0();
+  const navi = useNavigate();
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        const accessToken = await getAccessTokenSilently();
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+        const { data } = await axios.get(
+          `${BACKENDURL}/customer/user/login/${user?.sub}`,
+          config
+        );
+        if (!data[0].isAdmin) {
+          navi("/");
+        }
+      } catch (err) {
+        navi("/");
+      }
+    };
+    checkAdmin();
+  }, [getAccessTokenSilently, navi, user]);
 
   let currentTabDisplay;
   switch (currentTab) {

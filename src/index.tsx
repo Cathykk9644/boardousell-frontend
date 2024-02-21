@@ -19,6 +19,7 @@ import CheckoutPage from "./Component/CheckoutPage";
 import ContactUsPage from "./Component/ContactUs-Sub/ContactUsPage";
 import SearchPage from "./Component/SearchPage";
 import { Auth0Provider } from "@auth0/auth0-react";
+import AdminPage from "./Component/Admin-Sub/AdminPage";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -53,6 +54,7 @@ root.render(
             <Route path="checkout" element={<CheckoutPage />} />
             <Route path="search" element={<SearchPage />} />
           </Route>
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </BrowserRouter>
     </Auth0Provider>
