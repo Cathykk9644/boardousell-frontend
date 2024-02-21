@@ -3,6 +3,7 @@ import StarsIcon from "@mui/icons-material/Stars";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useEffect, useState } from "react";
 import {
+  Link,
   useNavigate,
   useOutletContext,
   useSearchParams,
@@ -57,15 +58,19 @@ export default function SearchPage(): JSX.Element {
         className="card card-side bg-base-300 shadow-xl my-5 max-w-full p-3"
         key={product.name}
       >
-        <img
-          className="object-contain w-1/2 sm:h-44"
-          src={
-            product.productPhotos[0] ? product.productPhotos[0].url : noImage
-          }
-          alt={product.name}
-        />
+        <Link to={`/product/${product.id}`}>
+          <img
+            className="object-contain w-1/2 sm:h-44"
+            src={
+              product.productPhotos[0] ? product.productPhotos[0].url : noImage
+            }
+            alt={product.name}
+          />
+        </Link>
         <div className="card-body p-5">
-          <h1 className="card-title">{product.name}</h1>
+          <Link to={`/product/${product.id}`}>
+            <h1 className="card-title">{product.name}</h1>
+          </Link>
           <div className="flex flex-col my-3">
             <div>
               Price: HKD${" "}
