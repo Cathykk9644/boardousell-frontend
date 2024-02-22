@@ -86,7 +86,7 @@ export default function ExplorePage() {
   const categoriesDisplay = categories.map((name) => (
     <Link
       className="btn btn-link w-1/2"
-      to={`search?category=${name}`}
+      to={`/search?category=${name}`}
       key={name}
     >
       {name}

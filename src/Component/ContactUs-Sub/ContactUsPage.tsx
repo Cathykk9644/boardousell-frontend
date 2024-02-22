@@ -63,9 +63,18 @@ export default function ContactUsPage(): JSX.Element {
         return (
           <div key={info.detail}>
             Link:{" "}
-            <a href={`${info.detail}`} className="link">
+            <button
+              onClick={() =>
+                window.open(
+                  info.detail.startsWith("http")
+                    ? info.detail
+                    : `http://${info.detail}`
+                )
+              }
+              className="link"
+            >
               {info.detail}
-            </a>
+            </button>
           </div>
         );
       case "Map":
