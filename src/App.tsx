@@ -42,7 +42,7 @@ export default function App(): JSX.Element {
           },
         };
         const { data }: { data: [user, boolean] } = await axios.get(
-          `${BACKENDURL}/customer/user/login/${user?.sub}`,
+          `${BACKENDURL}/customer/user/${user!.sub}`,
           config
         );
         //data[0] is the user Data
@@ -61,12 +61,12 @@ export default function App(): JSX.Element {
         setUserId(data[0].id);
         setIsAdmin(data[0].isAdmin);
         const wishlistRes = await axios.get(
-          `${BACKENDURL}/customer/wishlist/info/${data[0].id}`,
+          `${BACKENDURL}/customer/wishlist/${data[0].id}`,
           config
         );
         setWishlist(wishlistRes.data);
         const cartRes = await axios.get(
-          `${BACKENDURL}/customer/cart/info/${data[0].id}`,
+          `${BACKENDURL}/customer/cart/${data[0].id}`,
           config
         );
         setCart(cartRes.data);
