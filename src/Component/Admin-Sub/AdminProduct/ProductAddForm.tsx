@@ -13,12 +13,12 @@ import axios from "axios";
 import { BACKENDURL } from "../../../constant";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../../firebase";
-import { product } from "../../../type";
+import { category, product } from "../../../type";
 import { useAuth0 } from "@auth0/auth0-react";
 
 type props = {
   open: boolean;
-  categories: string[];
+  categories: category[];
   setIsAdding: Function;
   setNewAddedProducts: Function;
 };
@@ -38,16 +38,16 @@ export default function ProductAddForm({
 }: props) {
   const [newData, setNewData] = useState<newData>({
     name: "",
-    price: "",
+    price: "1000",
     description: "",
-    stock: "",
+    stock: "0",
   });
   const [fileValue, setFileValue] = useState<File[]>([]);
   const [fileName, setFileName] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
   const [isNewProduct, setIsNewProduct] = useState<boolean>(true);
   const [isOnsale, setInOnsale] = useState<boolean>(false);
-  const [discount, setDiscount] = useState<string>("");
+  const [discount, setDiscount] = useState<string>("1");
   const [errMsg, setErrMsg] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { getAccessTokenSilently } = useAuth0();
@@ -87,45 +87,38 @@ export default function ProductAddForm({
     if (!newData.name.length) {
       return setErrMsg("Please Add Product Name First.");
     }
+    if (!newData.price.length) {
+      return setErrMsg("Please Add Price First.");
+    }
+    if (!newData.stock.length) {
+      return setErrMsg("Please Add Stock First");
+    }
+    if (isOnsale && !discount.length) {
+      return setErrMsg("Please Add Discount First.");
+    }
     try {
       setIsLoading(true);
-      let data: product;
+      let data: product & { categories: category[] };
       const accessToken = await getAccessTokenSilently();
       const config = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       };
-      const basicRes = await axios.post(
+      const inputData = {
+        ...newData,
+        isNewProduct,
+        isOnsale,
+        discount,
+        categories: selectedCategory,
+      };
+      const res = await axios.post(
         `${BACKENDURL}/admin/product/create`,
-        newData,
+        inputData,
         config
       );
-      data = basicRes.data;
-      if (isNewProduct) {
-        const newProductRes = await axios.put(
-          `${BACKENDURL}/admin/product/newProduct/${data.id}`,
-          { isNew: true },
-          config
-        );
-        data = newProductRes.data;
-      }
-      if (isOnsale) {
-        const onsaleRes = await axios.put(
-          `${BACKENDURL}/admin/product/onsale/${data.id}`,
-          { isNew: true },
-          config
-        );
-        const discountRes = await axios.put(
-          `${BACKENDURL}/admin/product/discount/${onsaleRes.data.onsale.id}`,
-          { discount },
-          config
-        );
-        data = discountRes.data;
-      }
-      if (!fileValue.length) {
-        data.productPhotos = [];
-      }
+      data = res.data;
+
       for (const file of fileValue) {
         const storageRef = ref(
           storage,
@@ -133,12 +126,6 @@ export default function ProductAddForm({
         );
         await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
-        const accessToken = await getAccessTokenSilently();
-        const config = {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        };
         const fileRes = await axios.post(
           `${BACKENDURL}/admin/product/photo/`,
           {
@@ -148,23 +135,9 @@ export default function ProductAddForm({
           },
           config
         );
-        data = fileRes.data;
+        data.productPhotos.push(fileRes.data);
       }
-      if (!selectedCategory.length) {
-        data.categories = [];
-      }
-      for (const category of selectedCategory) {
-        const categoryRes = await axios.put(
-          `${BACKENDURL}/admin/category/product`,
-          {
-            link: true,
-            category,
-            productId: data.id,
-          },
-          config
-        );
-        data = categoryRes.data;
-      }
+
       setNewAddedProducts((prev: product[]) => [...prev, data]);
       setNewData({ name: "", price: "", description: "", stock: "" });
       setFileValue([]);
@@ -202,14 +175,14 @@ export default function ProductAddForm({
   }
   const categoryDisplay = categories.map((category) => {
     return (
-      <tr key={category}>
-        <th>{category}</th>
+      <tr key={category.id}>
+        <th>{category.name}</th>
         <td>
           <input
             className="checkbox"
             type="checkbox"
-            value={category}
-            checked={!!hashProductCat[category]}
+            value={category.name}
+            checked={!!hashProductCat[category.name]}
             onChange={handleSelectCategory}
           />
         </td>

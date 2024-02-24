@@ -23,9 +23,9 @@ export default function ExplorePage() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const onsaleRes = await axios.get(`${BACKENDURL}/product/onsale`);
+
         const categoryList: { data: category[] } = await axios.get(
-          `${BACKENDURL}/category/all`
+          `${BACKENDURL}/category`
         );
         const randomIndexFirst = Math.floor(
           Math.random() * categoryList.data.length
@@ -45,17 +45,19 @@ export default function ExplorePage() {
         const rawSuggestList: suggestCategory[] = [];
 
         for (const category of random) {
-          const products: { data: product[] } = await axios.get(
-            `${BACKENDURL}/category/suggest/${category.name}`
-          );
+          const products: { data: { amount: number; data: product[] } } =
+            await axios.get(
+              `${BACKENDURL}/product/category/${category.id}?limit=12`
+            );
           rawSuggestList.push({
             category: category.name,
-            products: products.data,
+            products: products.data.data,
           });
         }
         const flattenData = categoryList.data.map(
           (category: category) => category.name
         );
+        const onsaleRes = await axios.get(`${BACKENDURL}/product/onsale`);
         setSuggestLists(rawSuggestList);
         setCategories(flattenData);
         setOnsaleList(onsaleRes.data);

@@ -13,8 +13,8 @@ import noImage from "./img/no-image.jpg";
 import { Pagination } from "@mui/material";
 import { product, outletProps } from "../type";
 type res = {
-  resultAmount: number;
-  result: product[];
+  amount: number;
+  data: product[];
 };
 
 export default function SearchPage(): JSX.Element {
@@ -29,8 +29,8 @@ export default function SearchPage(): JSX.Element {
         const { data }: { data: res } = await axios.get(
           `${BACKENDURL}/product/search?${query.toString()}`
         );
-        setProducts(data.result);
-        setResultAmount(data.resultAmount);
+        setProducts(data.data);
+        setResultAmount(data.amount);
       } catch (error) {
         setError({
           backHome: true,

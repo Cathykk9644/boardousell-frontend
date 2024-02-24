@@ -82,6 +82,9 @@ export default function AdminInfoPage() {
   };
 
   const handleAdd = async () => {
+    if (!edit.detail.length) {
+      return setErrMsg("Please add data to add infomation.");
+    }
     try {
       setIsLoading(true);
       const accessToken = await getAccessTokenSilently();

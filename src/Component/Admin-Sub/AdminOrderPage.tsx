@@ -8,7 +8,7 @@ import { BACKENDURL } from "../../constant";
 import { useAuth0 } from "@auth0/auth0-react";
 
 type search = {
-  type: "status" | "message" | "email" | "id" | "product";
+  type: "status" | "id" | "message" | "email" | "product";
   input: string;
 };
 type page = {
@@ -16,6 +16,7 @@ type page = {
   current: number;
 };
 
+const resultPerPage = 5;
 export default function AdminOrderPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [orders, setOrders] = useState<order[]>([]);
@@ -23,7 +24,10 @@ export default function AdminOrderPage() {
     type: "status",
     input: "Pending",
   });
-  const [currentSearch, setCurrentSearch] = useState<search | null>(null);
+  const [currentSearch, setCurrentSearch] = useState<search>({
+    type: "status",
+    input: "Pending",
+  });
   const [page, setPage] = useState<page>({ total: 0, current: 0 });
   const [expand, setExpand] = useState<number | null>(null);
   const [errMsg, setErrMsg] = useState("");
@@ -65,48 +69,43 @@ export default function AdminOrderPage() {
     }
   };
 
+  const getResult = async (
+    type: search["type"],
+    input: string,
+    newPage: number
+  ) => {
+    const accessToken = await getAccessTokenSilently();
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+    if (type === "message") {
+      const { data } = await axios.get(
+        `${BACKENDURL}/admin/order/search?sort=${type}&order=${input}&limit=${resultPerPage}&page=${newPage}`,
+        config
+      );
+      return { amount: data.amount, data: data.data };
+    } else {
+      const { data } = await axios.get(
+        `${BACKENDURL}/admin/order/search?${type}=${input}&limit=${resultPerPage}&page=${newPage}`,
+        config
+      );
+      return { amount: data.amount, data: data.data };
+    }
+  };
+
   const handleSearch = async () => {
     try {
       setIsLoading(true);
-      let count;
-      let data;
-      const accessToken = await getAccessTokenSilently();
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
-      switch (search.type) {
-        case "id":
-          const idRes = await axios.get(
-            `${BACKENDURL}/admin/order/${search.input}`,
-            config
-          );
-          count = idRes.data.count;
-          data = idRes.data.data;
-          break;
-        case "message":
-          const msgRes = await axios.get(
-            `${BACKENDURL}/admin/order/message?page=1&sort=${search.input}`,
-            config
-          );
-          count = msgRes.data.count;
-          data = msgRes.data.data;
-          break;
-        default:
-          const res = await axios.get(
-            `${BACKENDURL}/admin/order/${search.type}?${search.type}=${search.input}&page=1`,
-            config
-          );
-          count = res.data.count;
-          data = res.data.data;
-      }
+      const { amount, data } = await getResult(search.type, search.input, 1);
       setOrders(data);
-      setPage({ total: Math.ceil(count / 5), current: 1 });
+      setPage({ total: Math.ceil(amount / 5), current: 1 });
       setCurrentSearch({ ...search });
       setIsLoading(false);
       setErrMsg("");
     } catch (err) {
+      console.log(err);
       setErrMsg("Oh. Somethings went wrong. Cannot search orders.");
       setIsLoading(false);
     }
@@ -118,32 +117,11 @@ export default function AdminOrderPage() {
   ) => {
     try {
       setIsLoading(true);
-      let data;
-      const accessToken = await getAccessTokenSilently();
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
-      switch (currentSearch!.type) {
-        case "message":
-          const msgRes = await axios.get(
-            `${BACKENDURL}/admin/order/message?page=${newPage}&sort=${
-              currentSearch!.input
-            }`,
-            config
-          );
-          data = msgRes.data.data;
-          break;
-        default:
-          const res = await axios.get(
-            `${BACKENDURL}/admin/order/${currentSearch!.type}?${
-              currentSearch!.type
-            }=${currentSearch!.input}&page=${newPage}`,
-            config
-          );
-          data = res.data.data;
-      }
+      const { data } = await getResult(
+        currentSearch.type,
+        currentSearch.input,
+        newPage
+      );
       setOrders(data);
       setPage({ ...page, current: newPage });
       setIsLoading(false);

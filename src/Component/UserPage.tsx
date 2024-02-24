@@ -5,7 +5,7 @@ import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { BACKENDURL } from "../constant";
-import { outletProps, level, user } from "../type";
+import { outletProps, user } from "../type";
 import { Skeleton } from "@mui/material";
 
 type editing = {
@@ -62,6 +62,7 @@ export default function UserPage(): JSX.Element {
     setError,
     userId,
     isLoading,
+    user,
   ]);
 
   const handleEdit = (target: "name" | "phone") => {

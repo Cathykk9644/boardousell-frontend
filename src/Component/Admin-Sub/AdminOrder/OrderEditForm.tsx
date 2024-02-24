@@ -64,7 +64,7 @@ export default function OrderEditForm({
       setOrders((prev: order[]) => {
         const newOrders = [...prev];
         const targetIndex = prev.findIndex((target) => target.id === order.id);
-        newOrders[targetIndex].messages.unshift(data);
+        newOrders[targetIndex].messages.push(data);
         return newOrders;
       });
       setInput("");

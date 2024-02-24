@@ -15,7 +15,8 @@ import axios from "axios";
 
 export default function AdminPage() {
   const [currentTab, setCurrentTab] = useState<string>("order");
-  const { logout, user, getAccessTokenSilently } = useAuth0();
+  const { logout, user, getAccessTokenSilently, isAuthenticated, isLoading } =
+    useAuth0();
   const navi = useNavigate();
 
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function AdminPage() {
           },
         };
         const { data } = await axios.get(
-          `${BACKENDURL}/customer/user/login/${user?.sub}`,
+          `${BACKENDURL}/customer/user/${user?.sub}`,
           config
         );
         if (!data[0].isAdmin) {
@@ -38,8 +39,13 @@ export default function AdminPage() {
         navi("/");
       }
     };
-    checkAdmin();
-  }, [getAccessTokenSilently, navi, user]);
+    if (!isLoading && isAuthenticated) {
+      checkAdmin();
+    }
+    if (isLoading && !isAuthenticated) {
+      navi("/");
+    }
+  }, [getAccessTokenSilently, navi, user, isLoading, isAuthenticated]);
 
   let currentTabDisplay;
   switch (currentTab) {
@@ -66,7 +72,7 @@ export default function AdminPage() {
       break;
   }
   return (
-    <div className="min-h-screen max-h-screen">
+    <div className="h-screen">
       <div className="flex justify-between items-center">
         <img className="h-20" src={logo} alt="logo" />
         <h1 className="text-2xl">Admin Page</h1>

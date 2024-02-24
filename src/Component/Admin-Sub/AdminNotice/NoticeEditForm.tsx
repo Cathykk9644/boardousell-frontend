@@ -54,7 +54,7 @@ export default function NoticeEditForm({
   };
 
   const handleChangePhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) {
+    if (!e.target.files?.length) {
       return;
     }
     try {
@@ -94,8 +94,12 @@ export default function NoticeEditForm({
           Authorization: `Bearer ${accessToken}`,
         },
       };
-      const { data } = await axios.delete(
-        `${BACKENDURL}/admin/notice/photo/${notice.id}`,
+      const { data } = await axios.put(
+        `${BACKENDURL}/admin/notice/photo`,
+        {
+          noticeId: notice.id,
+          url: null,
+        },
         config
       );
       updateNotice(data);
@@ -119,7 +123,7 @@ export default function NoticeEditForm({
       };
       if (edit.type) {
         const { data } = await axios.put(
-          `${BACKENDURL}/admin/notice/info`,
+          `${BACKENDURL}/admin/notice`,
           {
             noticeId: notice.id,
             [edit.type]: edit.input,

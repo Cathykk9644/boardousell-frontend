@@ -18,11 +18,17 @@ const stripePromise = loadStripe(
   process.env.REACT_APP_STRIPE_KEY ? process.env.REACT_APP_STRIPE_KEY : ""
 );
 
+type productWithAmount = product & {
+  productorder: {
+    amount: number;
+  };
+};
+
 export default function OrderPage(): JSX.Element {
   const { orderId } = useParams<Params>();
   const [orderInfo, setOrderInfo] = useState<order>();
   const [userInfo, setUserInfo] = useState<user>();
-  const [productList, setProductList] = useState<product[]>([]);
+  const [productList, setProductList] = useState<productWithAmount[]>([]);
   const [messageList, setMessageList] = useState<message[]>([]);
   const [input, setInput] = useState<string>("");
   const [clientSecret, setClientSecret] = useState("");

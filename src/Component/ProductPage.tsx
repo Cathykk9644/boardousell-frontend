@@ -7,13 +7,14 @@ import noImage from "./img/no-image.jpg";
 import StarsIcon from "@mui/icons-material/Stars";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ProductList from "./Sub-Component/ProductList";
-import { product, outletProps } from "../type";
+import { product, outletProps, category } from "../type";
 
+const resultLimit = 12;
 export default function ProductPage(): JSX.Element {
   const { productId } = useParams<string>();
   const [productInfo, setProductInfo] = useState<product | null>(null);
   const [photoList, setPhotoList] = useState<string[]>([]);
-  const [categoryList, setCategoryList] = useState<string[]>([]);
+  const [categoryList, setCategoryList] = useState<category[]>([]);
   const [suggestCategory, setSuggestCategory] = useState<string>("");
   const [suggestProducts, setSuggestProducts] = useState<product[]>([]);
   const [isLoadingProduct, setIsLoadingProduct] = useState<boolean>(false);
@@ -23,28 +24,24 @@ export default function ProductPage(): JSX.Element {
     const fetchData = async () => {
       try {
         setIsLoadingProduct(true);
-        const { data } = await axios.get(
-          `${BACKENDURL}/product/info/${productId}`
-        );
+        const { data } = await axios.get(`${BACKENDURL}/product/${productId}`);
         const { productPhotos, categories, ...product } = data;
         const flatPhotoList = productPhotos.map(
           (item: { url: string }) => item.url
         );
-        const flatCategoryList = categories.map(
-          (item: { name: string }) => item.name
-        );
-        let randomIndex = Math.floor(Math.random() * flatCategoryList.length);
-        let randomCategory = flatCategoryList[randomIndex];
-        const suggestProductRes: { data: product[] } = await axios.get(
-          `${BACKENDURL}/category/suggest/${randomCategory}`
-        );
-        const filterSuggestProducts = suggestProductRes.data.filter(
+        let randomIndex = Math.floor(Math.random() * categories.length);
+        let randomCategory: category = categories[randomIndex];
+        const suggestProductRes: { data: { amount: number; data: product[] } } =
+          await axios.get(
+            `${BACKENDURL}/product/category/${randomCategory.id}?limit=${resultLimit}`
+          );
+        const filterSuggestProducts = suggestProductRes.data.data.filter(
           (item) => item.id !== Number(productId)
         );
         setProductInfo(product);
         setPhotoList(flatPhotoList);
-        setCategoryList(flatCategoryList);
-        setSuggestCategory(randomCategory);
+        setCategoryList(categories);
+        setSuggestCategory(randomCategory.name);
         setSuggestProducts(filterSuggestProducts);
         setIsLoadingProduct(false);
       } catch (error) {
@@ -77,7 +74,7 @@ export default function ProductPage(): JSX.Element {
     );
   });
 
-  const categoriesInProduct = categoryList.map((name) => (
+  const categoriesInProduct = categoryList.map(({ name }) => (
     <Link
       key={name}
       className="btn btn-link btn-xs px-2"

@@ -28,7 +28,7 @@ export default function AdminCategoryPage() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const { data } = await axios.get(`${BACKENDURL}/category/all`);
+        const { data } = await axios.get(`${BACKENDURL}/category`);
         setCategories(data);
         setErrMsg("");
         setIsLoading(false);
@@ -41,6 +41,9 @@ export default function AdminCategoryPage() {
   }, []);
 
   const handleAddCategory = async () => {
+    if (!input.length) {
+      return setErrMsg("Need name for the new category");
+    }
     try {
       setIsLoading(true);
       const accessToken = await getAccessTokenSilently();

@@ -17,7 +17,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 type search = {
   keyword: string;
-  type: "email" | "name" | "phone" | "all";
+  type: "email" | "name" | "phone";
 };
 type edit = {
   id: number | null;
@@ -26,7 +26,7 @@ type edit = {
 export default function AdminUserPage(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<user[]>([]);
-  const [search, setSearch] = useState<search>({ keyword: "", type: "all" });
+  const [search, setSearch] = useState<search>({ keyword: "", type: "name" });
   const [errMsg, setErrMsg] = useState<string>("");
   const [edit, setEdit] = useState<edit>({ id: null, points: "" });
   const [expand, setExpanded] = useState<number | null>(null);
@@ -42,9 +42,6 @@ export default function AdminUserPage(): JSX.Element {
 
   const handleChangeSearchType = (target: search["type"]) => {
     switch (target) {
-      case "all":
-        setSearch({ type: "all", keyword: "" });
-        break;
       case "phone":
         setSearch((prev: search) => {
           const newData = { ...prev };
@@ -59,6 +56,7 @@ export default function AdminUserPage(): JSX.Element {
         setSearch({ type: target, keyword: search.keyword });
     }
   };
+
   const handleSearch = async () => {
     try {
       setIsLoading(true);
@@ -68,21 +66,12 @@ export default function AdminUserPage(): JSX.Element {
           Authorization: `Bearer ${accessToken}`,
         },
       };
-      if (search.type === "all") {
-        const { data } = await axios.get(
-          `${BACKENDURL}/admin/user/search`,
-          config
-        );
-        setUsers(data);
-      } else {
-        const { data } = await axios.get(
-          `${BACKENDURL}/admin/user/search?${
-            !!search.keyword.length ? search.type + "=" + search.keyword : ""
-          }`,
-          config
-        );
-        setUsers(data);
-      }
+      const { data } = await axios.get(
+        `${BACKENDURL}/admin/user/search?${search.type}=${search.keyword}
+        `,
+        config
+      );
+      setUsers(data);
       setErrMsg("");
       setIsLoading(false);
     } catch (err) {
@@ -148,95 +137,95 @@ export default function AdminUserPage(): JSX.Element {
     }
   };
 
-  const userDisplay = users.length
-    ? users.map((user: user) => {
-        return (
-          <Accordion
-            expanded={expand === user.id}
-            onChange={() => handleChangeExpand(user.id)}
-            key={user.id}
-          >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>
-                {search.type === "all"
-                  ? `name: ${user.name}`
-                  : `${search.type}: ${user[search.type]}`}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <table className="table">
-                <tbody>
-                  <tr>
-                    <th>Name:</th>
-                    <td>{user.name}</td>
-                  </tr>
-                  <tr>
-                    <th>Email:</th>
-                    <td>{user.email}</td>
-                  </tr>
-                  <tr>
-                    <th>Phone:</th>
-                    <td>{user.phone}</td>
-                  </tr>
-                  <tr>
-                    <th>Membership:</th>
-                    <td>{user.level.title}</td>
-                  </tr>
-                  <tr>
-                    <th>Points:</th>
-                    {edit.id === user.id ? (
-                      <td className="flex flex-start">
-                        <input
-                          className="input input-sm"
-                          value={edit.points}
-                          onChange={(e) => {
-                            if (!isNaN(Number(e.target.value))) {
-                              setEdit({ id: edit.id, points: e.target.value });
-                            }
-                          }}
-                        />
-                        <button
-                          className="btn btn-ghost btn-sm btn-square"
-                          onClick={handleConfirmEdit}
-                        >
-                          <DoneRoundedIcon />
-                        </button>
-                      </td>
-                    ) : (
-                      <td>
-                        {user.points}
-                        <button
-                          className="ml-3 btn btn-ghost btn-sm btn-square"
-                          onClick={() =>
-                            setEdit({
-                              id: user.id,
-                              points: user.points.toString(),
-                            })
-                          }
-                        >
-                          <EditRoundedIcon />
-                        </button>
-                      </td>
-                    )}
-                  </tr>
-                  <tr>
-                    <th>Admin:</th>
-                    <td>
+  const userDisplay = users.length ? (
+    users.map((user: user) => {
+      return (
+        <Accordion
+          expanded={expand === user.id}
+          onChange={() => handleChangeExpand(user.id)}
+          key={user.id}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>{user[search.type]}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <table className="table">
+              <tbody>
+                <tr>
+                  <th>Name:</th>
+                  <td>{user.name}</td>
+                </tr>
+                <tr>
+                  <th>Email:</th>
+                  <td>{user.email}</td>
+                </tr>
+                <tr>
+                  <th>Phone:</th>
+                  <td>{user.phone}</td>
+                </tr>
+                <tr>
+                  <th>Membership:</th>
+                  <td>{user.level.title}</td>
+                </tr>
+                <tr>
+                  <th>Points:</th>
+                  {edit.id === user.id ? (
+                    <td className="flex flex-start">
                       <input
-                        type="checkbox"
-                        checked={user.isAdmin}
-                        className="checkbox checkbox-sm"
-                        onChange={(e) => handleAdminChange(e, user.id)}
+                        className="input input-sm"
+                        value={edit.points}
+                        onChange={(e) => {
+                          if (!isNaN(Number(e.target.value))) {
+                            setEdit({ id: edit.id, points: e.target.value });
+                          }
+                        }}
                       />
+                      <button
+                        className="btn btn-ghost btn-sm btn-square"
+                        onClick={handleConfirmEdit}
+                      >
+                        <DoneRoundedIcon />
+                      </button>
                     </td>
-                  </tr>
-                </tbody>
-              </table>
-            </AccordionDetails>
-          </Accordion>
-        );
-      })
-    : "No user found in this current search.";
+                  ) : (
+                    <td>
+                      {user.points}
+                      <button
+                        className="ml-3 btn btn-ghost btn-sm btn-square"
+                        onClick={() =>
+                          setEdit({
+                            id: user.id,
+                            points: user.points.toString(),
+                          })
+                        }
+                      >
+                        <EditRoundedIcon />
+                      </button>
+                    </td>
+                  )}
+                </tr>
+                <tr>
+                  <th>Admin:</th>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={user.isAdmin}
+                      className="checkbox checkbox-sm"
+                      onChange={(e) => handleAdminChange(e, user.id)}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </AccordionDetails>
+        </Accordion>
+      );
+    })
+  ) : (
+    <div className="flex justify-center">
+      No user found in this current search.
+    </div>
+  );
 
   return (
     <div className="flex flex-col items-center">
@@ -250,20 +239,17 @@ export default function AdminUserPage(): JSX.Element {
             handleChangeSearchType(e.target.value as search["type"])
           }
         >
-          <option value="all">All</option>
           <option value="email">Email</option>
           <option value="name">Name</option>
           <option value="phone">Phone</option>
         </select>
-        {search.type !== "all" && (
-          <input
-            value={search.keyword}
-            className="input input-bordered input-sm w-full"
-            onChange={(e) =>
-              setSearch({ type: search.type, keyword: e.target.value })
-            }
-          />
-        )}
+        <input
+          value={search.keyword}
+          className="input input-bordered input-sm w-full"
+          onChange={(e) =>
+            setSearch({ type: search.type, keyword: e.target.value })
+          }
+        />
 
         <button className="btn btn-md btn-square" onClick={handleSearch}>
           <SearchRoundedIcon />
@@ -273,7 +259,7 @@ export default function AdminUserPage(): JSX.Element {
         {isLoading ? (
           <CircularProgress />
         ) : (
-          <div className="w-5/6">{userDisplay}</div>
+          <div className="w-full sm:w-5/6">{userDisplay}</div>
         )}
       </div>
     </div>

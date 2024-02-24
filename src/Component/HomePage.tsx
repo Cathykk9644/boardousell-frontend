@@ -16,9 +16,7 @@ export default function HomePage(): JSX.Element {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const productDataRes = await axios.get(
-          `${BACKENDURL}/product/newProduct`
-        );
+        const productDataRes = await axios.get(`${BACKENDURL}/product/new`);
         setNewProduct(productDataRes.data);
         setIsLoading(false);
       } catch (error) {

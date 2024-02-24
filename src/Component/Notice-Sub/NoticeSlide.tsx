@@ -18,7 +18,7 @@ export default function NoticeSlide({ setError }: { setError: Function }) {
   useEffect(() => {
     const fetchNotice = async () => {
       try {
-        const noticesRes = await axios.get(`${BACKENDURL}/notice/newest`);
+        const noticesRes = await axios.get(`${BACKENDURL}/notice/?limit=3`);
         setNotices(noticesRes.data);
       } catch (error) {
         setError({

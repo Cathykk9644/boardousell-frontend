@@ -21,12 +21,12 @@ import {
   ref,
   uploadBytes,
 } from "firebase/storage";
-import { product } from "../../../type";
+import { category, product } from "../../../type";
 import { useAuth0 } from "@auth0/auth0-react";
-
+type productWithCategories = product & { categories: category[] };
 type props = {
-  product: product;
-  categories: string[];
+  product: productWithCategories;
+  categories: category[];
   open: boolean;
   setOpen: Function;
   setErrMsg: Function;
@@ -56,10 +56,12 @@ export default function ProductEditForm({
       setOpen(null);
     } else setOpen(product.id);
   };
-
-  const handleCheckBox = async (updateType: string, isNew: boolean) => {
+  const handleCheckBox = async (
+    updateType: "newproduct" | "onsale",
+    isLinking: boolean
+  ) => {
     if (edit.type === "discount") {
-      setEdit({ type: null, input: "" });
+      handleConfirmEdit();
     }
     try {
       setIsLoading(true);
@@ -70,11 +72,20 @@ export default function ProductEditForm({
         },
       };
       const { data } = await axios.put(
-        `${BACKENDURL}/admin/product/${updateType}/${product.id}`,
-        { isNew: isNew },
+        `${BACKENDURL}/admin/product/${updateType}`,
+        { productId: product.id, relation: isLinking },
         config
       );
-      updateProduct(data);
+      setProducts((prev: product[]) => {
+        const newList = [...prev];
+        const productIndex = prev.findIndex(
+          (target) => target.id === product.id
+        );
+        newList[productIndex][updateType] = isLinking ? data : null;
+        return newList;
+      });
+      setErrMsg("");
+      setIsLoading(false);
     } catch (err) {
       setErrMsg("Oh. Somethings went wrong. Cannot update this product.");
       setIsLoading(false);
@@ -82,6 +93,9 @@ export default function ProductEditForm({
   };
 
   const handleConfirmEdit = async () => {
+    if (!edit.input.length && edit.type !== "description") {
+      return setErrMsg("Input cannot be empty");
+    }
     try {
       setIsLoading(true);
       const accessToken = await getAccessTokenSilently();
@@ -93,22 +107,35 @@ export default function ProductEditForm({
       if (edit.type === "discount") {
         if (product.onsale) {
           const { data } = await axios.put(
-            `${BACKENDURL}/admin/product/discount/${product.onsale.id}`,
-            { discount: edit.input },
+            `${BACKENDURL}/admin/product/discount`,
+            { onsaleId: product.onsale.id, discount: edit.input },
             config
           );
-          updateProduct(data);
+          setProducts((prev: product[]) => {
+            const newList = [...prev];
+            const productIndex = prev.findIndex(
+              (target) => target.id === product.id
+            );
+            newList[productIndex].onsale = data;
+            return newList;
+          });
         }
-      } else if (edit.type !== null) {
+      } else {
+        const inputData = { productId: product.id, [edit.type!]: edit.input };
         const { data } = await axios.put(
-          `${BACKENDURL}/admin/product/info/${product.id}`,
-          { [edit.type]: edit.input },
+          `${BACKENDURL}/admin/product`,
+          inputData,
           config
         );
-        updateProduct(data);
-      } else {
-        setIsLoading(false);
-        return setErrMsg("Cannot find your updating type.");
+        console.log(data);
+        setProducts((prev: product[]) => {
+          const newList = [...prev];
+          const productIndex = prev.findIndex(
+            (target) => target.id === product.id
+          );
+          newList[productIndex] = data;
+          return newList;
+        });
       }
       setEdit({ type: null, input: "" });
       setErrMsg("");
@@ -120,8 +147,10 @@ export default function ProductEditForm({
   };
 
   const handleEdit = (type: edit["type"]) => {
-    if (type === edit.type) {
+    if (edit.type) {
       handleConfirmEdit();
+    }
+    if (edit.type === type) {
       return;
     }
     switch (type) {
@@ -146,9 +175,7 @@ export default function ProductEditForm({
     }
   };
 
-  const handleCategory = async (e: {
-    target: { value: string; checked: boolean };
-  }) => {
+  const handleCategory = async (category: category, isLinking: boolean) => {
     try {
       setIsLoading(true);
       const accessToken = await getAccessTokenSilently();
@@ -157,16 +184,32 @@ export default function ProductEditForm({
           Authorization: `Bearer ${accessToken}`,
         },
       };
-      const { data } = await axios.put(
+      await axios.put(
         `${BACKENDURL}/admin/category/product`,
         {
-          category: e.target.value,
-          link: !e.target.checked,
+          categoryId: category.id,
+          relation: isLinking,
           productId: product.id,
         },
         config
       );
-      updateProduct(data);
+      setProducts((prev: productWithCategories[]) => {
+        const newList = [...prev];
+        const productIndex = newList.findIndex(
+          (target) => target.id === product.id
+        );
+        if (isLinking) {
+          newList[productIndex].categories.push(category);
+        } else {
+          const filterList = newList[productIndex].categories.filter(
+            (target) => target.id !== category.id
+          );
+          newList[productIndex].categories = filterList;
+        }
+        return newList;
+      });
+      setErrMsg("");
+      setIsLoading(false);
     } catch (err) {
       setErrMsg("Oh. Somethings went wrong. Cannot update this product.");
       setIsLoading(false);
@@ -187,7 +230,23 @@ export default function ProductEditForm({
         { photoId },
         config
       );
-      updateProduct(data);
+      setProducts((prev: product[]) => {
+        const newList = [...prev];
+        const productIndex = newList.findIndex(
+          (target) => target.id === product.id
+        );
+        for (const photo of newList[productIndex].productPhotos) {
+          if (photo.id === photoId) {
+            photo.thumbnail = true;
+          }
+          if (photo.id === data.oldThumbnailPhotoId) {
+            photo.thumbnail = false;
+          }
+        }
+        return newList;
+      });
+      setErrMsg("");
+      setIsLoading(false);
     } catch (err) {
       setErrMsg(
         "Oh. Somethings went wrong. Cannot update this product thumbnail."
@@ -205,7 +264,7 @@ export default function ProductEditForm({
           Authorization: `Bearer ${accessToken}`,
         },
       };
-      const { data } = await axios.delete(
+      await axios.delete(
         `${BACKENDURL}/admin/product/photo/${photoId}`,
         config
       );
@@ -214,7 +273,19 @@ export default function ProductEditForm({
         `/product/${product.name}/${deletefileName}`
       );
       await deleteObject(storageRef);
-      updateProduct(data);
+      setProducts((prev: product[]) => {
+        const newList = [...prev];
+        const productIndex = newList.findIndex(
+          (target) => target.id === product.id
+        );
+        const newPhotoList = newList[productIndex].productPhotos.filter(
+          (target) => target.id !== photoId
+        );
+        newList[productIndex].productPhotos = newPhotoList;
+        return newList;
+      });
+      setErrMsg("");
+      setIsLoading(false);
     } catch (err) {
       setErrMsg("Oh. Somethings went wrong. Cannot delete this photo.");
       setIsLoading(false);
@@ -252,6 +323,7 @@ export default function ProductEditForm({
     }
     try {
       setIsLoading(true);
+      const newData: product["productPhotos"] = [];
       for (const file of fileValue) {
         const storageRef = ref(
           storage,
@@ -274,27 +346,26 @@ export default function ProductEditForm({
           },
           config
         );
-        updateProduct(data);
+        newData.push(data);
       }
+      setProducts((prev: product[]) => {
+        const newList = [...prev];
+        const productIndex = newList.findIndex(
+          (target) => target.id === product.id
+        );
+        for (const data of newData) {
+          newList[productIndex].productPhotos.push(data);
+        }
+        return newList;
+      });
       setFileName([]);
       setFileValue([]);
+      setErrMsg("");
+      setIsLoading(false);
     } catch (err) {
       setErrMsg("Oh. Somethings went wrong. Cannot upload this photo.");
       setIsLoading(false);
     }
-  };
-
-  const updateProduct = (data: product) => {
-    setProducts((prev: product[]) => {
-      const newProducts: product[] = [...prev];
-      const index = newProducts.findIndex(
-        (findProduct) => findProduct.id === product.id
-      );
-      newProducts[index] = data;
-      return newProducts;
-    });
-    setErrMsg("");
-    setIsLoading(false);
   };
 
   const photoDisplay = !!product.productPhotos.length ? (
@@ -340,15 +411,14 @@ export default function ProductEditForm({
 
   const categoryDisplay = categories.map((category) => {
     return (
-      <tr key={category}>
-        <th>{category}</th>
+      <tr key={category.id}>
+        <th>{category.name}</th>
         <td>
           <input
             className="checkbox"
             type="checkbox"
-            value={category}
-            checked={!!hashProductCat[category]}
-            onChange={handleCategory}
+            checked={!!hashProductCat[category.name]}
+            onChange={(e) => handleCategory(category, e.target.checked)}
           />
         </td>
       </tr>
@@ -373,7 +443,7 @@ export default function ProductEditForm({
     <Accordion expanded={open} onChange={handleChange}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography sx={{ width: "70%" }}>{product.name}</Typography>
-        <Typography sx={{ width: "30%" }}>stock: {product.stock}</Typography>
+        <Typography sx={{ width: "30%" }}>Stock: {product.stock}</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Backdrop open={isLoading} sx={{ zIndex: 99 }}>
@@ -463,7 +533,7 @@ export default function ProductEditForm({
                   type="checkbox"
                   checked={!!product.newproduct}
                   onChange={(e) =>
-                    handleCheckBox("newProduct", e.target.checked)
+                    handleCheckBox("newproduct", e.target.checked)
                   }
                 />
               </td>

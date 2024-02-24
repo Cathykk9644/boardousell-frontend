@@ -13,15 +13,18 @@ export default function ProductCard({
   handleAddItem,
 }: props): JSX.Element {
   const navi = useNavigate();
-
+  let productPhoto = noImage;
+  for (const photo of product.productPhotos) {
+    if (photo.thumbnail) {
+      productPhoto = photo.url;
+    }
+  }
   return (
     <div className="card w-44 m-2 md:w-52 bg-accent text-accent-content shadow-xl">
       <img
         className="my-5 h-32 object-contain cursor-pointer"
         onClick={() => navi(`../product/${product.id}`)}
-        src={
-          product.productPhotos.length ? product.productPhotos[0].url : noImage
-        }
+        src={productPhoto}
         alt={product.name}
       />
       <div className="card-body flex flex-col items-center p-1">

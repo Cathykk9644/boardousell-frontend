@@ -22,6 +22,7 @@ type props = {
 };
 
 type linkedProducts = {
+  //key is product.id
   [key: number]: product;
 };
 
@@ -37,11 +38,11 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
     const fetchData = async () => {
       try {
         setIsloading(true);
-        const { data }: { data: product[] } = await axios.get(
-          `${BACKENDURL}/category/product/${category.id}`
+        const { data }: { data: { data: product[] } } = await axios.get(
+          `${BACKENDURL}/product/category/${category.id}`
         );
         const linkedProductHash: { [key: number]: product } = {};
-        for (const product of data) {
+        for (const product of data.data) {
           linkedProductHash[product.id] = product;
         }
         setLinkedProducts(linkedProductHash);
@@ -62,9 +63,9 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
       }
       setIsloading(true);
       const { data } = await axios.get(
-        `${BACKENDURL}/product/search/all/${input}`
+        `${BACKENDURL}/product/search?keyword=${input}`
       );
-      setProducts(data);
+      setProducts(data.data);
       setIsloading(false);
       setInput("");
       setErrMsg("");
@@ -74,7 +75,7 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
     }
   };
 
-  const handleCheckBox = async (link: boolean, product: product) => {
+  const handleCheckBox = async (isLinking: boolean, product: product) => {
     try {
       setIsloading(true);
       const accessToken = await getAccessTokenSilently();
@@ -86,13 +87,13 @@ export default function CategoryLinkingForm({ category, setLinking }: props) {
       await axios.put(
         `${BACKENDURL}/admin/category/product`,
         {
-          link,
+          relation: isLinking,
           productId: product.id,
-          category: category.name,
+          categoryId: category.id,
         },
         config
       );
-      if (link) {
+      if (isLinking) {
         setLinkedProducts((prev) => {
           return { [product.id]: product, ...prev };
         });

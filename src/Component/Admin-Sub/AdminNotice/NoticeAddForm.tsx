@@ -69,7 +69,7 @@ export default function NoticeAddForm({ open, setOpen, setNotices }: props) {
         await uploadBytes(photoRef, fileValue);
         const url = await getDownloadURL(photoRef);
         await axios.put(
-          `${BACKENDURL}/notice/photo`,
+          `${BACKENDURL}/admin/notice/photo`,
           {
             noticeId: data.id,
             url,

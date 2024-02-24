@@ -66,11 +66,8 @@ export default function AdminMembershipPage() {
           Authorization: `Bearer ${accessToken}`,
         },
       };
-      const { data } = await axios.delete(
-        `${BACKENDURL}/admin/level/${id}`,
-        config
-      );
-      setLevels(data);
+      await axios.delete(`${BACKENDURL}/admin/level/${id}`, config);
+      setLevels((prev: level[]) => prev.filter((target) => target.id !== id));
       setErrMsg("");
       setIsLoading(false);
     } catch (err) {
@@ -80,6 +77,15 @@ export default function AdminMembershipPage() {
   };
 
   const handleConfirmAdd = async () => {
+    if (!editInput.requirement.length) {
+      return setErrMsg("Must have requirement");
+    }
+    if (!editInput.discount.length) {
+      return setErrMsg("Must have discount");
+    }
+    if (!editInput.title) {
+      return setErrMsg("Must have title");
+    }
     try {
       setIsLoading(true);
       const accessToken = await getAccessTokenSilently();
@@ -93,7 +99,7 @@ export default function AdminMembershipPage() {
         editInput,
         config
       );
-      setLevels(data);
+      setLevels((prev) => [...prev, data]);
       setErrMsg("");
       setIsLoading(false);
     } catch (err) {
@@ -142,7 +148,12 @@ export default function AdminMembershipPage() {
           newData,
           config
         );
-        setLevels(data);
+        setLevels((prev: level[]) => {
+          const newList = [...prev];
+          const levelIndex = newList.findIndex((target) => target.id === id);
+          newList[levelIndex] = data;
+          return newList;
+        });
       }
       setErrMsg("");
       setIsLoading(false);
@@ -173,6 +184,8 @@ export default function AdminMembershipPage() {
     setEditId(null);
     setEditInput({ title: "", requirement: "", discount: "" });
   };
+
+  levels.sort((a, b) => b.requirement - a.requirement);
   const levelDisplay = levels.map((level) => {
     const isEditing = editId === level.id;
     return (
@@ -262,7 +275,11 @@ export default function AdminMembershipPage() {
           <thead>
             <tr>
               <th>Title:</th>
-              <th>Requirement:</th>
+              <th>
+                Upgrade
+                <br />
+                Requirement:
+              </th>
               <th>Discount:</th>
               <th></th>
             </tr>

@@ -21,16 +21,27 @@ type page = {
   current: number;
 };
 
+type productWithCategories = product & {
+  categories: category[];
+};
+
+const resultLimit = 5;
+
 export default function AdminProductPage() {
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<category[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [products, setProducts] = useState<product[]>([]);
-  const [currentSearch, setCurrentSearch] = useState<search | null>(null);
+  const [products, setProducts] = useState<productWithCategories[]>([]);
+  const [currentSearch, setCurrentSearch] = useState<search>({
+    type: "name",
+    input: "",
+  });
   const [page, setPage] = useState<page>({ total: 0, current: 0 });
   const [search, setSearch] = useState<search>({ type: "name", input: "" });
   const [open, setOpen] = useState<number | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
-  const [newAddedProducts, setNewAddedProducts] = useState<product[]>([]);
+  const [newAddedProducts, setNewAddedProducts] = useState<
+    productWithCategories[]
+  >([]);
   const [errMsg, setErrMsg] = useState<string>("");
   const { getAccessTokenSilently } = useAuth0();
 
@@ -47,9 +58,8 @@ export default function AdminProductPage() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const { data } = await axios.get(`${BACKENDURL}/category/all`);
-        const flattenData = data.map((category: category) => category.name);
-        setCategories(flattenData);
+        const { data } = await axios.get(`${BACKENDURL}/category`);
+        setCategories(data);
         setErrMsg("");
         setIsLoading(false);
       } catch (err) {
@@ -63,7 +73,7 @@ export default function AdminProductPage() {
   const handleChangeSearchType = async (newType: key) => {
     switch (newType) {
       case "category":
-        setSearch({ type: "category", input: categories[0] });
+        setSearch({ type: "category", input: categories[0].name });
         break;
       case "stock":
         setSearch({
@@ -76,65 +86,50 @@ export default function AdminProductPage() {
     }
   };
 
+  const getResult = async (type: key, input: string, newPage: number) => {
+    switch (type) {
+      case "stock":
+        const accessToken = await getAccessTokenSilently();
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+        const stockRes = await axios.get(
+          `${BACKENDURL}/admin/product/stock/${input}?limit=${resultLimit}&page=${newPage}`,
+          config
+        );
+        return {
+          amount: stockRes.data.amount,
+          data: stockRes.data.data,
+        };
+      case "category":
+        const categoryIndex = categories.findIndex(
+          (target) => target.name === input
+        );
+        const categoryRes = await axios.get(
+          `${BACKENDURL}/product/category/${categories[categoryIndex].id}?limit=${resultLimit}&page=${newPage}`
+        );
+        return {
+          amount: categoryRes.data.amount,
+          data: categoryRes.data.data,
+        };
+      default:
+        const { data } = await axios.get(
+          `${BACKENDURL}/product/search?limit=${resultLimit}&page=${newPage}&${
+            type === "name" ? `keyword=${input}` : ""
+          }`
+        );
+        return { amount: data.amount, data: data.data };
+    }
+  };
+
   const handleSearch = async () => {
     try {
       setIsLoading(true);
-      const accessToken = await getAccessTokenSilently();
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
-      let res;
-      switch (search.type) {
-        case "all":
-          res = await axios.get(`${BACKENDURL}/admin/product/all/1`, config);
-          break;
-        case "name":
-          if (!search.input.length) {
-            return setErrMsg("Please Enter Keyword.");
-          }
-          res = await axios.get(
-            `${BACKENDURL}/admin/product/name/${search.input}/1`,
-            config
-          );
-          break;
-        case "stock":
-          if (!search.input.length) {
-            return setErrMsg("Please Enter Amount/LowerLimit-UpperLimit.");
-          }
-          const checking = search.input.split("-");
-          if (checking.length > 2) {
-            return setErrMsg("Please Enter Amount/LowerLimit-UpperLimit.");
-          }
-          if (isNaN(Number(checking[0])) || !checking[0].length) {
-            return setErrMsg("Please Enter Amount/LowerLimit-UpperLimit.");
-          }
-          if (
-            checking.length === 2 &&
-            (!checking[1].length || isNaN(Number(checking[1])))
-          ) {
-            return setErrMsg("Please Enter Amount/LowerLimit-UpperLimit.");
-          }
-          res = await axios.get(
-            `${BACKENDURL}/admin/product/stock/${search.input}/1`,
-            config
-          );
-          break;
-        case "category":
-          res = await axios.get(
-            `${BACKENDURL}/admin/product/category/${search.input}/1`,
-            config
-          );
-          break;
-        default:
-          return setErrMsg("No Search Found.");
-      }
-      setPage({
-        total: Math.ceil(res.data.count / 5),
-        current: 1,
-      });
-      setProducts(res.data.data);
+      const { amount, data } = await getResult(search.type, search.input, 1);
+      setPage({ current: 1, total: Math.ceil(amount / 5) });
+      setProducts(data);
       setCurrentSearch({ ...search });
       setNewAddedProducts([]);
       setIsLoading(false);
@@ -151,40 +146,26 @@ export default function AdminProductPage() {
   ) => {
     try {
       setIsLoading(true);
-      const accessToken = await getAccessTokenSilently();
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
-      switch (currentSearch?.type) {
-        case "all":
-          const allDataRes = await axios.get(
-            `${BACKENDURL}/admin/product/all/${newPage}`,
-            config
-          );
-          setProducts(allDataRes.data.data);
-          break;
-        default:
-          const { data } = await axios.get(
-            `${BACKENDURL}/admin/product/${currentSearch?.type}/${currentSearch?.input}/${newPage}`,
-            config
-          );
-          setProducts(data.data);
-      }
-      setPage({ current: newPage, total: page.total });
+      const { amount, data } = await getResult(
+        currentSearch.type,
+        currentSearch.input,
+        newPage
+      );
+      setPage({ current: newPage, total: Math.ceil(amount / 5) });
+      setProducts(data);
+      setNewAddedProducts([]);
       setIsLoading(false);
       setErrMsg("");
     } catch (err) {
-      setErrMsg("Oh. Somethings went wrong. Cannot change page.");
+      setErrMsg("Oh. Somethings went wrong. Cannot search product");
       setIsLoading(false);
     }
   };
 
   const option = categories.map((category) => {
     return (
-      <option value={category} key={category}>
-        {category}
+      <option value={category.name} key={category.id}>
+        {category.name}
       </option>
     );
   });
@@ -232,7 +213,7 @@ export default function AdminProductPage() {
         >
           <option value="all">All</option>
           <option value="name">Name</option>
-          <option value="stock">stock</option>
+          <option value="stock">Stock</option>
           <option value="category">Category</option>
         </select>
         {search.type === "name" && (

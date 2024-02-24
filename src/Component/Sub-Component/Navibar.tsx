@@ -9,20 +9,14 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Link, useNavigate } from "react-router-dom";
 import { Divider, Drawer, Slide } from "@mui/material";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { BACKENDURL } from "../../constant";
 import { useAuth0 } from "@auth0/auth0-react";
-import { category } from "../../type";
 type props = {
   open: boolean;
   setDrawer: Function;
-  setError: Function;
 };
 
-export default function Navibar({ open, setDrawer, setError }: props) {
-  const [categories, setCategories] = useState<string[]>([]);
+export default function Navibar({ open, setDrawer }: props) {
   const [openSearch, setOpenSearch] = useState<boolean>(false);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const { isAuthenticated, logout, loginWithRedirect } = useAuth0();
   const [keyword, setKeyword] = useState<string>("");
@@ -31,66 +25,26 @@ export default function Navibar({ open, setDrawer, setError }: props) {
   const handleSearch = () => {
     setOpenSearch(false);
     setKeyword("");
-    setSelectedCategory("");
-    if (selectedCategory.length && keyword.length) {
-      return navi(`../search?category=${selectedCategory}&keyword=${keyword}`);
-    }
-    if (selectedCategory.length) {
-      return navi(`../search?category=${selectedCategory}`);
-    }
-    if (keyword.length) {
-      return navi(`../search?keyword=${keyword}`);
-    }
-    return navi(`../search`);
+    navi(`../search?keyword=${keyword}&limit=5&page=1`);
   };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data } = await axios.get(`${BACKENDURL}/category/all`);
-        const flattenData = data.map((category: category) => category.name);
-        setCategories(flattenData);
-      } catch (error) {
-        setError({
-          backHome: false,
-          message: "Oh. Somethings went wrong. Cannot load Categories",
-        });
-      }
-    };
-    fetchData();
     window.addEventListener("resize", () => {
       setWindowWidth(window.innerWidth);
     });
-  }, [setError]);
-
-  const option = categories.map((category) => {
-    return (
-      <option value={category} key={category}>
-        {category}
-      </option>
-    );
-  });
+  }, []);
 
   const searchAndMenu =
     windowWidth > 640 ? (
       <div className="space-x-1 pr-4 overflow-x-hidden flex-initial">
         <Slide direction="left" in={openSearch}>
           <div className="flex flex-row items-center space-x-1">
-            <div className="flex flex-col space-y-1">
-              <select
-                value={selectedCategory}
-                className="select select-sm select-bordered"
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                <option value="">Category: </option>
-                {option}
-              </select>
-              <input
-                className="input input-sm input-bordered"
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                placeholder="Search:"
-              />
-            </div>
+            <input
+              className="input input-sm input-bordered"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              placeholder="Search:"
+            />
+
             <button className="btn btn-ghost" onClick={handleSearch}>
               <SearchRoundedIcon />
             </button>
@@ -125,14 +79,6 @@ export default function Navibar({ open, setDrawer, setError }: props) {
         >
           <div>
             <div className="flex flex-col space-y-1">
-              <select
-                value={selectedCategory}
-                className="select select-sm select-bordered"
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                <option value="">Category: </option>
-                {option}
-              </select>
               <input
                 className="input input-sm input-bordered"
                 value={keyword}

@@ -175,11 +175,7 @@ export default function App(): JSX.Element {
   return (
     <div data-theme="nord" className="min-h-screen">
       <ErrorPage error={error} handleError={handleError} />
-      <Navibar
-        open={drawer === "nav"}
-        setDrawer={setDrawer}
-        setError={setError}
-      />
+      <Navibar open={drawer === "nav"} setDrawer={setDrawer} />
       <Outlet context={outletProps} />
       {isAuthenticated && (
         <Wishlist

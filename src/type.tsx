@@ -8,18 +8,17 @@ export type product = {
   price: number;
   description: string;
   stock: number;
-  onsale?: { id: number; discount: number };
-  newproduct?: { id: number };
-  categories: category[];
   productPhotos: {
     id: number;
     url: string;
     thumbnail: boolean;
     fileName: string;
   }[];
-  productorder: {
-    amount: number;
-  };
+  newproduct?: { id: number };
+  onsale?: { id: number; discount: number };
+  // productorder?: {
+  //   amount: number;
+  // };
 };
 
 export type item = {
