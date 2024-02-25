@@ -33,7 +33,7 @@ export default function NoticePage(): JSX.Element {
   useEffect(() => {
     setCurrentNoticeId(Number(noticeId));
   }, [noticeId]);
-
+  console.log(noticeList);
   const handleExpand = async (noticeId: number) => {
     setCurrentNoticeId((prev) => (prev === noticeId ? null : noticeId));
   };
@@ -65,7 +65,7 @@ export default function NoticePage(): JSX.Element {
   return (
     <div className="min-h-screen flex flex-col">
       <NoticeSlide setError={setError} />
-      <h1 className="m-2">All Notices:</h1>
+      <b className="m-5 text-xl self-center">All Notices:</b>
       <div className="sm:w-5/6 self-center">{listDisplay}</div>
     </div>
   );

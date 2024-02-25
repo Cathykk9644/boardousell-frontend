@@ -4,10 +4,8 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import Inventory2RoundedIcon from "@mui/icons-material/Inventory2Rounded";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Link, useNavigate } from "react-router-dom";
-import { Divider, Drawer, Slide } from "@mui/material";
+import { Divider, Drawer } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 type props = {
@@ -16,14 +14,11 @@ type props = {
 };
 
 export default function Navibar({ open, setDrawer }: props) {
-  const [openSearch, setOpenSearch] = useState<boolean>(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const { isAuthenticated, logout, loginWithRedirect } = useAuth0();
   const [keyword, setKeyword] = useState<string>("");
   const navi = useNavigate();
-
   const handleSearch = () => {
-    setOpenSearch(false);
     setKeyword("");
     navi(`../search?keyword=${keyword}&limit=5&page=1`);
   };
@@ -33,113 +28,42 @@ export default function Navibar({ open, setDrawer }: props) {
     });
   }, []);
 
-  const searchAndMenu =
-    windowWidth > 640 ? (
-      <div className="space-x-1 pr-4 overflow-x-hidden flex-initial">
-        <Slide direction="left" in={openSearch}>
-          <div className="flex flex-row items-center space-x-1">
-            <input
-              className="input input-sm input-bordered"
-              value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
-              placeholder="Search:"
-            />
-
-            <button className="btn btn-ghost" onClick={handleSearch}>
-              <SearchRoundedIcon />
-            </button>
-          </div>
-        </Slide>
-        {openSearch ? (
-          <button
-            className="btn btn-ghost btn-square"
-            onClick={() => setOpenSearch(false)}
-          >
-            <ChevronRightIcon />
-          </button>
-        ) : (
-          <button
-            className="btn btn-ghost btn-square"
-            onClick={() => setOpenSearch(true)}
-          >
-            <SearchRoundedIcon />
-          </button>
-        )}
-
-        <button className="btn btn-ghost" onClick={() => setDrawer("nav")}>
-          <MenuIcon />
-        </button>
-      </div>
-    ) : (
-      <div className="flex-initial">
-        <Slide
-          direction="down"
-          in={openSearch}
-          className="flex items-center space-x-3 mr-3"
-        >
-          <div>
-            <div className="flex flex-col space-y-1">
-              <input
-                className="input input-sm input-bordered"
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                placeholder="Search:"
-              />
-            </div>
-            <button
-              className="btn btn-ghost btn-square btn-sm"
-              onClick={handleSearch}
-            >
-              <SearchRoundedIcon />
-            </button>
-            <button
-              className="btn btn-ghost btn-square btn-sm"
-              onClick={() => setOpenSearch(false)}
-            >
-              <ExpandLessIcon />
-            </button>
-          </div>
-        </Slide>
-        <Slide
-          direction="down"
-          in={!openSearch}
-          className="absolute right-5 flex space-x-3"
-        >
-          <div>
-            <button
-              className="btn btn-ghost btn-square btn-sm"
-              onClick={() => setOpenSearch(true)}
-            >
-              <SearchRoundedIcon />
-            </button>
-            <button
-              className="btn btn-ghost btn-square btn-sm"
-              onClick={() => setDrawer("nav")}
-            >
-              <MenuIcon />
-            </button>
-          </div>
-        </Slide>
-      </div>
-    );
-
-  return (
-    <div className="navbar shadow">
-      <div className="flex-1">
+  const mobileDisplay = (
+    <div className="navbar">
+      <div className="navbar-start">
         <Link to="/" className="btn btn-ghost max-h-full h-20">
           <img className="max-h-full" src={logo} alt="logo" />
         </Link>
       </div>
-      {searchAndMenu}
+      <div className="navbar-end gap-5">
+        <label className="input input-bordered input-sm flex items-center rounded-full gap-2">
+          <SearchRoundedIcon
+            className="cursor-pointer"
+            onClick={() => navi(`/search?keyword=${keyword}`)}
+          />
+          <input
+            type="text"
+            className="w-36"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+        </label>
+        <button
+          className="btn btn-ghost btn-square btn-sm"
+          onClick={() => setDrawer("nav")}
+        >
+          <MenuIcon />
+        </button>
+      </div>
       <Drawer open={open} anchor="right" onClose={() => setDrawer(null)}>
         <div className="bg-neutral-content min-h-screen w-52">
           {isAuthenticated ? (
             <div className="h-20 flex justify-evenly items-center">
               <Link to="/orderlist" onClick={() => setDrawer(null)}>
-                <Inventory2RoundedIcon />
+                <Inventory2RoundedIcon color="primary" />
               </Link>
               <Link to="/user" onClick={() => setDrawer(null)}>
-                <AccountCircleRoundedIcon />
+                <AccountCircleRoundedIcon color="primary" />
               </Link>
               <button onClick={() => logout()}>
                 <LogoutRoundedIcon />
@@ -148,7 +72,7 @@ export default function Navibar({ open, setDrawer }: props) {
           ) : (
             <div className="h-20 flex items-center justify-center">
               <button
-                className="btn btn-secondary"
+                className="btn btn-accent rounded-full"
                 onClick={() => loginWithRedirect()}
               >
                 Login/Register
@@ -156,7 +80,7 @@ export default function Navibar({ open, setDrawer }: props) {
             </div>
           )}
           <Divider className="bg-primary" />
-          <ul className="menu flex flex-col items-center ">
+          <ul className="menu flex flex-col items-center space-y-5 mt-5">
             <li>
               <Link
                 className="place-content-center btn btn-ghost "
@@ -189,4 +113,75 @@ export default function Navibar({ open, setDrawer }: props) {
       </Drawer>
     </div>
   );
+
+  const largeDisplay = (
+    <div className="navbar">
+      <div className="navbar-start">
+        <Link to="/" className="btn btn-ghost max-h-full h-20">
+          <img className="max-h-full" src={logo} alt="logo" />
+        </Link>
+      </div>
+      <div className="navbar-center flex gap-10">
+        <button className="btn btn-ghost" onClick={() => navi("/notice")}>
+          Notices
+        </button>
+        <button className="btn btn-ghost" onClick={() => navi("/explore")}>
+          Products
+        </button>
+        <button className="btn btn-ghost" onClick={() => navi("/contactus")}>
+          Contact Us
+        </button>
+      </div>
+      <div className="navbar-end gap-5 mr-5">
+        <label className="input input-bordered flex items-center rounded-full gap-2">
+          <SearchRoundedIcon
+            className="cursor-pointer"
+            onClick={handleSearch}
+          />
+          <input
+            type="text"
+            className="grow"
+            placeholder="E.g. Marvel Champion"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+        </label>
+        {isAuthenticated ? (
+          <div className="space-x-5 flex items-center">
+            <Link
+              to="/orderlist"
+              className="btn btn-circle btn-primary"
+              onClick={() => setDrawer(null)}
+            >
+              <Inventory2RoundedIcon />
+            </Link>
+            <Link
+              to="/user"
+              className="btn btn-circle btn-secondary"
+              onClick={() => setDrawer(null)}
+            >
+              <AccountCircleRoundedIcon />
+            </Link>
+            <button
+              className="btn btn-accent rounded-full"
+              onClick={() => logout()}
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <button
+            className="btn btn-accent rounded-full"
+            onClick={() => loginWithRedirect()}
+          >
+            Login/Register
+          </button>
+        )}
+      </div>
+    </div>
+  );
+
+  const searchAndMenu = windowWidth > 1024 ? largeDisplay : mobileDisplay;
+
+  return searchAndMenu;
 }
