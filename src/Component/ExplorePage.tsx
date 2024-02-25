@@ -1,7 +1,12 @@
 import axios from "axios";
 import { CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Link, useOutletContext, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useOutletContext,
+  useSearchParams,
+} from "react-router-dom";
 import { BACKENDURL } from "../constant";
 import { outletProps, product, category } from "../type";
 import ProductListForSearch from "./Sub-Component/ProductListForSearch";
@@ -16,23 +21,27 @@ export default function ExplorePage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<product[]>([]);
   const [page, setPage] = useState<page>({ current: 0, total: 0 });
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<category[]>([]);
   const { handleAddItem, setError } = useOutletContext<outletProps>();
   const [query] = useSearchParams();
+  const navi = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
+        const { data }: { data: category[] } = await axios.get(
+          `${BACKENDURL}/category`
+        );
         let queryPage = query.get("page");
         if (!queryPage) {
           queryPage = "1";
         }
-        const queryCategoryId = query.get("category");
-        switch (queryCategoryId) {
+        const queryCategory = query.get("category");
+        switch (queryCategory) {
           case null:
             const allData = await axios.get(
-              `${BACKENDURL}/product/search?limit=${resultPerPage}&page${queryPage}`
+              `${BACKENDURL}/product/search?limit=${resultPerPage}&page=${queryPage}`
             );
             setProducts(allData.data.data);
             setPage({
@@ -42,7 +51,7 @@ export default function ExplorePage() {
             break;
           case "onsale":
             const salesData = await axios.get(
-              `${BACKENDURL}/product/onsale?limit=${resultPerPage}&page${queryPage}`
+              `${BACKENDURL}/product/onsale?limit=${resultPerPage}&page=${queryPage}`
             );
             setProducts(salesData.data.data);
             setPage({
@@ -52,7 +61,7 @@ export default function ExplorePage() {
             break;
           case "new":
             const newData = await axios.get(
-              `${BACKENDURL}/product/new/search?limit=${resultPerPage}&page${queryPage}`
+              `${BACKENDURL}/product/new/search?limit=${resultPerPage}&page=${queryPage}`
             );
             setProducts(newData.data.data);
             setPage({
@@ -61,8 +70,11 @@ export default function ExplorePage() {
             });
             break;
           default:
+            const queryCategoryIdIndex = data.findIndex(
+              (target) => queryCategory === target.name
+            );
             const categoryData = await axios.get(
-              `${BACKENDURL}/product/category/${queryCategoryId}?limit=${resultPerPage}&page${queryPage}`
+              `${BACKENDURL}/product/category/${data[queryCategoryIdIndex].id}?limit=${resultPerPage}&page=${queryPage}`
             );
             setProducts(categoryData.data.data);
             setPage({
@@ -71,6 +83,7 @@ export default function ExplorePage() {
             });
             break;
         }
+        setCategories(data);
         setIsLoading(false);
       } catch (error) {
         setError({
@@ -81,18 +94,26 @@ export default function ExplorePage() {
       }
     };
     fetchData();
-  }, [setError]);
+  }, [setError, query]);
 
-  const categoriesDisplay = categories.map((name) => (
+  const categoriesDisplay = categories.map((category) => (
     <Link
       className="btn btn-link w-1/2"
-      to={`/explore?category=${name}`}
-      key={name}
+      to={`/explore?category=${category.name}`}
+      key={category.id}
     >
-      {name}
+      {category.name}
     </Link>
   ));
 
+  const handleChangePage = (newPage: number) => {
+    const queryCategory = query.get("category");
+    navi(
+      `/explore?${
+        queryCategory ? `category=${queryCategory}&` : ""
+      }page=${newPage}`
+    );
+  };
   return (
     <div className="min-h-screen">
       {isLoading ? (
@@ -100,6 +121,8 @@ export default function ExplorePage() {
       ) : (
         <ProductListForSearch
           handleAddItem={handleAddItem}
+          page={page}
+          handleChangePage={handleChangePage}
           products={products}
         />
       )}

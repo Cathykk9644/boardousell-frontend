@@ -27,7 +27,7 @@ export default function ProductList({
   for (const product of products) {
     currentList.push(product);
     count++;
-    if (count === 4) {
+    if (count === 3) {
       dividedList.push(currentList);
       count = 0;
       currentList = [];
@@ -60,7 +60,7 @@ export default function ProductList({
             />
           );
         });
-        while (productGroupList && productGroupList.length < 4 && i !== 0) {
+        while (productGroupList && productGroupList.length < 3 && i !== 0) {
           productGroupList.push(
             <div
               className="card w-44 h-72 mt-3"

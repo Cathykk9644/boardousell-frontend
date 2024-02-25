@@ -20,48 +20,51 @@ export default function ProductCard({
     }
   }
   return (
-    <div className="card w-44 m-2 md:w-52 bg-accent text-accent-content shadow-xl">
+    <div className="card flex flex-col items-center w-72 p-6 bg-accent text-accent-content rounded-3xl shadow-xl m-3">
       <img
-        className="my-5 h-32 object-contain cursor-pointer"
+        className="w-56 h-44 object-contain cursor-pointer"
         onClick={() => navi(`../product/${product.id}`)}
         src={productPhoto}
         alt={product.name}
       />
-      <div className="card-body flex flex-col items-center p-1">
-        <h2
-          className="card-title cursor-pointer"
-          onClick={() => navi(`../product/${product.id}`)}
-        >
-          {product.name}
-        </h2>
-        <div className="flex flex-row w-full justify-between items-center">
+
+      <div className="card-body flex flex-col w-full p-1">
+        <div>
+          <h1
+            className="cursor-pointer text-lg"
+            onClick={() => navi(`../product/${product.id}`)}
+          >
+            {product.name}
+          </h1>
           {product.onsale ? (
-            <div className="flex flex-col">
-              <span className="line-through">HKD${product.price}</span>
-              <span>
+            <div className="flex w-full">
+              <b className="text-red-600">
                 HKD${Math.round(product.price * product.onsale.discount)}
-              </span>
+              </b>
+              <h1 className="line-through">HKD${product.price}</h1>
             </div>
           ) : (
-            <span>HKD${product.price}</span>
+            <b>{`HKD$${product.price}`}</b>
           )}
-          <span>stock: {product.stock}</span>
         </div>
       </div>
-      <div className="card-actions flex justify-end mb-1 mr-1">
-        <button
-          className="btn w-11 h-11"
-          onClick={() => handleAddItem(product.id, "wishlist")}
-        >
-          <StarsIcon />
-        </button>
-        <button
-          className="btn w-11 h-11"
-          disabled={!product.stock}
-          onClick={() => handleAddItem(product.id, "cart")}
-        >
-          <ShoppingCartIcon />
-        </button>
+      <div className="card-actions justify-between w-full flex justify-between">
+        <span className="self-center">stock: {product.stock}</span>
+        <div className="space-x-3">
+          <button
+            className="btn btn-square w-12 h-12 rounded-md"
+            onClick={() => handleAddItem(product.id, "wishlist")}
+          >
+            <StarsIcon />
+          </button>
+          <button
+            className="btn btn-square w-12 h-12 rounded-md"
+            disabled={!product.stock}
+            onClick={() => handleAddItem(product.id, "cart")}
+          >
+            <ShoppingCartIcon />
+          </button>
+        </div>
       </div>
     </div>
   );
