@@ -5,7 +5,7 @@ import Inventory2RoundedIcon from "@mui/icons-material/Inventory2Rounded";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { Link, useNavigate } from "react-router-dom";
-import { Divider, Drawer } from "@mui/material";
+import { Drawer } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 type props = {
@@ -29,25 +29,11 @@ export default function Navibar({ open, setDrawer }: props) {
   }, []);
 
   const mobileDisplay = (
-    <div className="navbar">
+    <div className="navbar flex justify-between">
       <div className="navbar-start">
-        <Link to="/" className="btn btn-ghost max-h-full h-20">
+        <Link to="/" className="btn btn-ghost px-2 h-20">
           <img className="max-h-full" src={logo} alt="logo" />
         </Link>
-      </div>
-      <div className="navbar-end gap-5">
-        <label className="input input-bordered input-sm flex items-center rounded-full gap-2">
-          <SearchRoundedIcon
-            className="cursor-pointer"
-            onClick={() => navi(`/search?keyword=${keyword}`)}
-          />
-          <input
-            type="text"
-            className="w-36"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-          />
-        </label>
         <button
           className="btn btn-ghost btn-square btn-sm"
           onClick={() => setDrawer("nav")}
@@ -55,31 +41,50 @@ export default function Navibar({ open, setDrawer }: props) {
           <MenuIcon />
         </button>
       </div>
-      <Drawer open={open} anchor="right" onClose={() => setDrawer(null)}>
+      <div className="navbar-end space-x-2">
+        <SearchRoundedIcon
+          className="cursor-pointer m-"
+          onClick={() => navi(`/search`)}
+        />
+        {isAuthenticated && (
+          <Link
+            to="/orderlist"
+            className="btn btn-circle btn-primary"
+            onClick={() => setDrawer(null)}
+          >
+            <Inventory2RoundedIcon />
+          </Link>
+        )}
+        {isAuthenticated && (
+          <Link
+            to="/user"
+            className="btn btn-circle btn-secondary"
+            onClick={() => setDrawer(null)}
+          >
+            <AccountCircleRoundedIcon />
+          </Link>
+        )}
+        {isAuthenticated && (
+          <button
+            className="btn btn-accent btn-circle"
+            onClick={() => logout()}
+          >
+            <LogoutRoundedIcon />
+          </button>
+        )}
+
+        {!isAuthenticated && (
+          <button
+            className="btn btn-accent rounded-full"
+            onClick={() => loginWithRedirect()}
+          >
+            Login/Register
+          </button>
+        )}
+      </div>
+
+      <Drawer open={open} anchor="left" onClose={() => setDrawer(null)}>
         <div className="bg-neutral-content min-h-screen w-52">
-          {isAuthenticated ? (
-            <div className="h-20 flex justify-evenly items-center">
-              <Link to="/orderlist" onClick={() => setDrawer(null)}>
-                <Inventory2RoundedIcon color="primary" />
-              </Link>
-              <Link to="/user" onClick={() => setDrawer(null)}>
-                <AccountCircleRoundedIcon color="primary" />
-              </Link>
-              <button onClick={() => logout()}>
-                <LogoutRoundedIcon />
-              </button>
-            </div>
-          ) : (
-            <div className="h-20 flex items-center justify-center">
-              <button
-                className="btn btn-accent rounded-full"
-                onClick={() => loginWithRedirect()}
-              >
-                Login/Register
-              </button>
-            </div>
-          )}
-          <Divider className="bg-primary" />
           <ul className="menu flex flex-col items-center space-y-5 mt-5">
             <li>
               <Link
@@ -163,10 +168,10 @@ export default function Navibar({ open, setDrawer }: props) {
               <AccountCircleRoundedIcon />
             </Link>
             <button
-              className="btn btn-accent rounded-full"
+              className="btn btn-accent btn-circle"
               onClick={() => logout()}
             >
-              Logout
+              <LogoutRoundedIcon />
             </button>
           </div>
         ) : (

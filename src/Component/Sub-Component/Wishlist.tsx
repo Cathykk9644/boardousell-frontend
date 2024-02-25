@@ -34,34 +34,38 @@ export default function Wishlist({
 
   const wishlistDisplay = wishlist.map((item: item, i: number) => {
     return (
-      <li
-        className={`flex justify-between items-center  ${
+      <tr
+        className={
           i % 2 === 0
             ? "bg-primary text-base-300"
             : "bg-secondary text-secondary-content"
-        }`}
+        }
         key={item.id}
       >
-        <button
-          className="m-1 btn btn-sm btn-square"
-          onClick={() => handleDeleteItem(item.id, "wishlist")}
-        >
-          <DeleteIcon />
-        </button>
-        <button
-          className="btn btn-ghost max-w-32"
-          onClick={() => handleGoProduct(item.product.id)}
-        >
-          {item.product.name}
-        </button>
-        <div className="flex min-w-32 justify-between">
-          <div>
-            $
-            {item.product.onsale
-              ? Math.round(item.product.price * item.product.onsale.discount)
-              : item.product.price}
-            <p>stock: {item.product.stock}</p>
-          </div>
+        <td>
+          <button
+            className="m-1 btn btn-sm btn-square"
+            onClick={() => handleDeleteItem(item.id, "wishlist")}
+          >
+            <DeleteIcon />
+          </button>
+        </td>
+        <td>
+          <button
+            className="btn btn-ghost flex flex-col items-start"
+            onClick={() => handleGoProduct(item.product.id)}
+          >
+            {item.product.name}
+            <p className="text-xs">stock: {item.product.stock}</p>
+          </button>
+        </td>
+        <td>
+          $
+          {item.product.onsale
+            ? Math.round(item.product.price * item.product.onsale.discount)
+            : item.product.price}
+        </td>
+        <td>
           <button
             className="m-1 btn btn-sm btn-square self-center"
             disabled={!item.product.stock}
@@ -69,8 +73,8 @@ export default function Wishlist({
           >
             <AddShoppingCartIcon />
           </button>
-        </div>
-      </li>
+        </td>
+      </tr>
     );
   });
 
@@ -108,7 +112,9 @@ export default function Wishlist({
           </div>
           <Divider className="bg-primary" />
           <div className="bg-base-100 w-5/6 h-5/6 self-center my-auto overflow-y-scroll">
-            <ul className="w-full ">{wishlistDisplay}</ul>
+            <table className="w-full">
+              <tbody>{wishlistDisplay}</tbody>
+            </table>
           </div>
         </div>
       </Drawer>

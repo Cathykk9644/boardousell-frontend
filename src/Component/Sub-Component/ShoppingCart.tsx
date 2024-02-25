@@ -34,34 +34,38 @@ export default function ShoppingCart({
   };
   const cartDisplay = cart.map((item: item, i: number) => {
     return (
-      <li
-        className={`flex justify-between items-center  ${
+      <tr
+        className={
           i % 2 === 0
             ? "bg-primary text-base-300"
             : "bg-secondary text-secondary-content"
-        }`}
+        }
         key={item.id}
       >
-        <button
-          className="m-1 btn btn-sm btn-square"
-          onClick={() => handleDeleteItem(item.id, "cart")}
-        >
-          <DeleteIcon />
-        </button>
-        <button
-          className="btn btn-ghost max-w-32"
-          onClick={() => handleGoProduct(item.product.id)}
-        >
-          {item.product.name}
-        </button>
-        <div className="flex flex-col flex-end min-w-24 justify-between">
+        <td>
+          <button
+            className="m-1 btn btn-sm btn-square"
+            onClick={() => handleDeleteItem(item.id, "cart")}
+          >
+            <DeleteIcon />
+          </button>
+        </td>
+        <td>
+          <button
+            className="btn btn-ghost flex flex-col items-start"
+            onClick={() => handleGoProduct(item.product.id)}
+          >
+            {item.product.name}
+            <p className="text-xs">stock: {item.product.stock}</p>
+          </button>
+        </td>
+        <td>
           $
           {item.product.onsale
             ? Math.round(item.product.price * item.product.onsale.discount)
             : item.product.price}
-          <p>stock: {item.product.stock}</p>
-        </div>
-      </li>
+        </td>
+      </tr>
     );
   });
 
@@ -106,7 +110,9 @@ export default function ShoppingCart({
           </div>
           <Divider className="bg-primary" />
           <div className="bg-base-100 w-5/6 h-4/6 my-10 self-center overflow-y-scroll">
-            <ul>{cartDisplay}</ul>
+            <table className="w-full">
+              <tbody>{cartDisplay}</tbody>
+            </table>
           </div>
           <div className="flex flex-col w-4/5 self-center mb-5">
             <h2 className="self-end text-xl">Total Amount: ${totalAmount}</h2>
