@@ -25,26 +25,32 @@ export default function ProductPage(): JSX.Element {
       try {
         setIsLoadingProduct(true);
         const { data } = await axios.get(`${BACKENDURL}/product/${productId}`);
+
         const { productPhotos, categories, ...product } = data;
         const flatPhotoList = productPhotos.map(
           (item: { url: string }) => item.url
         );
-        let randomIndex = Math.floor(Math.random() * categories.length);
-        let randomCategory: category = categories[randomIndex];
-        const suggestProductRes: { data: { amount: number; data: product[] } } =
-          await axios.get(
+        if (categories.length) {
+          let randomIndex = Math.floor(Math.random() * categories.length);
+          let randomCategory: category = categories[randomIndex];
+          const suggestProductRes: {
+            data: { amount: number; data: product[] };
+          } = await axios.get(
             `${BACKENDURL}/product/category/${randomCategory.id}?limit=${resultLimit}`
           );
-        const filterSuggestProducts = suggestProductRes.data.data.filter(
-          (item) => item.id !== Number(productId)
-        );
+          const filterSuggestProducts = suggestProductRes.data.data.filter(
+            (item) => item.id !== Number(productId)
+          );
+          setSuggestCategory(randomCategory.name);
+          setSuggestProducts(filterSuggestProducts);
+        }
         setProductInfo(product);
         setPhotoList(flatPhotoList);
         setCategoryList(categories);
-        setSuggestCategory(randomCategory.name);
-        setSuggestProducts(filterSuggestProducts);
+
         setIsLoadingProduct(false);
       } catch (error) {
+        console.log(error);
         setError({
           backHome: true,
           message: "Oh. Somethings went wrong. Cannot load this product.",
