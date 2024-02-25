@@ -15,6 +15,18 @@ html {
     url("./Component//img/homepage-background.png");
 }
 
+.notice-background > div {
+  width: 800px;
+
+  @media screen and (max-width: 640px) {
+    width: 300px;
+  }
+}
+
+.notice-background img {
+  object-fit: contain;
+}
+
 .max-w-full-screen {
   max-width: 100vw;
 }

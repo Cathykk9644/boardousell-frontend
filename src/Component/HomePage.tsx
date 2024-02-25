@@ -33,7 +33,7 @@ export default function HomePage(): JSX.Element {
   return (
     <div className="flex flex-col">
       <NoticeSlide setError={setError} />
-      <h1 className="m-2 text-2xl">New arrived:</h1>
+      <b className="m-5 text-xl self-center">New arrivals:</b>
       {isLoading ? (
         <CircularProgress className="self-center" />
       ) : (

@@ -18,7 +18,7 @@ export default function NoticeSlide({ setError }: { setError: Function }) {
   useEffect(() => {
     const fetchNotice = async () => {
       try {
-        const noticesRes = await axios.get(`${BACKENDURL}/notice/?limit=3`);
+        const noticesRes = await axios.get(`${BACKENDURL}/notice/`);
         setNotices(noticesRes.data);
       } catch (error) {
         setError({
@@ -86,7 +86,6 @@ export default function NoticeSlide({ setError }: { setError: Function }) {
         animationName = "reset-notice";
         break;
     }
-
     return (
       <div
         className="absolute h-full w-full "
@@ -118,39 +117,41 @@ export default function NoticeSlide({ setError }: { setError: Function }) {
       <style>
         {animationNext} {animationPrev} {animationReset}
       </style>
-      <div className="notice-background h-48 sm:h-80 justify-center items-center sm:items-start">
-        <div className="overflow-x-hidden flex flex-col justify-end flex-wrap w-72 h-5/6 sm:w-96 sm:m-10 relative">
+      <div className="notice-background h-48 sm:h-80 justify-center items-center relative">
+        <div className="overflow-x-hidden flex flex-col justify-end flex-wrap h-full relative">
           {noticesDisplay}
-          <MobileStepper
-            className="flex justify-center"
-            sx={{
-              bgcolor: "transparent",
-              zIndex: 1,
-            }}
-            variant="dots"
-            steps={notices.length}
-            position="static"
-            activeStep={currentNotice}
-            backButton={
-              <button
-                onClick={handlePrev}
-                className={currentNotice === 0 ? "invisible" : ""}
-              >
-                <KeyboardArrowLeft className="text-base-300" />
-              </button>
-            }
-            nextButton={
-              <button
-                className={
-                  currentNotice === notices.length - 1 ? "invisible" : ""
-                }
-                onClick={handleNext}
-              >
-                <KeyboardArrowRight className="text-base-300" />
-              </button>
-            }
-          />
-        </div>
+        </div>{" "}
+        <MobileStepper
+          className="absolute bottom-0 flex justify-center bg-base-300"
+          sx={{
+            bgcolor: "transparent",
+            zIndex: 1,
+          }}
+          variant="dots"
+          steps={notices.length}
+          position="static"
+          activeStep={currentNotice}
+          backButton={
+            <button
+              onClick={handlePrev}
+              className={`relative bg-primary rounded-full -left-12 w-8 h-8  ${
+                currentNotice === 0 && "invisible"
+              }`}
+            >
+              <KeyboardArrowLeft className="text-base-300" />
+            </button>
+          }
+          nextButton={
+            <button
+              className={`relative bg-primary rounded-full  -right-12 w-8 h-8  ${
+                currentNotice === notices.length - 1 && "invisible"
+              }`}
+              onClick={handleNext}
+            >
+              <KeyboardArrowRight className="text-base-300" />
+            </button>
+          }
+        />
       </div>
     </div>
   );
