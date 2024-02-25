@@ -7,6 +7,7 @@ module.exports = {
     "./src/Component/Sub-Component/ErrorPage.tsx",
     "./src/Component/Sub-Component/ProductCard.tsx",
     "./src/Component/Sub-Component/ProductList.tsx",
+    "./src/Component/Sub-Component/ProductListForSearch.tsx",
     "./src/Component/Sub-Component/ShoppingCart.tsx",
     "./src/Component/Sub-Component/Wishlist.tsx",
     "./src/Component/Notice-Sub/NoticeSlide.tsx",

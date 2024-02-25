@@ -87,7 +87,7 @@ export default function Navibar({ open, setDrawer }: props) {
                 to="/notice"
                 onClick={() => setDrawer(null)}
               >
-                All Notices
+                Announcement
               </Link>
             </li>
             <li>
@@ -96,7 +96,7 @@ export default function Navibar({ open, setDrawer }: props) {
                 to="/explore"
                 onClick={() => setDrawer(null)}
               >
-                Explore
+                Products
               </Link>
             </li>
             <li>
@@ -123,7 +123,7 @@ export default function Navibar({ open, setDrawer }: props) {
       </div>
       <div className="navbar-center flex gap-10">
         <button className="btn btn-ghost" onClick={() => navi("/notice")}>
-          Notices
+          Announcement
         </button>
         <button className="btn btn-ghost" onClick={() => navi("/explore")}>
           Products
