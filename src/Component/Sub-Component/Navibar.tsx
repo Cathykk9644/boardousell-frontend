@@ -20,7 +20,10 @@ export default function Navibar({ open, setDrawer }: props) {
   const navi = useNavigate();
   const handleSearch = () => {
     setKeyword("");
-    navi(`../search?keyword=${keyword}&limit=5&page=1`);
+    if (!keyword.length) {
+      return navi(`../search`);
+    }
+    navi(`../search?keyword=${keyword}&page=1`);
   };
   useEffect(() => {
     window.addEventListener("resize", () => {

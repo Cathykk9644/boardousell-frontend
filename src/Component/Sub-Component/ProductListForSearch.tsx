@@ -31,8 +31,8 @@ export default function ProductListForSearch({
   });
 
   return (
-    <div className="flex flex-col items-center w-full mb-5">
-      <div className="w-96 md:w-5/6 flex flex-row justify-around flex-wrap">
+    <div className="flex flex-col items-center w-2/3">
+      <div className="flex flex-row justify-around flex-wrap">
         {productListDisplay}
       </div>
       <Pagination

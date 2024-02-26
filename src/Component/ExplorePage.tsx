@@ -2,7 +2,6 @@ import axios from "axios";
 import { CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import {
-  Link,
   useNavigate,
   useOutletContext,
   useSearchParams,
@@ -16,7 +15,7 @@ type page = {
   total: number;
 };
 
-const resultPerPage = 12;
+const resultPerPage = 9;
 export default function ExplorePage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<product[]>([]);
@@ -24,6 +23,11 @@ export default function ExplorePage() {
   const [categories, setCategories] = useState<category[]>([]);
   const { handleAddItem, setError } = useOutletContext<outletProps>();
   const [query] = useSearchParams();
+  let queryPage = query.get("page");
+  if (!queryPage) {
+    queryPage = "1";
+  }
+  const queryCategory = query.get("category");
   const navi = useNavigate();
 
   useEffect(() => {
@@ -33,11 +37,7 @@ export default function ExplorePage() {
         const { data }: { data: category[] } = await axios.get(
           `${BACKENDURL}/category`
         );
-        let queryPage = query.get("page");
-        if (!queryPage) {
-          queryPage = "1";
-        }
-        const queryCategory = query.get("category");
+
         switch (queryCategory) {
           case null:
             const allData = await axios.get(
@@ -49,7 +49,7 @@ export default function ExplorePage() {
               total: Math.ceil(allData.data.amount / resultPerPage),
             });
             break;
-          case "onsale":
+          case "sale":
             const salesData = await axios.get(
               `${BACKENDURL}/product/onsale?limit=${resultPerPage}&page=${queryPage}`
             );
@@ -61,7 +61,7 @@ export default function ExplorePage() {
             break;
           case "new":
             const newData = await axios.get(
-              `${BACKENDURL}/product/new/search?limit=${resultPerPage}&page=${queryPage}`
+              `${BACKENDURL}/product/new?limit=${resultPerPage}&page=${queryPage}`
             );
             setProducts(newData.data.data);
             setPage({
@@ -94,37 +94,87 @@ export default function ExplorePage() {
       }
     };
     fetchData();
-  }, [setError, query]);
+  }, [setError, queryPage, queryCategory]);
 
   const categoriesDisplay = categories.map((category) => (
-    <Link
-      className="btn btn-link w-1/2"
-      to={`/explore?category=${category.name}`}
+    <button
+      className={`btn btn-sm w-max m-1 ${
+        queryCategory === category.name && "btn-neutral"
+      }`}
       key={category.id}
+      onClick={() => handleChangeExplore(category.name)}
     >
       {category.name}
-    </Link>
+    </button>
   ));
 
+  const handleChangeExplore = (category: string | null) => {
+    if (category === queryCategory) {
+      return;
+    }
+    if (!category) {
+      return navi(`/explore`);
+    }
+    navi(`/explore?category=${category}`);
+  };
+
   const handleChangePage = (newPage: number) => {
-    const queryCategory = query.get("category");
     navi(
       `/explore?${
         queryCategory ? `category=${queryCategory}&` : ""
       }page=${newPage}`
     );
   };
+
   return (
     <div className="min-h-screen">
       {isLoading ? (
         <CircularProgress />
       ) : (
-        <ProductListForSearch
-          handleAddItem={handleAddItem}
-          page={page}
-          handleChangePage={handleChangePage}
-          products={products}
-        />
+        <div className="w-full flex flex-col items-center">
+          <div className="flex justify-between w-4/6 items-center">
+            <div className="space-x-4">
+              <button
+                className={`btn rounded-full ${
+                  !queryCategory && "btn-neutral"
+                }`}
+                onClick={() => handleChangeExplore(null)}
+              >
+                All Products
+              </button>
+              <button
+                className={`btn rounded-full ${
+                  queryCategory === "new" && "btn-neutral"
+                }`}
+                onClick={() => handleChangeExplore("new")}
+              >
+                New Arrivals
+              </button>
+              <button
+                className={`btn rounded-full ${
+                  queryCategory === "sale" && "btn-neutral"
+                }`}
+                onClick={() => handleChangeExplore("sale")}
+              >
+                On Sales
+              </button>
+            </div>
+            <details className="dropdown">
+              <summary className="underline font-bold cursor-pointer">
+                Sort by Categories
+              </summary>
+              <div className="dropdown-content bg-primary z-50 rounded p-1">
+                {categoriesDisplay}
+              </div>
+            </details>
+          </div>
+          <ProductListForSearch
+            handleAddItem={handleAddItem}
+            page={page}
+            handleChangePage={handleChangePage}
+            products={products}
+          />
+        </div>
       )}
     </div>
   );
