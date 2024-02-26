@@ -64,6 +64,7 @@ export default function OrderPage(): JSX.Element {
           return navi(`/`);
         }
         const { user, products, messages, ...order } = data;
+        console.log(user);
         setOrderInfo(order);
         setUserInfo(user);
         setProductList(products);

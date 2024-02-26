@@ -87,7 +87,9 @@ export default function Payment({
           Authorization: `Bearer ${accessToken}`,
         },
       };
+      console.log(orderId);
       await axios.put(`${BACKENDURL}/customer/order/paid`, { orderId }, config);
+
       setOrderInfo((prev: order) => {
         return { ...prev, status: "Paid" };
       });

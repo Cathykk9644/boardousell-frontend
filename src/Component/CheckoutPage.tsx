@@ -27,6 +27,7 @@ export default function CheckoutPage(): JSX.Element {
     isAuthenticated,
     loginWithRedirect,
     isLoading,
+    user,
     getAccessTokenSilently,
   } = useAuth0();
   const navi = useNavigate();
@@ -53,10 +54,11 @@ export default function CheckoutPage(): JSX.Element {
         );
 
         const userDataRes = await axios.get(
-          `${BACKENDURL}/customer/user/${userId}`,
+          `${BACKENDURL}/customer/user/${user?.sub}`,
           config
         );
-        setUserInfo(userDataRes.data);
+        setPhone(userDataRes.data[0].phone ? userDataRes.data[0].phone : "");
+        setUserInfo(userDataRes.data[0]);
         setNewCart(data);
         setIsLoadingCart(false);
       } catch (error) {
@@ -76,6 +78,7 @@ export default function CheckoutPage(): JSX.Element {
     isAuthenticated,
     loginWithRedirect,
     isLoading,
+    user,
   ]);
 
   const findCartId = (productId: number): number => {
@@ -191,7 +194,6 @@ export default function CheckoutPage(): JSX.Element {
     isAblePurchase = false;
     tip = "Please Add Phone Number Before checkout";
   }
-
   const handleConfirm = async () => {
     try {
       const accessToken = await getAccessTokenSilently();
@@ -201,6 +203,8 @@ export default function CheckoutPage(): JSX.Element {
         },
       };
       if (!userInfo?.phone) {
+        console.log("here");
+        console.log(phone);
         await axios.put(
           `${BACKENDURL}/customer/user/${userId}`,
           { phone: phone },
