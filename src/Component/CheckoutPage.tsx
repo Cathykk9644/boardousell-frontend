@@ -48,7 +48,7 @@ export default function CheckoutPage(): JSX.Element {
           },
         };
         const { data } = await axios.get(
-          `${BACKENDURL}/customer/cart/info/${userId}`,
+          `${BACKENDURL}/customer/cart/${userId}`,
           config
         );
 
